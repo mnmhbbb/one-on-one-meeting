@@ -2,19 +2,19 @@
 
 ## 기술 스택
 
-- Language: TypeScript
-- Framework: Next.js
-- Build Tool: Webpack 5
-- Transpiler: SWC
-- Package Manager: Pnpm
-  - 아직 Pnpm을 사용하지 않았다면 전역에 설치가 필요함 `npm install -g pnpm`
-- DataBase(Baas): Supabase
-- State Management Library:
-  - Server State: TanStack Query
-  - Client State: Zustand
-- UI Library: shadcn/ui
-- CSS Framework: TailwindCSS
-- Deployment: Vercel
+| 항목                    | 내용                                                                 |
+|-----------------------|----------------------------------------------------------------------|
+| **Language**           | TypeScript                                                           |
+| **Framework**          | Next.js                                                              |
+| **Build Tool**         | Webpack 5                                                            |
+| **Transpiler**         | SWC                                                                  |
+| **Package Manager**    | Pnpm<br>※ 전역 설치 필요: `npm install -g pnpm`                      |
+| **Database (BaaS)**    | Supabase                                                             |
+| **State Management**   | - Server State: TanStack Query<br>- Client State: Zustand           |
+| **UI Library**         | shadcn/ui                                                            |
+| **CSS Framework**      | TailwindCSS                                                          |
+| **Deployment**         | Vercel                                                               |
+
 # Git 작업 메시지 규칙
 
 ## 메시지 타입별 형식
@@ -39,9 +39,7 @@
 
 ---
 
-## 브랜치 전략
-
-### 브랜치 구조
+## 브랜치 구조
 
 - `main`: 배포용 브랜치
 - `develop`: 개발용 통합 브랜치
