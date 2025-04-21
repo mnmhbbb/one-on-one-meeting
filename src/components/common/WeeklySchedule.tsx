@@ -2,12 +2,13 @@
 
 import { memo } from "react";
 import { format, startOfWeek, addDays } from "date-fns";
-import { DAYS, STATUS_COLORS, STATUS_LABELS, TIMES } from "@/common/const";
+import { DAYS, TIMES } from "@/common/const";
 import useDateStore from "@/store/dateStore";
 import { cn } from "@/lib/utils";
-import { InterviewEvent } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/utils/data/mockData";
+import StatusBadge from "@/components/common/StatusBadge";
 
-const WeeklySchedule = ({ events }: { events: InterviewEvent[] }) => {
+const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const { currentDate } = useDateStore();
 
   // 현재 주의 월요일부터 금요일까지의 날짜 배열 생성
@@ -55,15 +56,10 @@ const WeeklySchedule = ({ events }: { events: InterviewEvent[] }) => {
                     key={`${dayIndex}-${timeIndex}`}
                     className={cn(
                       "h-5 rounded-md flex justify-center items-center mt-2",
-                      event ? STATUS_COLORS[event.status] : "bg-gray-50",
+                      event ? "" : "bg-gray-50",
                     )}
                   >
-                    {/* 면담 상태 표시 */}
-                    {event && (
-                      <span className="text-xs px-2 text-black truncate block">
-                        {STATUS_LABELS[event.status]}
-                      </span>
-                    )}
+                    {event && <StatusBadge status={event.status} />}
                   </div>
                 );
               })}

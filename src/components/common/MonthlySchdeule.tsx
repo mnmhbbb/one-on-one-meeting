@@ -12,14 +12,14 @@ import {
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import useDateStore from "@/store/dateStore";
-import { InterviewEvent } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/utils/data/mockData";
 import { STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 
 dayjs.locale("ko");
 
 const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
 
-const MonthlySchedule = ({ events }: { events: InterviewEvent[] }) => {
+const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const { currentDate } = useDateStore();
 
   const monthStart = startOfMonth(currentDate);
