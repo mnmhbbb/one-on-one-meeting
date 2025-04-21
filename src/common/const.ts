@@ -45,15 +45,6 @@ export type InterviewStatus =
   | "COMPLETED"
   | "RECORDED";
 
-export const INTERVIEW_STATES: Record<InterviewStatus, string> = {
-  REQUESTED: "확정 요청",
-  REJECTED: "면담 거절",
-  CONFIRMED: "면담 확정",
-  CANCELLED: "면담 취소",
-  COMPLETED: "면담 완료",
-  RECORDED: "기록된 면담",
-};
-
 export const STATUS_COLORS: Record<InterviewStatus, string> = {
   REQUESTED: "bg-blue-300",
   REJECTED: "bg-pink-300",
