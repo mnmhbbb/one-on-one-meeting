@@ -9,35 +9,35 @@ import useDateStore from "@/store/dateStore";
 dayjs.locale("ko");
 
 interface DateSelectorProps {
-  viewType: "month" | "week";
+  viewType: "month" | "week" | "day";
 }
 
 const DateSelector = ({ viewType }: DateSelectorProps) => {
   const { currentDate, setCurrentDate } = useDateStore();
 
   const handlePrevious = () => {
-    const newDate =
-      viewType === "month"
-        ? dayjs(currentDate).subtract(1, "month").toDate()
-        : dayjs(currentDate).subtract(1, "week").toDate();
+    const newDate = dayjs(currentDate).subtract(1, viewType).toDate();
     setCurrentDate(newDate);
   };
 
   const handleNext = () => {
-    const newDate =
-      viewType === "month"
-        ? dayjs(currentDate).add(1, "month").toDate()
-        : dayjs(currentDate).add(1, "week").toDate();
+    const newDate = dayjs(currentDate).add(1, viewType).toDate();
     setCurrentDate(newDate);
   };
 
   const formatDate = () => {
-    if (viewType === "month") {
-      return dayjs(currentDate).format("YYYY년 M월");
-    } else {
-      const startOfWeek = dayjs(currentDate).startOf("week").add(1, "day"); // 월요일
-      const endOfWeek = startOfWeek.add(4, "day"); // 금요일
-      return `${startOfWeek.format("M월 D일")} ~ ${endOfWeek.format("M월 D일")}`;
+    switch (viewType) {
+      case "month":
+        return dayjs(currentDate).format("YYYY년 M월");
+      case "week": {
+        const startOfWeek = dayjs(currentDate).startOf("week").add(1, "day"); // 월요일
+        const endOfWeek = startOfWeek.add(4, "day"); // 금요일
+        return `${startOfWeek.format("M월 D일")} ~ ${endOfWeek.format("M월 D일")}`;
+      }
+      case "day":
+        return dayjs(currentDate).format("YYYY년 M월 D일");
+      default:
+        return "";
     }
   };
 
