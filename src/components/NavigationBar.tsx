@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -19,4 +20,4 @@ const NavigationBar = () => {
   );
 };
 
-export default NavigationBar;
+export default memo(NavigationBar);

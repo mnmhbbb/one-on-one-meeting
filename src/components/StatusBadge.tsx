@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
 
@@ -20,4 +21,4 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
   );
 };
 
-export default StatusBadge;
+export default memo(StatusBadge);

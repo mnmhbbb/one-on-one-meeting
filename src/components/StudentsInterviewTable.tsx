@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import StatusBadge from "@/components/StatusBadge";
@@ -15,7 +16,7 @@ interface InterviewTableProps {
   events: InterviewInfo[];
 }
 
-const InterviewTable = ({ events }: InterviewTableProps) => {
+const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -69,4 +70,4 @@ const InterviewTable = ({ events }: InterviewTableProps) => {
   );
 };
 
-export default InterviewTable;
+export default memo(StudentsInterviewTable);

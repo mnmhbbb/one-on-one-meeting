@@ -1,11 +1,11 @@
 "use client";
 
+import { memo } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useDateStore from "@/store/dateStore";
-
 dayjs.locale("ko");
 
 interface DateSelectorProps {
@@ -54,4 +54,4 @@ const DateSelector = ({ viewType }: DateSelectorProps) => {
   );
 };
 
-export default DateSelector;
+export default memo(DateSelector);
