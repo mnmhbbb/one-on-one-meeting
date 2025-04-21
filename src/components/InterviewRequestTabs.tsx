@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EVENTS } from "@/utils/data/mockData";
@@ -14,6 +15,8 @@ import {
 import useDateStore from "@/store/dateStore";
 import StudentsInterviewTable from "@/components/StudentsInterviewTable";
 import DateSelector from "@/components/DateSelector";
+import StatusFilterGroup from "@/components/StatusFilterGroup";
+import { InterviewStatus } from "@/common/const";
 
 const TABS = [
   { value: "month", label: "Month" },
@@ -23,26 +26,52 @@ const TABS = [
 
 const InterviewRequestTabs = () => {
   const { currentDate } = useDateStore();
+  const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
+    "REQUESTED",
+    "REJECTED",
+    "CONFIRMED",
+    "CANCELLED",
+    "COMPLETED",
+    "RECORDED",
+  ]);
+
+  // 상태 필터링이 적용된 이벤트 목록
+  const filteredEvents = useMemo(
+    () => EVENTS.filter((event) => selectedStatuses.includes(event.status)),
+    [selectedStatuses],
+  );
 
   // 각 탭에 해당하는 이벤트 필터링
-  const monthEvents = EVENTS.filter((event) => {
-    const eventDate = new Date(event.date);
-    return isSameMonth(eventDate, currentDate);
-  });
+  const monthEvents = useMemo(
+    () =>
+      filteredEvents.filter((event) => {
+        const eventDate = new Date(event.date);
+        return isSameMonth(eventDate, currentDate);
+      }),
+    [filteredEvents, currentDate],
+  );
 
-  const weekEvents = EVENTS.filter((event) => {
-    const eventDate = new Date(event.date);
-    const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-    const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
-    return isWithinInterval(eventDate, { start: weekStart, end: weekEnd });
-  });
+  const weekEvents = useMemo(
+    () =>
+      filteredEvents.filter((event) => {
+        const eventDate = new Date(event.date);
+        const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+        const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+        return isWithinInterval(eventDate, { start: weekStart, end: weekEnd });
+      }),
+    [filteredEvents, currentDate],
+  );
 
-  const dayEvents = EVENTS.filter((event) => {
-    const eventDate = new Date(event.date);
-    const dayStart = startOfDay(currentDate);
-    const dayEnd = endOfDay(currentDate);
-    return isWithinInterval(eventDate, { start: dayStart, end: dayEnd });
-  });
+  const dayEvents = useMemo(
+    () =>
+      filteredEvents.filter((event) => {
+        const eventDate = new Date(event.date);
+        const dayStart = startOfDay(currentDate);
+        const dayEnd = endOfDay(currentDate);
+        return isWithinInterval(eventDate, { start: dayStart, end: dayEnd });
+      }),
+    [filteredEvents, currentDate],
+  );
 
   return (
     <Tabs defaultValue="month">
@@ -60,6 +89,7 @@ const InterviewRequestTabs = () => {
               <DateSelector viewType="month" />
               <div></div>
             </div>
+            <StatusFilterGroup onFilterChange={setSelectedStatuses} />
             <StudentsInterviewTable events={monthEvents} />
           </CardContent>
         </Card>
@@ -78,6 +108,7 @@ const InterviewRequestTabs = () => {
               <DateSelector viewType="week" />
               <div></div>
             </div>
+            <StatusFilterGroup onFilterChange={setSelectedStatuses} />
             <StudentsInterviewTable events={weekEvents} />
           </CardContent>
         </Card>
@@ -96,6 +127,7 @@ const InterviewRequestTabs = () => {
               <DateSelector viewType="day" />
               <div></div>
             </div>
+            <StatusFilterGroup onFilterChange={setSelectedStatuses} />
             <StudentsInterviewTable events={dayEvents} />
           </CardContent>
         </Card>
@@ -104,4 +136,4 @@ const InterviewRequestTabs = () => {
   );
 };
 
-export default InterviewRequestTabs;
+export default memo(InterviewRequestTabs);
