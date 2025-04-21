@@ -6,7 +6,7 @@ import { DAYS, TIMES } from "@/common/const";
 import useDateStore from "@/store/dateStore";
 import { cn } from "@/lib/utils";
 import { InterviewInfo } from "@/utils/data/mockData";
-import StatusBadge from "@/components/common/StatusBadge";
+import StatusBadge from "@/components/StatusBadge";
 
 const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const { currentDate } = useDateStore();

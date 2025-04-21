@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import StatusBadge from "./common/StatusBadge";
+import StatusBadge from "@/components/StatusBadge";
 import {
   Table,
   TableBody,

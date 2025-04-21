@@ -13,7 +13,7 @@ import {
 } from "date-fns";
 import useDateStore from "@/store/dateStore";
 import StudentsInterviewTable from "@/components/StudentsInterviewTable";
-import DateSelector from "@/components/common/DateSelector";
+import DateSelector from "@/components/DateSelector";
 
 const TABS = [
   { value: "month", label: "Month" },

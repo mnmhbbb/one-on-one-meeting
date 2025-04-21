@@ -1,4 +1,4 @@
-import ScheduleFrame from "@/components/common/ScheduleFrame";
+import ScheduleFrame from "@/components/ScheduleFrame";
 import StudentsHeader from "@/components/StudentsHeader";
 import InterviewRequestTabs from "@/components/InterviewRequestTabs";
 

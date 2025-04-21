@@ -3,9 +3,9 @@
 import { memo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import MonthlySchedule from "@/components/common/MonthlySchdeule";
-import WeeklySchedule from "@/components/common/WeeklySchedule";
-import DateSelector from "@/components/common/DateSelector";
+import MonthlySchedule from "@/components/MonthlySchdeule";
+import WeeklySchedule from "@/components/WeeklySchedule";
+import DateSelector from "@/components/DateSelector";
 import { EVENTS } from "@/utils/data/mockData";
 
 const TABS = [
