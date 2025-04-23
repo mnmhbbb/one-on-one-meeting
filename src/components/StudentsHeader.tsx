@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ProfessorSearchDialog } from "@/components/ProfessorSearchDialog";
 
 const StudentsHeader = () => {
   const pathname = usePathname();
@@ -32,11 +31,9 @@ const StudentsHeader = () => {
         </div>
         {/* TODO: 학생 이름 표시 */}
         <h2 className="text-xl text-center font-semibold mb-4">OOO님의 면담 일정</h2>
-        {/* TODO: 교수님 검색 모달 */}
-        <Button variant="outline" className="text-neutral-400 max-w-auto mb-4 max-w-fit ml-auto">
-          <Search />
-          교수님을 검색하세요.
-        </Button>
+        <div className="flex justify-end">
+          <ProfessorSearchDialog />
+        </div>
       </div>
     </>
   );
