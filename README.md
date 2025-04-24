@@ -8,6 +8,7 @@
 - Transpiler: SWC
 - Package Manager: Pnpm
   - 아직 Pnpm을 사용하지 않았다면 전역에 설치가 필요함 `npm install -g pnpm`
+  - `pnpm install`
 - DataBase(Baas): Supabase
 - State Management Library:
   - Server State: TanStack Query
