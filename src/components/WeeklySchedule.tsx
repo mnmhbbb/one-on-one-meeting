@@ -5,16 +5,16 @@ import { format, startOfWeek, addDays } from "date-fns";
 import { DAYS, TIMES } from "@/common/const";
 import useDateStore from "@/store/dateStore";
 import { cn } from "@/lib/utils";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { ConsultationInfo } from "@/utils/data/mockData";
 import StatusBadge from "@/components/StatusBadge";
 import ConsultationDetailModal from "@/components/ConsultationDetailModal";
 
-const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
+const WeeklySchedule = ({ events }: { events: ConsultationInfo[] }) => {
   const { currentDate } = useDateStore();
-  const [selectedConsultation, setSelectedConsultation] = useState<InterviewInfo | null>(null);
+  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleConsultationClick = (consultation: InterviewInfo) => {
+  const handleConsultationClick = (consultation: ConsultationInfo) => {
     setSelectedConsultation(consultation);
     setIsModalOpen(true);
   };

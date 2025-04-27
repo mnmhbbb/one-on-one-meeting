@@ -1,12 +1,12 @@
 import { memo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { ConsultationInfo } from "@/utils/data/mockData";
 
 interface ConsultationDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  consultation: InterviewInfo | null;
+  consultation: ConsultationInfo | null;
 }
 
 const ConsultationDetailModal = ({

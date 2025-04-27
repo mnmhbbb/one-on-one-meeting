@@ -1,14 +1,14 @@
 import ScheduleFrame from "@/components/ScheduleFrame";
 import StudentsHeader from "@/components/StudentsHeader";
-import InterviewRequestTabs from "@/components/InterviewRequestTabs";
+import ConsultationRequestTabs from "@/components/ConsultationRequestTabs";
 
-const InterviewRequestsPage = () => {
+const ConsultationRequestsPage = () => {
   return (
     <ScheduleFrame>
       <StudentsHeader />
-      <InterviewRequestTabs />
+      <ConsultationRequestTabs />
     </ScheduleFrame>
   );
 };
 
-export default InterviewRequestsPage;
+export default ConsultationRequestsPage;

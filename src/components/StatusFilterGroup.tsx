@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useCallback, memo } from "react";
-import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import { ConsultationStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
 
 interface StatusFilterGroupProps {
-  onFilterChange: (statuses: InterviewStatus[]) => void;
+  onFilterChange: (statuses: ConsultationStatus[]) => void;
 }
 
-const ALL_STATUSES: InterviewStatus[] = [
+const ALL_STATUSES: ConsultationStatus[] = [
   "REQUESTED",
   "REJECTED",
   "CONFIRMED",
@@ -17,7 +17,7 @@ const ALL_STATUSES: InterviewStatus[] = [
 ];
 
 const StatusFilterGroup = ({ onFilterChange }: StatusFilterGroupProps) => {
-  const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>(ALL_STATUSES);
+  const [selectedStatuses, setSelectedStatuses] = useState<ConsultationStatus[]>(ALL_STATUSES);
 
   const handleToggleAll = useCallback(() => {
     if (selectedStatuses.length === ALL_STATUSES.length) {
@@ -30,7 +30,7 @@ const StatusFilterGroup = ({ onFilterChange }: StatusFilterGroupProps) => {
   }, [selectedStatuses, onFilterChange]);
 
   const handleToggleStatus = useCallback(
-    (status: InterviewStatus) => {
+    (status: ConsultationStatus) => {
       const newSelectedStatuses = selectedStatuses.includes(status)
         ? selectedStatuses.filter((s) => s !== status)
         : [...selectedStatuses, status];

@@ -1,8 +1,8 @@
-import { InterviewStatus } from "@/common/const";
+import { ConsultationStatus } from "@/common/const";
 
-export interface InterviewInfo {
+export interface ConsultationInfo {
   date: string; // "YYYY-MM-DD HH:mm" 형식
-  status: InterviewStatus;
+  status: ConsultationStatus;
   professor: string;
   memo?: string;
   reason: string;
@@ -11,7 +11,7 @@ export interface InterviewInfo {
 }
 
 // FIXME: 확인용 더미데이터
-export const EVENTS: InterviewInfo[] = [
+export const EVENTS: ConsultationInfo[] = [
   {
     date: "2025-03-31 14:00",
     status: "REQUESTED",

@@ -10,7 +10,7 @@ const StudentsHeader = () => {
 
   const links = [
     { href: "/my", label: "MY" },
-    { href: "/interview-requests", label: "신청현황" },
+    { href: "/consultation-requests", label: "신청현황" },
   ];
 
   return (

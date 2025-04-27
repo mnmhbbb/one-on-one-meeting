@@ -12,7 +12,7 @@ import {
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import useDateStore from "@/store/dateStore";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { ConsultationInfo } from "@/utils/data/mockData";
 import { STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import ConsultationDetailModal from "@/components/ConsultationDetailModal";
 
@@ -20,15 +20,15 @@ dayjs.locale("ko");
 
 const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
 
-const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
+const MonthlySchedule = ({ events }: { events: ConsultationInfo[] }) => {
   const { currentDate } = useDateStore();
-  const [selectedConsultation, setSelectedConsultation] = useState<InterviewInfo | null>(null);
+  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
 
-  const handleConsultationClick = (consultation: InterviewInfo) => {
+  const handleConsultationClick = (consultation: ConsultationInfo) => {
     setSelectedConsultation(consultation);
     setIsModalOpen(true);
   };
