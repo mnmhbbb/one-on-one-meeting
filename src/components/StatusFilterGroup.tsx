@@ -13,7 +13,6 @@ const ALL_STATUSES: InterviewStatus[] = [
   "REJECTED",
   "CONFIRMED",
   "CANCELLED",
-  "COMPLETED",
   "RECORDED",
 ];
 

@@ -31,7 +31,6 @@ const InterviewRequestTabs = () => {
     "REJECTED",
     "CONFIRMED",
     "CANCELLED",
-    "COMPLETED",
     "RECORDED",
   ]);
 
