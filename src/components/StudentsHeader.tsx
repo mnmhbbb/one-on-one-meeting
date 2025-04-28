@@ -9,8 +9,8 @@ const StudentsHeader = () => {
   const pathname = usePathname();
 
   const links = [
-    { href: "/my", label: "MY" },
-    { href: "/consultation-requests", label: "신청현황" },
+    { href: "/student/my", label: "MY" },
+    { href: "/student/consultation-requests", label: "신청현황" },
   ];
 
   return (
