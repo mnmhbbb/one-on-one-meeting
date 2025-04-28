@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
-import { ProfessorSearchDialog } from "@/components/ProfessorSearchDialog";
+import ProfessorSearchModal from "@/components/ProfessorSearchModal";
 
 const StudentsHeader = () => {
   const pathname = usePathname();
 
   const links = [
     { href: "/my", label: "MY" },
-    { href: "/interview-requests", label: "신청현황" },
+    { href: "/consultation-requests", label: "신청현황" },
   ];
 
   return (
@@ -32,7 +32,7 @@ const StudentsHeader = () => {
         {/* TODO: 학생 이름 표시 */}
         <h2 className="text-xl text-center font-semibold mb-4">OOO님의 면담 일정</h2>
         <div className="flex justify-end">
-          <ProfessorSearchDialog />
+          <ProfessorSearchModal />
         </div>
       </div>
     </>

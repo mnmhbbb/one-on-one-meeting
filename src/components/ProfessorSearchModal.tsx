@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Search } from "lucide-react";
 import {
   Dialog,
@@ -17,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function ProfessorSearchDialog() {
+const ProfessorSearchModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -85,4 +86,6 @@ export function ProfessorSearchDialog() {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default memo(ProfessorSearchModal);

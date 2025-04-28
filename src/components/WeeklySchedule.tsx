@@ -1,15 +1,23 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState } from "react";
 import { format, startOfWeek, addDays } from "date-fns";
 import { DAYS, TIMES } from "@/common/const";
 import useDateStore from "@/store/dateStore";
 import { cn } from "@/lib/utils";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { ConsultationInfo } from "@/utils/data/mockData";
 import StatusBadge from "@/components/StatusBadge";
+import ConsultationDetailModal from "@/components/ConsultationDetailModal";
 
-const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
+const WeeklySchedule = ({ events }: { events: ConsultationInfo[] }) => {
   const { currentDate } = useDateStore();
+  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationInfo | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleConsultationClick = (consultation: ConsultationInfo) => {
+    setSelectedConsultation(consultation);
+    setIsModalOpen(true);
+  };
 
   // 현재 주의 월요일부터 금요일까지의 날짜 배열 생성
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // 1은 월요일
@@ -23,7 +31,7 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
   };
 
   return (
-    <div className="relative">
+    <>
       <div className="grid grid-cols-[100px_1fr] border-b pb-2">
         <div className="text-sm font-semibold text-gray-400">시간</div>
         <div className="grid grid-cols-5 gap-2 text-center text-sm font-semibold text-gray-600">
@@ -58,6 +66,7 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
                       "h-5 rounded-md flex justify-center items-center mt-2",
                       event ? "" : "bg-gray-50",
                     )}
+                    onClick={() => event && handleConsultationClick(event)}
                   >
                     {event && <StatusBadge status={event.status} />}
                   </div>
@@ -67,7 +76,13 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
           ))}
         </div>
       </div>
-    </div>
+
+      <ConsultationDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        consultation={selectedConsultation}
+      />
+    </>
   );
 };
 

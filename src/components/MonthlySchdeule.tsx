@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import {
@@ -12,18 +12,26 @@ import {
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import useDateStore from "@/store/dateStore";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { ConsultationInfo } from "@/utils/data/mockData";
 import { STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import ConsultationDetailModal from "@/components/ConsultationDetailModal";
 
 dayjs.locale("ko");
 
 const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
 
-const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
+const MonthlySchedule = ({ events }: { events: ConsultationInfo[] }) => {
   const { currentDate } = useDateStore();
+  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationInfo | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
+
+  const handleConsultationClick = (consultation: ConsultationInfo) => {
+    setSelectedConsultation(consultation);
+    setIsModalOpen(true);
+  };
 
   // 이전 달의 날짜들 계산
   // startDay: 현재 월의 1일이 무슨 요일인지 (0: 일요일, 1: 월요일, ..., 6: 토요일)
@@ -51,7 +59,7 @@ const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const allDays = [...prevMonthDays, ...currentMonthDays, ...nextMonthDays];
 
   return (
-    <div>
+    <>
       <div className="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-600 border-b pb-2">
         {WEEKDAYS.map((day, i) => (
           <div key={i}>{day}</div>
@@ -83,6 +91,7 @@ const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
                       "text-xs text-center px-1 py-0.5 rounded ",
                       STATUS_COLORS[event.status],
                     )}
+                    onClick={() => event && handleConsultationClick(event)}
                   >
                     {STATUS_LABELS[event.status]}
                   </div>
@@ -92,7 +101,13 @@ const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
           );
         })}
       </div>
-    </div>
+
+      <ConsultationDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        consultation={selectedConsultation}
+      />
+    </>
   );
 };
 

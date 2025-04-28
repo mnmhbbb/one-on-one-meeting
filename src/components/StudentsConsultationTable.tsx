@@ -10,13 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { ConsultationInfo } from "@/utils/data/mockData";
 
-interface InterviewTableProps {
-  events: InterviewInfo[];
+interface ConsultationTableProps {
+  events: ConsultationInfo[];
 }
 
-const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
+const StudentsConsultationTable = ({ events }: ConsultationTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -70,4 +70,4 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
   );
 };
 
-export default memo(StudentsInterviewTable);
+export default memo(StudentsConsultationTable);

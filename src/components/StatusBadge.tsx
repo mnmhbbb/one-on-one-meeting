@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import { ConsultationStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
 
 interface StatusBadgeProps {
-  status: InterviewStatus;
+  status: ConsultationStatus;
   className?: string;
 }
 

@@ -13,10 +13,10 @@ import {
   isWithinInterval,
 } from "date-fns";
 import useDateStore from "@/store/dateStore";
-import StudentsInterviewTable from "@/components/StudentsInterviewTable";
+import StudentsConsultationTable from "@/components/StudentsConsultationTable";
 import DateSelector from "@/components/DateSelector";
 import StatusFilterGroup from "@/components/StatusFilterGroup";
-import { InterviewStatus } from "@/common/const";
+import { ConsultationStatus } from "@/common/const";
 
 const TABS = [
   { value: "month", label: "Month" },
@@ -24,14 +24,13 @@ const TABS = [
   { value: "day", label: "Day" },
 ];
 
-const InterviewRequestTabs = () => {
+const ConsultationRequestTabs = () => {
   const { currentDate } = useDateStore();
-  const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
+  const [selectedStatuses, setSelectedStatuses] = useState<ConsultationStatus[]>([
     "REQUESTED",
     "REJECTED",
     "CONFIRMED",
     "CANCELLED",
-    "COMPLETED",
     "RECORDED",
   ]);
 
@@ -90,7 +89,7 @@ const InterviewRequestTabs = () => {
               <div></div>
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
-            <StudentsInterviewTable events={monthEvents} />
+            <StudentsConsultationTable events={monthEvents} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -109,7 +108,7 @@ const InterviewRequestTabs = () => {
               <div></div>
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
-            <StudentsInterviewTable events={weekEvents} />
+            <StudentsConsultationTable events={weekEvents} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -128,7 +127,7 @@ const InterviewRequestTabs = () => {
               <div></div>
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
-            <StudentsInterviewTable events={dayEvents} />
+            <StudentsConsultationTable events={dayEvents} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -136,4 +135,4 @@ const InterviewRequestTabs = () => {
   );
 };
 
-export default memo(InterviewRequestTabs);
+export default memo(ConsultationRequestTabs);
