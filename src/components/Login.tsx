@@ -26,7 +26,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-white p-4">
+    <div className="flex flex-col items-center justify-center bg-white p-4 pt-8 sm:pt-8 md:pt-12 lg:pt-16">
       <div className="w-full max-w-md rounded-lg bg-gray-100 py-16 px-8">
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
@@ -60,7 +60,9 @@ export default function Login() {
           <button
             type="button"
             className="w-full rounded-md bg-[#6b5545] py-4 text-center text-lg font-medium text-white hover:bg-[#5a4638]">
-            회원가입
+            <Link href="/register" className="block w-full h-full">
+              회원가입
+            </Link>
           </button>
 
           <div className="text-right">
