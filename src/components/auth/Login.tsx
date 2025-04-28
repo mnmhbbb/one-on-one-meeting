@@ -1,7 +1,5 @@
 "use client";
-
 import type React from "react";
-
 import { useState } from "react";
 import Link from "next/link";
 
@@ -12,7 +10,6 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const res = await fetch("/api/smartlead-login", {
       method: "POST",
       headers: {
@@ -20,7 +17,6 @@ export default function Login() {
       },
       body: JSON.stringify({ userId, userPw }),
     });
-
     const data = await res.json();
     setLoginResult(data.success);
   };
