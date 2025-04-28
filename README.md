@@ -8,11 +8,7 @@
 | **Framework**          | Next.js                                                              |
 | **Build Tool**         | Webpack 5                                                            |
 | **Transpiler**         | SWC                                                                  |
-<<<<<<< HEAD
 | **Package Manager**    | Pnpm<br>※ 전역 설치 필요: `npm install -g pnpm`                      |
-=======
-| **Package Manager**    | Pnpm<br>※ 전역 설치 필요: `npm install -g pnpm`, `pnpm install`     |
->>>>>>> e242dd4ece4f3762d3245e5096493e389a53ac9f
 | **Database (BaaS)**    | Supabase                                                             |
 | **State Management**   | - Server State: TanStack Query<br>- Client State: Zustand           |
 | **UI Library**         | shadcn/ui                                                            |
@@ -48,4 +44,3 @@
 - `main`: 배포용 브랜치
 - `develop`: 개발용 통합 브랜치
 - `feat/이슈 넘버`: 기능 개발 브랜치 예) `feat/12`
-
