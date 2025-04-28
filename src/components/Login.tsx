@@ -27,8 +27,8 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-white p-4">
-      <div className="w-full max-w-md rounded-lg bg-gray-100 p-6">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="w-full max-w-md rounded-lg bg-gray-100 py-16 px-8">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
             <input
               type="text"
@@ -36,7 +36,7 @@ export default function Login() {
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               required
-              className="w-full rounded-full border border-gray-300 bg-white px-4 py-3 text-sm focus:border-[#6b5545] focus:outline-none"
+              className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
             />
           </div>
 
@@ -47,24 +47,24 @@ export default function Login() {
               value={userPw}
               onChange={(e) => setUserPw(e.target.value)}
               required
-              className="w-full rounded-full border border-gray-300 bg-white px-4 py-3 text-sm focus:border-[#6b5545] focus:outline-none"
+              className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-md bg-[#6b5545] py-3 text-center text-white hover:bg-[#5a4638]">
+            className="w-full rounded-md bg-[#6b5545] py-4 text-center text-lg font-medium text-white hover:bg-[#5a4638]">
             로그인
           </button>
 
           <button
             type="button"
-            className="w-full rounded-md bg-[#6b5545] py-3 text-center text-white hover:bg-[#5a4638]">
+            className="w-full rounded-md bg-[#6b5545] py-4 text-center text-lg font-medium text-white hover:bg-[#5a4638]">
             회원가입
           </button>
 
-          <div className="text-center">
-            <Link href="#" className="text-sm text-[#6b5545] hover:underline">
+          <div className="text-right">
+            <Link href="#" className="text-base text-[#6b5545] hover:underline">
               비밀번호 찾기
             </Link>
           </div>
@@ -72,7 +72,7 @@ export default function Login() {
 
         {loginResult !== null && (
           <div
-            className={`mt-4 rounded-md p-3 text-center ${
+            className={`mt-6 rounded-md p-4 text-center text-base ${
               loginResult ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
             }`}>
             {loginResult ? "로그인 성공!" : "로그인 실패 😢"}
