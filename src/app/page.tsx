@@ -1,3 +1,4 @@
+import LoginTest from "@/components/LoginTest";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
