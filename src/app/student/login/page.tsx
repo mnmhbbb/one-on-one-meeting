@@ -1,9 +1,9 @@
-import Login from "@/components/auth/Login";
+import EmailLogin from "@/components/auth/EmailLogin";
 
 export default function LoginPage() {
   return (
     <div>
-      <Login></Login>
+      <EmailLogin></EmailLogin>
     </div>
   );
 }
