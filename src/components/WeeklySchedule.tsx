@@ -5,17 +5,17 @@ import { format, startOfWeek, addDays } from "date-fns";
 import { DAYS, TIMES } from "@/common/const";
 import useDateStore from "@/store/dateStore";
 import { cn } from "@/lib/utils";
-import { ConsultationInfo } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/utils/data/mockData";
 import StatusBadge from "@/components/StatusBadge";
-import ConsultationDetailModal from "@/components/ConsultationDetailModal";
+import InterviewDetailModal from "@/components/InterviewDetailModal";
 
-const WeeklySchedule = ({ events }: { events: ConsultationInfo[] }) => {
+const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const { currentDate } = useDateStore();
-  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationInfo | null>(null);
+  const [selectedInterview, setSelectedInterview] = useState<InterviewInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleConsultationClick = (consultation: ConsultationInfo) => {
-    setSelectedConsultation(consultation);
+  const handleInterviewClick = (interview: InterviewInfo) => {
+    setSelectedInterview(interview);
     setIsModalOpen(true);
   };
 
@@ -66,7 +66,7 @@ const WeeklySchedule = ({ events }: { events: ConsultationInfo[] }) => {
                       "h-5 rounded-md flex justify-center items-center mt-2",
                       event ? "" : "bg-gray-50",
                     )}
-                    onClick={() => event && handleConsultationClick(event)}
+                    onClick={() => event && handleInterviewClick(event)}
                   >
                     {event && <StatusBadge status={event.status} />}
                   </div>
@@ -77,10 +77,10 @@ const WeeklySchedule = ({ events }: { events: ConsultationInfo[] }) => {
         </div>
       </div>
 
-      <ConsultationDetailModal
+      <InterviewDetailModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        consultation={selectedConsultation}
+        interview={selectedInterview}
       />
     </>
   );

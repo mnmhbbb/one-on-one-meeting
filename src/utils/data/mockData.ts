@@ -1,8 +1,9 @@
-import { ConsultationStatus } from "@/common/const";
+import { InterviewStatus } from "@/common/const";
 
-export interface ConsultationInfo {
+export interface InterviewInfo {
+  id: string;
+  status: InterviewStatus;
   date: string; // "YYYY-MM-DD HH:mm" 형식
-  status: ConsultationStatus;
   professor: string;
   memo?: string;
   reason: string;
@@ -11,18 +12,20 @@ export interface ConsultationInfo {
 }
 
 // FIXME: 확인용 더미데이터
-export const EVENTS: ConsultationInfo[] = [
+export const EVENTS: InterviewInfo[] = [
   {
-    date: "2025-03-31 14:00",
+    id: "1",
     status: "REQUESTED",
+    date: "2025-03-31 14:00",
     professor: "김영훈",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
-    date: "2025-04-07 10:00",
+    id: "2",
     status: "CONFIRMED",
+    date: "2025-04-07 10:00",
     professor: "이준호",
     department: "콘텐츠IT",
     studentName: "홍길동",
@@ -30,8 +33,9 @@ export const EVENTS: ConsultationInfo[] = [
       "이 곳은 아주 아주 아주 긴 면담 사유입니다. 예를 들면 과제에 대한 문의라든가, 진로 상담이겠지요. 이 곳은 아주 아주 아주 긴 면담 사유입니다. 예를 들면 과제에 대한 문의라든가, 진로 상담이겠지요. 이 곳은 아주 아주 아주 긴 면담 사유입니다. 예를 들면 과제에 대한 문의라든가, 진로 상담이겠지요. 이 곳은 아주 아주 아주 긴 면담 사유입니다. 예를 들면 과제에 대한 문의라든가, 진로 상담이겠지요. 이 곳은 아주 아주 아주 긴 면담 사유입니다. 예를 들면 과제에 대한 문의라든가, 진로 상담이겠지요. ",
   },
   {
-    date: "2025-04-14 11:00",
+    id: "3",
     status: "RECORDED",
+    date: "2025-04-14 11:00",
     professor: "박서연",
     memo: "자바 제네릭 타입 사용법에 대해 문의하였다. OOO이 OOOO해서 어렵고, 문제의 요점을...",
     reason: "과제 문의",
@@ -39,56 +43,63 @@ export const EVENTS: ConsultationInfo[] = [
     studentName: "홍길동",
   },
   {
-    date: "2025-04-21 12:00",
+    id: "4",
     status: "CANCELLED",
+    date: "2025-04-21 12:00",
     professor: "김영훈",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
-    date: "2025-04-23 09:00",
+    id: "5",
     status: "CANCELLED",
+    date: "2025-04-23 09:00",
     professor: "이준호",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
+    id: "6",
+    status: "REQUESTED",
     date: "2025-04-23 10:00",
-    status: "REQUESTED",
     professor: "박서연",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
+    id: "7",
+    status: "REQUESTED",
     date: "2025-04-23 10:30",
-    status: "REQUESTED",
     professor: "박서연",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
+    id: "8",
+    status: "REQUESTED",
     date: "2025-04-23 11:30",
-    status: "REQUESTED",
     professor: "박서연",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
-    date: "2025-04-28 13:00",
+    id: "9",
     status: "REJECTED",
+    date: "2025-04-28 13:00",
     professor: "김영훈",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
-    date: "2025-04-29 14:00",
+    id: "10",
     status: "RECORDED",
+    date: "2025-04-29 14:00",
     professor: "박서연",
     reason: "과제 문의",
     memo: "자바 제네릭 타입 사용법에 대해 문의하였다. OOO이 OOOO해서 어렵고, 문제의 요점을...",
@@ -96,16 +107,18 @@ export const EVENTS: ConsultationInfo[] = [
     studentName: "홍길동",
   },
   {
-    date: "2025-05-02 10:30",
+    id: "11",
     status: "REJECTED",
+    date: "2025-05-02 10:30",
     professor: "김영훈",
     reason: "과제 문의",
     department: "콘텐츠IT",
     studentName: "홍길동",
   },
   {
-    date: "2025-05-07 16:30",
+    id: "12",
     status: "REQUESTED",
+    date: "2025-05-07 16:30",
     professor: "이준호",
     reason: "과제 문의",
     department: "콘텐츠IT",

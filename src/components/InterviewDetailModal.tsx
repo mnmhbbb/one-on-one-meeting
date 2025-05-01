@@ -1,20 +1,16 @@
 import { memo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ConsultationInfo } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/utils/data/mockData";
 
-interface ConsultationDetailModalProps {
+interface InterviewDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  consultation: ConsultationInfo | null;
+  interview: InterviewInfo | null;
 }
 
-const ConsultationDetailModal = ({
-  isOpen,
-  onClose,
-  consultation,
-}: ConsultationDetailModalProps) => {
-  if (!consultation) return null;
+const InterviewDetailModal = ({ isOpen, onClose, interview }: InterviewDetailModalProps) => {
+  if (!interview) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -25,19 +21,19 @@ const ConsultationDetailModal = ({
         <div className="space-y-4">
           <div>
             <h3 className="font-semibold">교수님</h3>
-            <p>{consultation.professor}</p>
+            <p>{interview.professor}</p>
           </div>
           <div>
             <h3 className="font-semibold">학과</h3>
-            <p>{consultation.department}</p>
+            <p>{interview.department}</p>
           </div>
           <div>
             <h3 className="font-semibold">면담 일시</h3>
-            <p>{new Date(consultation.date).toLocaleString()}</p>
+            <p>{new Date(interview.date).toLocaleString()}</p>
           </div>
           <div>
             <h3 className="font-semibold">상태</h3>
-            <p>{consultation.status}</p>
+            <p>{interview.status}</p>
           </div>
         </div>
         <div className="flex justify-end">
@@ -48,4 +44,4 @@ const ConsultationDetailModal = ({
   );
 };
 
-export default memo(ConsultationDetailModal);
+export default memo(InterviewDetailModal);

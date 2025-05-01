@@ -12,24 +12,24 @@ import {
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import useDateStore from "@/store/dateStore";
-import { ConsultationInfo } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/utils/data/mockData";
 import { STATUS_COLORS, STATUS_LABELS } from "@/common/const";
-import ConsultationDetailModal from "@/components/ConsultationDetailModal";
+import InterviewDetailModal from "@/components/InterviewDetailModal";
 
 dayjs.locale("ko");
 
 const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
 
-const MonthlySchedule = ({ events }: { events: ConsultationInfo[] }) => {
+const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const { currentDate } = useDateStore();
-  const [selectedConsultation, setSelectedConsultation] = useState<ConsultationInfo | null>(null);
+  const [selectedInterview, setSelectedInterview] = useState<InterviewInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
 
-  const handleConsultationClick = (consultation: ConsultationInfo) => {
-    setSelectedConsultation(consultation);
+  const handleInterviewClick = (interview: InterviewInfo) => {
+    setSelectedInterview(interview);
     setIsModalOpen(true);
   };
 
@@ -91,7 +91,7 @@ const MonthlySchedule = ({ events }: { events: ConsultationInfo[] }) => {
                       "text-xs text-center px-1 py-0.5 rounded ",
                       STATUS_COLORS[event.status],
                     )}
-                    onClick={() => event && handleConsultationClick(event)}
+                    onClick={() => event && handleInterviewClick(event)}
                   >
                     {STATUS_LABELS[event.status]}
                   </div>
@@ -102,10 +102,10 @@ const MonthlySchedule = ({ events }: { events: ConsultationInfo[] }) => {
         })}
       </div>
 
-      <ConsultationDetailModal
+      <InterviewDetailModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        consultation={selectedConsultation}
+        interview={selectedInterview}
       />
     </>
   );

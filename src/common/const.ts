@@ -21,9 +21,9 @@ export const TIMES: string[] = [
   "17:30 - 18:00",
 ];
 
-export type ConsultationStatus = "REQUESTED" | "REJECTED" | "CONFIRMED" | "CANCELLED" | "RECORDED";
+export type InterviewStatus = "REQUESTED" | "REJECTED" | "CONFIRMED" | "CANCELLED" | "RECORDED";
 
-export const STATUS_COLORS: Record<ConsultationStatus, string> = {
+export const STATUS_COLORS: Record<InterviewStatus, string> = {
   REQUESTED: "bg-blue-300",
   REJECTED: "bg-pink-300",
   CONFIRMED: "bg-green-300",
@@ -31,7 +31,7 @@ export const STATUS_COLORS: Record<ConsultationStatus, string> = {
   RECORDED: "bg-yellow-300",
 };
 
-export const STATUS_LABELS: Record<ConsultationStatus, string> = {
+export const STATUS_LABELS: Record<InterviewStatus, string> = {
   REQUESTED: "확정 요청",
   REJECTED: "면담 거절",
   CONFIRMED: "면담 확정",
