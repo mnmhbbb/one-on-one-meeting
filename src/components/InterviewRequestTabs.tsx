@@ -28,11 +28,11 @@ const TABS = [
 const InterviewRequestTabs = () => {
   const { currentDate } = useDateStore();
   const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
-    "REQUESTED",
-    "REJECTED",
-    "CONFIRMED",
-    "CANCELLED",
-    "RECORDED",
+    InterviewStatus.REQUESTED,
+    InterviewStatus.REJECTED,
+    InterviewStatus.CONFIRMED,
+    InterviewStatus.CANCELLED,
+    InterviewStatus.RECORDED,
   ]);
 
   // 상태 필터링이 적용된 이벤트 목록

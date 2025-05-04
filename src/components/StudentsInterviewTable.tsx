@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { memo } from "react";
 
+import { InterviewStatus } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
 import {
   Table,
@@ -61,7 +62,7 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[30%] px-6">
                 <div className="line-clamp-2 max-w-[250px] text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                  {event.status === "RECORDED" && event.memo}
+                  {event.status === InterviewStatus.RECORDED && event.memo}
                 </div>
               </TableCell>
             </TableRow>

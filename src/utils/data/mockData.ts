@@ -15,7 +15,7 @@ export interface InterviewInfo {
 export const EVENTS: InterviewInfo[] = [
   {
     id: "1",
-    status: "REQUESTED",
+    status: InterviewStatus.REQUESTED,
     date: "2025-03-31 14:00",
     professor: "김영훈",
     reason: "과제 문의",
@@ -24,7 +24,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "2",
-    status: "CONFIRMED",
+    status: InterviewStatus.CONFIRMED,
     date: "2025-04-07 10:00",
     professor: "이준호",
     department: "콘텐츠IT",
@@ -34,7 +34,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "3",
-    status: "RECORDED",
+    status: InterviewStatus.RECORDED,
     date: "2025-04-14 11:00",
     professor: "박서연",
     memo: "자바 제네릭 타입 사용법에 대해 문의하였다. OOO이 OOOO해서 어렵고, 문제의 요점을...",
@@ -44,7 +44,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "4",
-    status: "CANCELLED",
+    status: InterviewStatus.CANCELLED,
     date: "2025-04-21 12:00",
     professor: "김영훈",
     reason: "과제 문의",
@@ -53,7 +53,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "5",
-    status: "CANCELLED",
+    status: InterviewStatus.CANCELLED,
     date: "2025-04-23 09:00",
     professor: "이준호",
     reason: "과제 문의",
@@ -62,7 +62,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "6",
-    status: "REQUESTED",
+    status: InterviewStatus.REQUESTED,
     date: "2025-04-23 10:00",
     professor: "박서연",
     reason: "과제 문의",
@@ -71,7 +71,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "7",
-    status: "REQUESTED",
+    status: InterviewStatus.REQUESTED,
     date: "2025-04-23 10:30",
     professor: "박서연",
     reason: "과제 문의",
@@ -80,7 +80,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "8",
-    status: "REQUESTED",
+    status: InterviewStatus.REQUESTED,
     date: "2025-04-23 11:30",
     professor: "박서연",
     reason: "과제 문의",
@@ -89,7 +89,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "9",
-    status: "REJECTED",
+    status: InterviewStatus.REJECTED,
     date: "2025-04-28 13:00",
     professor: "김영훈",
     reason: "과제 문의",
@@ -98,7 +98,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "10",
-    status: "RECORDED",
+    status: InterviewStatus.RECORDED,
     date: "2025-04-29 14:00",
     professor: "박서연",
     reason: "과제 문의",
@@ -108,7 +108,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "11",
-    status: "REJECTED",
+    status: InterviewStatus.REJECTED,
     date: "2025-05-02 10:30",
     professor: "김영훈",
     reason: "과제 문의",
@@ -117,7 +117,7 @@ export const EVENTS: InterviewInfo[] = [
   },
   {
     id: "12",
-    status: "REQUESTED",
+    status: InterviewStatus.REQUESTED,
     date: "2025-05-07 16:30",
     professor: "이준호",
     reason: "과제 문의",

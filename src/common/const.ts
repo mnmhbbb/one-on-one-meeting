@@ -21,20 +21,26 @@ export const TIMES: string[] = [
   "17:30 - 18:00",
 ];
 
-export type InterviewStatus = "REQUESTED" | "REJECTED" | "CONFIRMED" | "CANCELLED" | "RECORDED";
+export enum InterviewStatus {
+  REQUESTED = "requested",
+  CONFIRMED = "confirmed",
+  REJECTED = "rejected",
+  CANCELLED = "cancelled",
+  RECORDED = "recorded",
+}
 
 export const STATUS_COLORS: Record<InterviewStatus, string> = {
-  REQUESTED: "bg-blue-300",
-  REJECTED: "bg-pink-300",
-  CONFIRMED: "bg-green-300",
-  CANCELLED: "bg-red-300",
-  RECORDED: "bg-yellow-300",
+  [InterviewStatus.REQUESTED]: "bg-blue-300",
+  [InterviewStatus.CONFIRMED]: "bg-green-300",
+  [InterviewStatus.REJECTED]: "bg-pink-300",
+  [InterviewStatus.CANCELLED]: "bg-red-300",
+  [InterviewStatus.RECORDED]: "bg-yellow-300",
 };
 
 export const STATUS_LABELS: Record<InterviewStatus, string> = {
-  REQUESTED: "확정 요청",
-  REJECTED: "면담 거절",
-  CONFIRMED: "면담 확정",
-  CANCELLED: "면담 취소",
-  RECORDED: "기록된 면담",
+  [InterviewStatus.REQUESTED]: "확정 요청",
+  [InterviewStatus.CONFIRMED]: "면담 확정",
+  [InterviewStatus.REJECTED]: "면담 거절",
+  [InterviewStatus.CANCELLED]: "면담 취소",
+  [InterviewStatus.RECORDED]: "기록된 면담",
 };
