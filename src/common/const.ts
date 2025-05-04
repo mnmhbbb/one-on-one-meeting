@@ -44,3 +44,13 @@ export const STATUS_LABELS: Record<InterviewStatus, string> = {
   [InterviewStatus.CANCELLED]: "면담 취소",
   [InterviewStatus.RECORDED]: "기록된 면담",
 };
+
+export enum InterviewModalType {
+  REQUESTED = "requested",
+  CONFIRMED = "confirmed",
+  REJECTED = "rejected",
+  CANCELLED = "cancelled",
+  RECORDED = "recorded",
+  CREATE = "create", // 신규 신청
+  LIST = "list", // 목록 조회
+}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 
 import "./globals.css";
+import { InterviewModal } from "@/components/modal/InterviewModal";
 import NavigationBar from "@/components/NavigationBar";
 
 const sans = Open_Sans({ subsets: ["latin"] });
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${sans.className} antialiased`}>
         <NavigationBar />
         <main>{children}</main>
+        <InterviewModal />
       </body>
     </html>
   );
