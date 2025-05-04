@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
 
-import ProfessorSearchModal from "@/components/ProfessorSearchModal";
+import ProfessorSearchModal from "@/components/modal/ProfessorSearchModal";
 
 const StudentsHeader = () => {
   const pathname = usePathname();
