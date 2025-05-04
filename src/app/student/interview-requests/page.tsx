@@ -1,6 +1,6 @@
+import InterviewRequestTabs from "@/components/InterviewRequestTabs";
 import ScheduleFrame from "@/components/ScheduleFrame";
 import StudentsHeader from "@/components/StudentsHeader";
-import InterviewRequestTabs from "@/components/InterviewRequestTabs";
 
 const InterviewRequestsPage = () => {
   return (

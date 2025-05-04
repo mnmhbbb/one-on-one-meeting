@@ -1,11 +1,12 @@
 "use client";
 
 import { memo, useState } from "react";
+
+import DateSelector from "@/components/DateSelector";
+import MonthlySchedule from "@/components/MonthlySchdeule";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import MonthlySchedule from "@/components/MonthlySchdeule";
 import WeeklySchedule from "@/components/WeeklySchedule";
-import DateSelector from "@/components/DateSelector";
 import { EVENTS } from "@/utils/data/mockData";
 
 const TABS = [
@@ -17,13 +18,13 @@ const ScheduleView = () => {
   const [viewType, setViewType] = useState<"month" | "week">("month");
 
   return (
-    <Tabs defaultValue="month" onValueChange={(value) => setViewType(value as "month" | "week")}>
+    <Tabs defaultValue="month" onValueChange={value => setViewType(value as "month" | "week")}>
       <TabsContent value="month">
         <Card className="rounded-l-none">
           <CardContent>
-            <div className="grid grid-cols-3 items-center mb-4">
+            <div className="mb-4 grid grid-cols-3 items-center">
               <TabsList>
-                {TABS.map((tab) => (
+                {TABS.map(tab => (
                   <TabsTrigger key={tab.value} value={tab.value}>
                     {tab.label}
                   </TabsTrigger>
@@ -39,9 +40,9 @@ const ScheduleView = () => {
       <TabsContent value="week">
         <Card className="rounded-l-none">
           <CardContent>
-            <div className="grid grid-cols-3 items-center mb-4">
+            <div className="mb-4 grid grid-cols-3 items-center">
               <TabsList>
-                {TABS.map((tab) => (
+                {TABS.map(tab => (
                   <TabsTrigger key={tab.value} value={tab.value}>
                     {tab.label}
                   </TabsTrigger>

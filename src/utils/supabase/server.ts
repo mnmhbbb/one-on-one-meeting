@@ -22,7 +22,7 @@ export async function createClient() {
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
+              cookieStore.set(name, value, options)
             );
           } catch {
             // 서버 컴포넌트에서는 쿠키를 읽는 것만 가능하고, 설정은 불가능하기 때문에
@@ -30,6 +30,6 @@ export async function createClient() {
           }
         },
       },
-    },
+    }
   );
 }

@@ -5,7 +5,7 @@ interface DateState {
   setCurrentDate: (date: Date) => void;
 }
 
-const useDateStore = create<DateState>((set) => ({
+const useDateStore = create<DateState>(set => ({
   currentDate: new Date(),
   setCurrentDate: (date: Date) => set({ currentDate: date }),
 }));

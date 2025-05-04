@@ -1,10 +1,11 @@
 "use client";
 
-import { memo } from "react";
 import dayjs from "dayjs";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { memo } from "react";
+
 import "dayjs/locale/ko";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import useDateStore from "@/store/dateStore";
 dayjs.locale("ko");
 
@@ -42,7 +43,7 @@ const DateSelector = ({ viewType }: DateSelectorProps) => {
   };
 
   return (
-    <div className="flex justify-center items-center gap-2">
+    <div className="flex items-center justify-center gap-2">
       <Button variant="ghost" className="rounded-full" size="icon" onClick={handlePrevious}>
         <ChevronLeft />
       </Button>

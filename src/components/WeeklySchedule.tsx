@@ -1,13 +1,14 @@
 "use client";
 
-import { memo, useState } from "react";
 import { format, startOfWeek, addDays } from "date-fns";
+import { memo, useState } from "react";
+
 import { DAYS, TIMES } from "@/common/const";
-import useDateStore from "@/store/dateStore";
-import { cn } from "@/lib/utils";
-import { InterviewInfo } from "@/utils/data/mockData";
-import StatusBadge from "@/components/StatusBadge";
 import InterviewDetailModal from "@/components/InterviewDetailModal";
+import StatusBadge from "@/components/StatusBadge";
+import { cn } from "@/lib/utils";
+import useDateStore from "@/store/dateStore";
+import { InterviewInfo } from "@/utils/data/mockData";
 
 const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const { currentDate } = useDateStore();
@@ -27,7 +28,7 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const findEvent = (date: Date, time: string) => {
     const dateStr = format(date, "yyyy-MM-dd");
     const [startTime] = time.split(" - ");
-    return events.find((event) => event.date === `${dateStr} ${startTime}`);
+    return events.find(event => event.date === `${dateStr} ${startTime}`);
   };
 
   return (
@@ -48,7 +49,7 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
         {/* 시간대 컬럼 */}
         <div className="space-y-2">
           {TIMES.map((time, i) => (
-            <div key={i} className="h-5 text-xs text-gray-400 pt-2">
+            <div key={i} className="h-5 pt-2 text-xs text-gray-400">
               {time.split(" - ")[0]}
             </div>
           ))}
@@ -63,8 +64,8 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
                   <div
                     key={`${dayIndex}-${timeIndex}`}
                     className={cn(
-                      "h-5 rounded-md flex justify-center items-center mt-2",
-                      event ? "" : "bg-gray-50",
+                      "mt-2 flex h-5 items-center justify-center rounded-md",
+                      event ? "" : "bg-gray-50"
                     )}
                     onClick={() => event && handleInterviewClick(event)}
                   >

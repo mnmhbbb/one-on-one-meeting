@@ -1,5 +1,7 @@
-import { memo } from "react";
 import { Search } from "lucide-react";
+import { memo } from "react";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -22,7 +23,7 @@ const ProfessorSearchModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="text-neutral-400 max-w-auto mb-4 max-w-fit">
+        <Button variant="outline" className="max-w-auto mb-4 max-w-fit text-neutral-400">
           <Search className="mr-2 h-4 w-4" />
           교수님을 검색하세요.
         </Button>
@@ -51,28 +52,28 @@ const ProfessorSearchModal = () => {
               <TabsTrigger value="all">전체보기</TabsTrigger>
             </TabsList>
             <TabsContent value="favorite">
-              <div className="max-h-[300px] overflow-y-auto space-y-2">
-                <div className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100">
+              <div className="max-h-[300px] space-y-2 overflow-y-auto">
+                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
                   <div className="font-semibold">OOO 교수님</div>
                   <div className="text-sm text-gray-500">OOOO학과</div>
                 </div>
-                <div className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100">
+                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
                   <div className="font-semibold">OOO 교수님</div>
                   <div className="text-sm text-gray-500">OOOO학과</div>
                 </div>
               </div>
             </TabsContent>
             <TabsContent value="all">
-              <div className="max-h-[300px] overflow-y-auto space-y-2">
-                <div className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100">
+              <div className="max-h-[300px] space-y-2 overflow-y-auto">
+                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
                   <div className="font-semibold">OOO 교수님</div>
                   <div className="text-sm text-gray-500">OOOO학과</div>
                 </div>
-                <div className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100">
+                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
                   <div className="font-semibold">OOO 교수님</div>
                   <div className="text-sm text-gray-500">OOOO학과</div>
                 </div>
-                <div className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100">
+                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
                   <div className="font-semibold">OOO 교수님</div>
                   <div className="text-sm text-gray-500">OOOO학과</div>
                 </div>

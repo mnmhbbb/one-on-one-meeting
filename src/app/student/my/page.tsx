@@ -1,8 +1,8 @@
 "use client";
 
 import ScheduleFrame from "@/components/ScheduleFrame";
-import StudentsHeader from "@/components/StudentsHeader";
 import ScheduleView from "@/components/ScheduleView";
+import StudentsHeader from "@/components/StudentsHeader";
 
 const MyPage = () => {
   return (

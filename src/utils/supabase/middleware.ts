@@ -19,7 +19,7 @@ export async function updateSession(request: NextRequest) {
           });
         },
       },
-    },
+    }
   );
 
   // Supabase에 저장된 토큰을 사용해 현재 로그인된 사용자를 확인하고,
@@ -31,7 +31,7 @@ export async function updateSession(request: NextRequest) {
   const PUBLIC_KEYWORDS = ["/login", "/register", "/find-password"];
   const isPublicPage =
     request.nextUrl.pathname === "/" ||
-    PUBLIC_KEYWORDS.some((keyword) => request.nextUrl.pathname.includes(keyword));
+    PUBLIC_KEYWORDS.some(keyword => request.nextUrl.pathname.includes(keyword));
 
   // 로그인하지 않은 상태에서 보호된(private) 페이지에 접근하면 메인 페이지로 리다이렉트
   if (!user && !isPublicPage) {

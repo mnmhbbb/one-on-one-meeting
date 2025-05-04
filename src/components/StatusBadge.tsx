@@ -1,4 +1,5 @@
 import { memo } from "react";
+
 import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
 
@@ -11,9 +12,9 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center px-2 py-1 rounded-md text-xs w-full",
+        "inline-flex w-full items-center justify-center rounded-md px-2 py-1 text-xs",
         STATUS_COLORS[status],
-        className,
+        className
       )}
     >
       {STATUS_LABELS[status]}

@@ -1,6 +1,3 @@
-import { memo, useState } from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/ko";
 import {
   format,
   startOfMonth,
@@ -10,11 +7,15 @@ import {
   subDays,
   addDays,
 } from "date-fns";
+import dayjs from "dayjs";
+import { memo, useState } from "react";
+import "dayjs/locale/ko";
+
+import { STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import InterviewDetailModal from "@/components/InterviewDetailModal";
 import { cn } from "@/lib/utils";
 import useDateStore from "@/store/dateStore";
 import { InterviewInfo } from "@/utils/data/mockData";
-import { STATUS_COLORS, STATUS_LABELS } from "@/common/const";
-import InterviewDetailModal from "@/components/InterviewDetailModal";
 
 dayjs.locale("ko");
 
@@ -60,36 +61,36 @@ const MonthlySchedule = ({ events }: { events: InterviewInfo[] }) => {
 
   return (
     <>
-      <div className="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-600 border-b pb-2">
+      <div className="grid grid-cols-7 gap-2 border-b pb-2 text-center text-sm font-semibold text-gray-600">
         {WEEKDAYS.map((day, i) => (
           <div key={i}>{day}</div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2 mt-2 text-sm">
+      <div className="mt-2 grid grid-cols-7 gap-2 text-sm">
         {allDays.map((date, i) => {
           // 각 날짜에 해당하는 이벤트들을 찾음 (최대 3개까지)
           const dateStr = format(date, "yyyy-MM-dd");
-          const dayEvents = events.filter((e) => e.date.startsWith(dateStr)).slice(0, 3);
+          const dayEvents = events.filter(e => e.date.startsWith(dateStr)).slice(0, 3);
 
           return (
             <div
               key={i}
               className={cn(
-                "min-h-[60px] p-1 border rounded relative",
-                !isSameMonth(date, currentDate) && "text-gray-400", // 현재 달의 날짜가 아닌 경우 회색으로 표시
+                "relative min-h-[60px] rounded border p-1",
+                !isSameMonth(date, currentDate) && "text-gray-400" // 현재 달의 날짜가 아닌 경우 회색으로 표시
               )}
             >
               {/* 날짜 숫자 표시 */}
-              <div className="text-xs font-semibold mb-1">{format(date, "d")}</div>
+              <div className="mb-1 text-xs font-semibold">{format(date, "d")}</div>
               {/* 면담 상태 표시 */}
               <div className="flex flex-col gap-0.5">
                 {dayEvents.map((event, eventIndex) => (
                   <div
                     key={eventIndex}
                     className={cn(
-                      "text-xs text-center px-1 py-0.5 rounded ",
-                      STATUS_COLORS[event.status],
+                      "rounded px-1 py-0.5 text-center text-xs",
+                      STATUS_COLORS[event.status]
                     )}
                     onClick={() => event && handleInterviewClick(event)}
                   >

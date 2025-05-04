@@ -1,6 +1,7 @@
-import { memo } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import { memo } from "react";
+
 import StatusBadge from "@/components/StatusBadge";
 import {
   Table,
@@ -21,11 +22,11 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[20%] px-6 font-semibold text-base text-center">날짜</TableHead>
-          <TableHead className="w-[40%] px-6 font-semibold text-base text-center">
+          <TableHead className="w-[20%] px-6 text-center text-base font-semibold">날짜</TableHead>
+          <TableHead className="w-[40%] px-6 text-center text-base font-semibold">
             면담 신청내용
           </TableHead>
-          <TableHead className="w-[30%] px-6 font-semibold text-base text-center">
+          <TableHead className="w-[30%] px-6 text-center text-base font-semibold">
             면담 기록내용
           </TableHead>
         </TableRow>
@@ -35,14 +36,14 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
           .map((event, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium w-[20%] px-6">
+              <TableCell className="w-[20%] px-6 font-medium">
                 <StatusBadge status={event.status} />
                 <br />
-                <div className="w-full text-center text-sm mt-1">
+                <div className="mt-1 w-full text-center text-sm">
                   {`${format(new Date(event.date), "yyyy.MM.dd")} (${format(
                     new Date(event.date),
                     "EEE",
-                    { locale: ko },
+                    { locale: ko }
                   )})`}
                 </div>
               </TableCell>
@@ -53,13 +54,13 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
                   [면담 일정] {event.date.split(" ")[1]} ~
                   {format(new Date(event.date), "HH:mm", { locale: ko })}
                   <br />
-                  <div className="line-clamp-2 text-ellipsis text-sm break-words whitespace-normal">
+                  <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
                     [면담 사유] {event.reason}
                   </div>
                 </div>
               </TableCell>
               <TableCell className="w-[30%] px-6">
-                <div className="line-clamp-2 text-ellipsis text-sm text-gray-600 max-w-[250px] break-words whitespace-normal">
+                <div className="line-clamp-2 max-w-[250px] text-sm break-words text-ellipsis whitespace-normal text-gray-600">
                   {event.status === "RECORDED" && event.memo}
                 </div>
               </TableCell>

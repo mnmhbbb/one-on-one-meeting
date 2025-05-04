@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
+
 import ProfessorSearchModal from "@/components/ProfessorSearchModal";
 
 const StudentsHeader = () => {
@@ -15,12 +16,12 @@ const StudentsHeader = () => {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2 items-end">
-        <div className="flex gap-2 h-fit">
-          {links.map((link) => (
+      <div className="grid grid-cols-3 items-end gap-2">
+        <div className="flex h-fit gap-2">
+          {links.map(link => (
             <Link
               key={link.href}
-              className={`border py-1.5 px-8 rounded-md flex items-center rounded-b-none border-b-0 ${
+              className={`flex items-center rounded-md rounded-b-none border border-b-0 px-8 py-1.5 ${
                 pathname === link.href ? "bg-stone-600 text-white" : ""
               }`}
               href={link.href}
@@ -30,7 +31,7 @@ const StudentsHeader = () => {
           ))}
         </div>
         {/* TODO: 학생 이름 표시 */}
-        <h2 className="text-xl text-center font-semibold mb-4">OOO님의 면담 일정</h2>
+        <h2 className="mb-4 text-center text-xl font-semibold">OOO님의 면담 일정</h2>
         <div className="flex justify-end">
           <ProfessorSearchModal />
         </div>

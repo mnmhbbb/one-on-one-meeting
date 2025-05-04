@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, memo } from "react";
+
 import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
 
@@ -32,36 +33,36 @@ const StatusFilterGroup = ({ onFilterChange }: StatusFilterGroupProps) => {
   const handleToggleStatus = useCallback(
     (status: InterviewStatus) => {
       const newSelectedStatuses = selectedStatuses.includes(status)
-        ? selectedStatuses.filter((s) => s !== status)
+        ? selectedStatuses.filter(s => s !== status)
         : [...selectedStatuses, status];
       setSelectedStatuses(newSelectedStatuses);
       onFilterChange(newSelectedStatuses);
     },
-    [selectedStatuses, onFilterChange],
+    [selectedStatuses, onFilterChange]
   );
 
   return (
-    <div className="flex flex-wrap gap-2 mb-4">
+    <div className="mb-4 flex flex-wrap gap-2">
       <button
         onClick={handleToggleAll}
         className={cn(
-          "px-4 py-1 rounded-full text-sm border transition-colors",
+          "rounded-full border px-4 py-1 text-sm transition-colors",
           selectedStatuses.length === ALL_STATUSES.length
-            ? "bg-gray-900 text-white border-gray-900"
-            : "bg-white text-gray-500 border-gray-300 hover:bg-gray-50",
+            ? "border-gray-900 bg-gray-900 text-white"
+            : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
         )}
       >
         전체
       </button>
-      {ALL_STATUSES.map((status) => (
+      {ALL_STATUSES.map(status => (
         <button
           key={status}
           onClick={() => handleToggleStatus(status)}
           className={cn(
-            "px-4 py-1 rounded-full text-sm border transition-colors",
+            "rounded-full border px-4 py-1 text-sm transition-colors",
             selectedStatuses.includes(status)
-              ? cn(STATUS_COLORS[status], "text-gray-900 border-transparent")
-              : "bg-white text-gray-500 border-gray-300 hover:bg-gray-50",
+              ? cn(STATUS_COLORS[status], "border-transparent text-gray-900")
+              : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
           )}
         >
           {STATUS_LABELS[status]}
