@@ -54,3 +54,9 @@ export enum InterviewModalType {
   CREATE = "create", // 신규 신청
   LIST = "list", // 목록 조회
 }
+
+export enum RoleViewType {
+  STUDENT_ON_STUDENT = "STUDENT_ON_STUDENT", // 학생이 학생 화면 조회
+  STUDENT_ON_PROFESSOR = "STUDENT_ON_PROFESSOR", // 학생이 교수 화면 조회
+  PROFESSOR_ON_PROFESSOR = "PROFESSOR_ON_PROFESSOR", // 교수가 교수 화면 조회
+}

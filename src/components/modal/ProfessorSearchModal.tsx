@@ -1,13 +1,14 @@
-import { Search } from "lucide-react";
+"use client";
+
 import { memo } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,20 +19,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 const ProfessorSearchModal = () => {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="max-w-auto mb-4 max-w-fit text-neutral-400">
-          <Search className="mr-2 h-4 w-4" />
-          교수님을 검색하세요.
-        </Button>
-      </DialogTrigger>
+  const { isProfessorSearchOpen, closeProfessorSearch } = useInterviewModalStore();
 
+  return (
+    <Dialog open={isProfessorSearchOpen} onOpenChange={closeProfessorSearch}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>교수 검색창</DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <Input placeholder="교수님을 검색하세요." className="mb-3" />

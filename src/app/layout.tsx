@@ -3,6 +3,7 @@ import { Open_Sans } from "next/font/google";
 
 import "./globals.css";
 import { InterviewModal } from "@/components/modal/InterviewModal";
+import ProfessorSearchModal from "@/components/modal/ProfessorSearchModal";
 import NavigationBar from "@/components/NavigationBar";
 
 const sans = Open_Sans({ subsets: ["latin"] });
@@ -26,6 +27,7 @@ export default function RootLayout({
         <NavigationBar />
         <main>{children}</main>
         <InterviewModal />
+        <ProfessorSearchModal />
       </body>
     </html>
   );

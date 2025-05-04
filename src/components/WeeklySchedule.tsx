@@ -1,25 +1,38 @@
 "use client";
 
 import { format, startOfWeek, addDays } from "date-fns";
-import { memo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { memo } from "react";
 
-import { DAYS, TIMES } from "@/common/const";
-import InterviewDetailModal from "@/components/InterviewDetailModal";
+import { DAYS, RoleViewType, TIMES } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 import useDateStore from "@/store/dateStore";
+import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/utils/data/mockData";
 
-const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
-  const { currentDate } = useDateStore();
-  const [selectedInterview, setSelectedInterview] = useState<InterviewInfo | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface WeeklyScheduleProps {
+  events: InterviewInfo[];
+  roleViewType: RoleViewType;
+}
 
-  const handleInterviewClick = (interview: InterviewInfo) => {
-    setSelectedInterview(interview);
-    setIsModalOpen(true);
+const WeeklySchedule = (props: WeeklyScheduleProps) => {
+  const router = useRouter();
+  const { currentDate, setCurrentDate } = useDateStore();
+  const { openProfessorSearch } = useInterviewModalStore();
+
+  const handleClick = (date: Date, event: InterviewInfo | undefined) => {
+    console.log(event);
+    if (!event) {
+      if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) openProfessorSearch();
+      // TODO: 면담신청모달 if (props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR)
+    } else {
+      if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) {
+        router.push("/student/interview-requests?tab=day");
+        setCurrentDate(date);
+      }
+    }
   };
-
   // 현재 주의 월요일부터 금요일까지의 날짜 배열 생성
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // 1은 월요일
   const weekDates = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
@@ -28,7 +41,7 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
   const findEvent = (date: Date, time: string) => {
     const dateStr = format(date, "yyyy-MM-dd");
     const [startTime] = time.split(" - ");
-    return events.find(event => event.date === `${dateStr} ${startTime}`);
+    return props.events.find(event => event.date === `${dateStr} ${startTime}`);
   };
 
   return (
@@ -67,7 +80,8 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
                       "mt-2 flex h-5 items-center justify-center rounded-md",
                       event ? "" : "bg-gray-50"
                     )}
-                    onClick={() => event && handleInterviewClick(event)}
+                    role="button"
+                    onClick={() => handleClick(date, event)}
                   >
                     {event && <StatusBadge status={event.status} />}
                   </div>
@@ -77,12 +91,6 @@ const WeeklySchedule = ({ events }: { events: InterviewInfo[] }) => {
           ))}
         </div>
       </div>
-
-      <InterviewDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        interview={selectedInterview}
-      />
     </>
   );
 };
