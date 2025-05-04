@@ -45,7 +45,7 @@ export default function StudentLoginPage() {
           </Link>
 
           <div className="text-right">
-            <Link href="#" className="text-base text-[#6b5545] hover:underline">
+            <Link href="/find-password" className="text-base text-[#6b5545] hover:underline">
               비밀번호 찾기
             </Link>
           </div>
