@@ -8,13 +8,12 @@ import { createClient } from "@/utils/supabase/server";
 export async function login(formData: FormData): Promise<void> {
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
 
+  const redirectTo = formData.get("redirectTo") as string | null;
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
@@ -22,25 +21,5 @@ export async function login(formData: FormData): Promise<void> {
   }
 
   revalidatePath("/", "layout");
-  redirect("/student/my");
-}
-
-export async function signup(formData: FormData) {
-  const supabase = await createClient();
-
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
-
-  const { error } = await supabase.auth.signUp(data);
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath("/", "layout");
-  redirect("/student/my");
+  redirect(redirectTo ?? "/"); // 미들웨어가 정한 redirectTo 반영
 }
