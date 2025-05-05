@@ -45,18 +45,24 @@ export const STATUS_LABELS: Record<InterviewStatus, string> = {
   [InterviewStatus.RECORDED]: "기록된 면담",
 };
 
-export enum InterviewModalType {
-  REQUESTED = "requested",
-  CONFIRMED = "confirmed",
-  REJECTED = "rejected",
-  CANCELLED = "cancelled",
-  RECORDED = "recorded",
-  CREATE = "create", // 신규 신청
-  LIST = "list", // 목록 조회
-}
+export const INTERVIEW_MODAL_TYPE = {
+  // InterviewStatus의 모든 값들을 포함
+  ...InterviewStatus,
+  // 추가 모달 타입
+  CREATE: "create", // 신규 신청
+  LIST: "list", // 목록 조회
+} as const;
+
+export type InterviewModalType = (typeof INTERVIEW_MODAL_TYPE)[keyof typeof INTERVIEW_MODAL_TYPE];
 
 export enum RoleViewType {
   STUDENT_ON_STUDENT = "STUDENT_ON_STUDENT", // 학생이 학생 화면 조회
   STUDENT_ON_PROFESSOR = "STUDENT_ON_PROFESSOR", // 학생이 교수 화면 조회
   PROFESSOR_ON_PROFESSOR = "PROFESSOR_ON_PROFESSOR", // 교수가 교수 화면 조회
+}
+
+export enum UserRole {
+  STUDENT = "student",
+  PROFESSOR = "professor",
+  ADMIN = "admin",
 }
