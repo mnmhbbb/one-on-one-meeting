@@ -7,7 +7,7 @@ import { memo } from "react";
 import { DAYS, RoleViewType, TIMES } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
-import useDateStore from "@/store/dateStore";
+import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/utils/data/mockData";
 

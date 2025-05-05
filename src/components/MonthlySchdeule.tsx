@@ -14,7 +14,7 @@ import "dayjs/locale/ko";
 
 import { RoleViewType, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
-import useDateStore from "@/store/dateStore";
+import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/utils/data/mockData";
 

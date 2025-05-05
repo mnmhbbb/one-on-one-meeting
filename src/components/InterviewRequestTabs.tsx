@@ -17,7 +17,7 @@ import StatusFilterGroup from "@/components/StatusFilterGroup";
 import StudentsInterviewTable from "@/components/StudentsInterviewTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import useDateStore from "@/store/dateStore";
+import { useDateStore } from "@/store/dateStore";
 import { EVENTS } from "@/utils/data/mockData";
 
 const TABS = [

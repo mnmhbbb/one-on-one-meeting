@@ -6,7 +6,7 @@ import { memo } from "react";
 
 import "dayjs/locale/ko";
 import { Button } from "@/components/ui/button";
-import useDateStore from "@/store/dateStore";
+import { useDateStore } from "@/store/dateStore";
 dayjs.locale("ko");
 
 interface DateSelectorProps {
