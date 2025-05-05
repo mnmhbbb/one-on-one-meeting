@@ -24,6 +24,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.13",
+    "immer": "^10.1.1",
     "ko": "link:dayjs/locale/ko",
     "lucide-react": "^0.487.0",
     "next": "15.2.4",
