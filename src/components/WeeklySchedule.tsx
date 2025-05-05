@@ -3,6 +3,7 @@
 import { format, startOfWeek, addDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { memo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { DAYS, RoleViewType, TIMES } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
@@ -10,7 +11,6 @@ import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/utils/data/mockData";
-
 interface WeeklyScheduleProps {
   events: InterviewInfo[];
   roleViewType: RoleViewType;
@@ -18,8 +18,13 @@ interface WeeklyScheduleProps {
 
 const WeeklySchedule = (props: WeeklyScheduleProps) => {
   const router = useRouter();
-  const { currentDate, setCurrentDate } = useDateStore();
-  const { openProfessorSearch } = useInterviewModalStore();
+  const { currentDate, setCurrentDate } = useDateStore(
+    useShallow(state => ({
+      currentDate: state.currentDate,
+      setCurrentDate: state.setCurrentDate,
+    }))
+  );
+  const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
 
   const handleClick = (date: Date, event: InterviewInfo | undefined) => {
     console.log(event);

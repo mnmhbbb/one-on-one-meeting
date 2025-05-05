@@ -10,7 +10,7 @@ import {
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { memo } from "react";
-import "dayjs/locale/ko";
+import { useShallow } from "zustand/react/shallow";
 
 import { RoleViewType, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
@@ -29,8 +29,13 @@ interface MonthlyScheduleProps {
 
 const MonthlySchedule = (props: MonthlyScheduleProps) => {
   const router = useRouter();
-  const { currentDate, setCurrentDate } = useDateStore();
-  const { openProfessorSearch } = useInterviewModalStore();
+  const { currentDate, setCurrentDate } = useDateStore(
+    useShallow(state => ({
+      currentDate: state.currentDate,
+      setCurrentDate: state.setCurrentDate,
+    }))
+  );
+  const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
 

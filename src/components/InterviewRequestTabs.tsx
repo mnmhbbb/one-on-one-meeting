@@ -27,7 +27,7 @@ const TABS = [
 ];
 
 const InterviewRequestTabs = () => {
-  const { currentDate } = useDateStore();
+  const currentDate = useDateStore(state => state.currentDate);
   const [selectedTab, setSelectedTab] = useState<"month" | "week" | "day">("month");
   const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
     InterviewStatus.REQUESTED,

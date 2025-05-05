@@ -10,7 +10,7 @@ import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 const StudentsHeader = () => {
   const pathname = usePathname();
-  const { openProfessorSearch } = useInterviewModalStore();
+  const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
 
   const links = [
     { href: "/student/my", label: "MY" },

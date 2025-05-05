@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +23,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 const ProfessorSearchModal = () => {
-  const { isProfessorSearchOpen, closeProfessorSearch } = useInterviewModalStore();
+  const { isProfessorSearchOpen, closeProfessorSearch } = useInterviewModalStore(
+    useShallow(state => ({
+      isProfessorSearchOpen: state.isProfessorSearchOpen,
+      closeProfessorSearch: state.closeProfessorSearch,
+    }))
+  );
 
   return (
     <Dialog open={isProfessorSearchOpen} onOpenChange={closeProfessorSearch}>

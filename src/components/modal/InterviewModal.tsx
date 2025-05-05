@@ -1,6 +1,7 @@
 "use client";
 
 import { lazy, Suspense } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { INTERVIEW_MODAL_TYPE, InterviewModalType } from "@/common/const";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -16,7 +17,13 @@ const CreateInterviewView = lazy(() => import("@/components/modal/CreateIntervie
 const InterviewListView = lazy(() => import("@/components/modal/InterviewListView"));
 
 export const InterviewModal = () => {
-  const { isOpen, type, close } = useInterviewModalStore();
+  const { isOpen, type, close } = useInterviewModalStore(
+    useShallow(state => ({
+      isOpen: state.isOpen,
+      type: state.type,
+      close: state.close,
+    }))
+  );
 
   // 임시
   const isLoading = false;

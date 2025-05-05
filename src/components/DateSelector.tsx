@@ -3,6 +3,7 @@
 import dayjs from "dayjs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { memo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import "dayjs/locale/ko";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,12 @@ interface DateSelectorProps {
 }
 
 const DateSelector = ({ viewType }: DateSelectorProps) => {
-  const { currentDate, setCurrentDate } = useDateStore();
+  const { currentDate, setCurrentDate } = useDateStore(
+    useShallow(state => ({
+      currentDate: state.currentDate,
+      setCurrentDate: state.setCurrentDate,
+    }))
+  );
 
   const handlePrevious = () => {
     const newDate = dayjs(currentDate).subtract(1, viewType).toDate();
