@@ -3,7 +3,7 @@ import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
 
-export default function Login() {
+export default function SmartleadLogin() {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
   const [loginResult, setLoginResult] = useState<null | boolean>(null);

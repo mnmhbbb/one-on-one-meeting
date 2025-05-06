@@ -1,4 +1,4 @@
-import Login from "@/components/auth/Login";
+import Login from "@/components/auth/SmartleadLogin";
 
 export default function LoginPage() {
   return (
