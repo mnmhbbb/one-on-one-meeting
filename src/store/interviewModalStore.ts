@@ -9,12 +9,16 @@ type InterviewModalState = {
   type: InterviewModalType | null;
   interviewInfo: InterviewInfo | null;
 
+  selectedTime: string[];
+
   open: (id: string, type: InterviewModalType) => void;
   close: () => void;
   openProfessorSearch: () => void;
   closeProfessorSearch: () => void;
   setInterviewInfo: (info: InterviewInfo) => void;
   resetInterviewModal: () => void;
+
+  setSelectedTime: (time: string[]) => void;
 };
 
 export const useInterviewModalStore = createStore<InterviewModalState>(set => ({
@@ -23,6 +27,8 @@ export const useInterviewModalStore = createStore<InterviewModalState>(set => ({
   interviewId: null,
   type: null,
   interviewInfo: null,
+
+  selectedTime: [],
   open: (id, type) => set({ isOpen: true, interviewId: id, type }),
   close: () => set({ isOpen: false, interviewId: null, type: null }),
   openProfessorSearch: () => set({ isProfessorSearchOpen: true }),
@@ -35,4 +41,6 @@ export const useInterviewModalStore = createStore<InterviewModalState>(set => ({
       interviewId: null,
       interviewInfo: null,
     }),
+
+  setSelectedTime: (time: string[]) => set({ selectedTime: time }),
 }));
