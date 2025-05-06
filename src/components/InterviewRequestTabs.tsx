@@ -8,7 +8,8 @@ import {
   isSameMonth,
   isWithinInterval,
 } from "date-fns";
-import { useState, useMemo, memo } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState, useMemo, memo, useEffect } from "react";
 
 import { InterviewStatus } from "@/common/const";
 import DateSelector from "@/components/DateSelector";
@@ -16,7 +17,7 @@ import StatusFilterGroup from "@/components/StatusFilterGroup";
 import StudentsInterviewTable from "@/components/StudentsInterviewTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import useDateStore from "@/store/dateStore";
+import { useDateStore } from "@/store/dateStore";
 import { EVENTS } from "@/utils/data/mockData";
 
 const TABS = [
@@ -26,18 +27,28 @@ const TABS = [
 ];
 
 const InterviewRequestTabs = () => {
-  const { currentDate } = useDateStore();
+  const currentDate = useDateStore(state => state.currentDate);
+  const [selectedTab, setSelectedTab] = useState<"month" | "week" | "day">("month");
   const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
-    "REQUESTED",
-    "REJECTED",
-    "CONFIRMED",
-    "CANCELLED",
-    "RECORDED",
+    InterviewStatus.REQUESTED,
+    InterviewStatus.REJECTED,
+    InterviewStatus.CONFIRMED,
+    InterviewStatus.CANCELLED,
+    InterviewStatus.RECORDED,
   ]);
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab");
+
+  // 쿼리스트링에 tab이 있으면 해당 탭으로 선택
+  useEffect(() => {
+    if (tab) {
+      setSelectedTab(tab as "month" | "week" | "day");
+    }
+  }, [tab]);
 
   // 상태 필터링이 적용된 이벤트 목록
   const filteredEvents = useMemo(
-    () => EVENTS.filter(event => selectedStatuses.includes(event.status)),
+    () => EVENTS.filter(event => selectedStatuses.includes(event.status as InterviewStatus)),
     [selectedStatuses]
   );
 
@@ -74,7 +85,10 @@ const InterviewRequestTabs = () => {
   );
 
   return (
-    <Tabs defaultValue="month">
+    <Tabs
+      value={selectedTab}
+      onValueChange={value => setSelectedTab(value as "month" | "week" | "day")}
+    >
       <TabsContent value="month">
         <Card className="rounded-l-none">
           <CardContent>

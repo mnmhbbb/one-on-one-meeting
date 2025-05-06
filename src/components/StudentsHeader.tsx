@@ -1,13 +1,16 @@
 "use client";
 
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
 
-import ProfessorSearchModal from "@/components/ProfessorSearchModal";
+import { Button } from "@/components/ui/button";
+import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 const StudentsHeader = () => {
   const pathname = usePathname();
+  const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
 
   const links = [
     { href: "/student/my", label: "MY" },
@@ -33,7 +36,14 @@ const StudentsHeader = () => {
         {/* TODO: 학생 이름 표시 */}
         <h2 className="mb-4 text-center text-xl font-semibold">OOO님의 면담 일정</h2>
         <div className="flex justify-end">
-          <ProfessorSearchModal />
+          <Button
+            onClick={openProfessorSearch}
+            variant="outline"
+            className="max-w-auto mb-4 max-w-fit text-neutral-400"
+          >
+            <Search className="mr-2 h-4 w-4" />
+            교수님을 검색하세요.
+          </Button>
         </div>
       </div>
     </>

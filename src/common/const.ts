@@ -21,20 +21,51 @@ export const TIMES: string[] = [
   "17:30 - 18:00",
 ];
 
-export type InterviewStatus = "REQUESTED" | "REJECTED" | "CONFIRMED" | "CANCELLED" | "RECORDED";
+export enum InterviewStatus {
+  REQUESTED = "requested",
+  CONFIRMED = "confirmed",
+  REJECTED = "rejected",
+  CANCELLED = "cancelled",
+  RECORDED = "recorded",
+}
 
 export const STATUS_COLORS: Record<InterviewStatus, string> = {
-  REQUESTED: "bg-blue-300",
-  REJECTED: "bg-pink-300",
-  CONFIRMED: "bg-green-300",
-  CANCELLED: "bg-red-300",
-  RECORDED: "bg-yellow-300",
+  [InterviewStatus.REQUESTED]: "bg-blue-300",
+  [InterviewStatus.CONFIRMED]: "bg-green-300",
+  [InterviewStatus.REJECTED]: "bg-pink-300",
+  [InterviewStatus.CANCELLED]: "bg-red-300",
+  [InterviewStatus.RECORDED]: "bg-yellow-300",
 };
 
 export const STATUS_LABELS: Record<InterviewStatus, string> = {
-  REQUESTED: "확정 요청",
-  REJECTED: "면담 거절",
-  CONFIRMED: "면담 확정",
-  CANCELLED: "면담 취소",
-  RECORDED: "기록된 면담",
+  [InterviewStatus.REQUESTED]: "확정 요청",
+  [InterviewStatus.CONFIRMED]: "면담 확정",
+  [InterviewStatus.REJECTED]: "면담 거절",
+  [InterviewStatus.CANCELLED]: "면담 취소",
+  [InterviewStatus.RECORDED]: "기록된 면담",
 };
+
+export const INTERVIEW_MODAL_TYPE = {
+  // InterviewStatus의 모든 값들을 포함
+  ...InterviewStatus,
+  // 추가 모달 타입
+  CREATE: "create", // 신규 신청
+  LIST: "list", // 목록 조회
+} as const;
+
+export type InterviewModalType = (typeof INTERVIEW_MODAL_TYPE)[keyof typeof INTERVIEW_MODAL_TYPE];
+
+export enum RoleViewType {
+  STUDENT_ON_STUDENT = "STUDENT_ON_STUDENT", // 학생이 학생 화면 조회
+  STUDENT_ON_PROFESSOR = "STUDENT_ON_PROFESSOR", // 학생이 교수 화면 조회
+  PROFESSOR_ON_PROFESSOR = "PROFESSOR_ON_PROFESSOR", // 교수가 교수 화면 조회
+}
+
+export enum UserRole {
+  STUDENT = "student",
+  PROFESSOR = "professor",
+  ADMIN = "admin",
+}
+
+// FIXME: 확정되면 추가
+export const INTERVIEW_PURPOSES = ["수업 관련", "진로 상담", "과제 문의", "기타"] as const;

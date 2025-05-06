@@ -2,6 +2,7 @@
 
 import { memo, useState } from "react";
 
+import { RoleViewType } from "@/common/const";
 import DateSelector from "@/components/DateSelector";
 import MonthlySchedule from "@/components/MonthlySchdeule";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,7 +34,7 @@ const ScheduleView = () => {
               <DateSelector viewType={viewType} />
               <div></div>
             </div>
-            <MonthlySchedule events={EVENTS} />
+            <MonthlySchedule events={EVENTS} roleViewType={RoleViewType.STUDENT_ON_STUDENT} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -51,7 +52,7 @@ const ScheduleView = () => {
               <DateSelector viewType={viewType} />
               <div></div>
             </div>
-            <WeeklySchedule events={EVENTS} />
+            <WeeklySchedule events={EVENTS} roleViewType={RoleViewType.STUDENT_ON_STUDENT} />
           </CardContent>
         </Card>
       </TabsContent>
