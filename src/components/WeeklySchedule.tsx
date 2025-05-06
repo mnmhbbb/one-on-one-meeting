@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { DAYS, RoleViewType, TIMES } from "@/common/const";
+import { DAYS, InterviewStatus, RoleViewType, TIMES } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
@@ -87,7 +87,7 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                     role="button"
                     onClick={() => handleClick(date, event)}
                   >
-                    {event && <StatusBadge status={event.status} />}
+                    {event && <StatusBadge status={event.status as InterviewStatus} />}
                   </div>
                 );
               })}

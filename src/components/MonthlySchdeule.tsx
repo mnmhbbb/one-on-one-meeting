@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { RoleViewType, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import { InterviewStatus, RoleViewType, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
@@ -109,10 +109,10 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
                     key={eventIndex}
                     className={cn(
                       "rounded px-1 py-0.5 text-center text-xs",
-                      STATUS_COLORS[event.status]
+                      STATUS_COLORS[event.status as InterviewStatus]
                     )}
                   >
-                    {STATUS_LABELS[event.status]}
+                    {STATUS_LABELS[event.status as InterviewStatus]}
                   </div>
                 ))}
               </div>

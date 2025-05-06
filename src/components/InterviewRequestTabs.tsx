@@ -48,7 +48,7 @@ const InterviewRequestTabs = () => {
 
   // 상태 필터링이 적용된 이벤트 목록
   const filteredEvents = useMemo(
-    () => EVENTS.filter(event => selectedStatuses.includes(event.status)),
+    () => EVENTS.filter(event => selectedStatuses.includes(event.status as InterviewStatus)),
     [selectedStatuses]
   );
 
