@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 import { InterviewStatus } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/utils/data/mockData";
 
 interface InterviewTableProps {
@@ -19,6 +20,15 @@ interface InterviewTableProps {
 }
 
 const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
+  const open = useInterviewModalStore(state => state.open);
+
+  const handleClick = useCallback(
+    (event: InterviewInfo) => {
+      open(event.id, event.status);
+    },
+    [open]
+  );
+
   return (
     <Table>
       <TableHeader>
@@ -36,7 +46,7 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
         {events
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
           .map((event, index) => (
-            <TableRow key={index}>
+            <TableRow key={index} role="button" onClick={() => handleClick(event)}>
               <TableCell className="w-[20%] px-6 font-medium">
                 <StatusBadge status={event.status} />
                 <br />
