@@ -10,11 +10,11 @@ interface StatusFilterGroupProps {
 }
 
 const ALL_STATUSES: InterviewStatus[] = [
-  "REQUESTED",
-  "REJECTED",
-  "CONFIRMED",
-  "CANCELLED",
-  "RECORDED",
+  InterviewStatus.REQUESTED,
+  InterviewStatus.REJECTED,
+  InterviewStatus.CONFIRMED,
+  InterviewStatus.CANCELLED,
+  InterviewStatus.RECORDED,
 ];
 
 const StatusFilterGroup = ({ onFilterChange }: StatusFilterGroupProps) => {

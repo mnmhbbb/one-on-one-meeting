@@ -1,13 +1,11 @@
-import { create } from "zustand";
+import { createStore } from "@/store/store";
 
 interface DateState {
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
 }
 
-const useDateStore = create<DateState>(set => ({
+export const useDateStore = createStore<DateState>(set => ({
   currentDate: new Date(),
   setCurrentDate: (date: Date) => set({ currentDate: date }),
 }));
-
-export default useDateStore;
