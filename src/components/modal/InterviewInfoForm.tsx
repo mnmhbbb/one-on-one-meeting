@@ -16,7 +16,11 @@ import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useUserStore } from "@/store/userStore";
 import "dayjs/locale/ko";
 
-const InterviewInfoForm = ({}) => {
+interface InterviewInfoFormProps {
+  isBeforeInterviewDate?: boolean;
+}
+
+const InterviewInfoForm = ({ isBeforeInterviewDate }: InterviewInfoFormProps) => {
   const userRole = useUserStore(state => state.role);
   const { interviewInfo, selectedTime, setInterviewInfo } = useInterviewModalStore(
     useShallow(state => ({
