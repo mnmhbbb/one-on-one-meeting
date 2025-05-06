@@ -1,7 +1,7 @@
 import Register from "@/components/auth/Register";
 import { Button } from "@/components/ui/button";
 
-import { signup } from "./actions";
+import { signup } from "../../actions/signup";
 import Link from "next/link";
 
 export default function StudentRegisterPage() {

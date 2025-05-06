@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
-import { login } from "./actions";
+import { login } from "../../actions/login";
 
 export default function StudentLoginPage() {
   return (
