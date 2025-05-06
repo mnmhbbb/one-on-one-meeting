@@ -66,3 +66,6 @@ export enum UserRole {
   PROFESSOR = "professor",
   ADMIN = "admin",
 }
+
+// FIXME: 확정되면 추가
+export const INTERVIEW_PURPOSES = ["수업 관련", "진로 상담", "과제 문의", "기타"] as const;
