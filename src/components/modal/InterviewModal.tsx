@@ -55,7 +55,7 @@ export const InterviewModal = () => {
     [INTERVIEW_MODAL_TYPE.REQUESTED]: RequestInterviewView,
     [INTERVIEW_MODAL_TYPE.REJECTED]: RejectInterviewView,
     [INTERVIEW_MODAL_TYPE.CANCELLED]: CancelInterviewView,
-    [INTERVIEW_MODAL_TYPE.CONFIRMED]: ConfirmInterviewView,
+    [INTERVIEW_MODAL_TYPE.CONFIRMED]: ConfirmInterviewView, // 미사용
     [INTERVIEW_MODAL_TYPE.RECORDED]: RecordedInterviewView,
     [INTERVIEW_MODAL_TYPE.CREATE]: CreateInterviewView,
     [INTERVIEW_MODAL_TYPE.LIST]: InterviewListView,
@@ -65,7 +65,7 @@ export const InterviewModal = () => {
   const ModalView = useMemo(() => {
     if (!type) return null;
 
-    // '면담 확정'의 경우, 현재 일시 - 면담 일시 > 0 ? RECORDED : CONFIRMED
+    // '면담 확정'의 경우, 현재 일시 - 면담 일시 > 0 ? RECORDED : REQUESTED
     if (type === INTERVIEW_MODAL_TYPE.CONFIRMED) {
       const interview = EVENTS.find(event => event.id === interviewId);
       if (!interview) return null;
@@ -74,8 +74,9 @@ export const InterviewModal = () => {
       const interviewDateTime = new Date(
         `${interview.date.split(" ")[0]}T${interview.date.split(" ")[1]}`
       );
+      console.log(now, interviewDateTime);
 
-      return now > interviewDateTime ? RecordedInterviewView : ConfirmInterviewView;
+      return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
     }
 
     return modalViewMap[type];
