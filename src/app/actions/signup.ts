@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 import { redirect } from "next/navigation";
 
 export async function signup(formData: FormData): Promise<void> {
@@ -46,6 +47,16 @@ export async function signup(formData: FormData): Promise<void> {
     throw new Error("회원가입은 되었지만 user.id를 찾을 수 없습니다.");
   }
 
+  // Supabase 사용자 이메일 인증 상태 업데이트
+  const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+    user_metadata: {
+      email_verified: true,
+    },
+  });
+  if (confirmError) {
+    throw new Error("이메일 인증 상태 갱신 실패");
+  }
+
   // 학생, 교수 테이블에 추가 정보 저장
   const commonData = {
     id: userId,
@@ -69,7 +80,7 @@ export async function signup(formData: FormData): Promise<void> {
     throw new Error(`지원되지 않는 역할입니다: ${role}`);
   }
 
-  // TODO: 이메일 인증 완료된 사용자인 지 확인하는 로직 추가하기
+  // TODO: 이메일 인증 완료된 사용자인지 확인하는 로직 추가하기
 
   revalidatePath("/", "layout");
 

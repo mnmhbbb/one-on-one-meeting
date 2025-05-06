@@ -22,32 +22,32 @@ export default function Register({ role }: Props) {
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [interviewLocation, setInterviewLocation] = useState("");
 
-  // const handleSendCode = async () => {
-  //   const res = await fetch("/api/email/send", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ email: userId }),
-  //   });
+  const handleSendCode = async () => {
+    const res = await fetch("/api/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userId }),
+    });
 
-  //   const result = await res.json();
-  //   alert(result.message);
-  // };
+    const result = await res.json();
+    alert(result.message);
+  };
 
-  // const handleVerifyCode = async () => {
-  //   const res = await fetch("/api/email/verify", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ email: userId, code: verificationCode }),
-  //   });
+  const handleVerifyCode = async () => {
+    const res = await fetch("/api/email/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userId, code: verificationCode }),
+    });
 
-  //   const result = await res.json();
-  //   if (res.ok) {
-  //     setIsCodeVerified(true);
-  //     alert(result.message);
-  //   } else {
-  //     alert(result.message);
-  //   }
-  // };
+    const result = await res.json();
+    if (res.ok) {
+      setIsCodeVerified(true);
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
 
   useEffect(() => {
     // 영문자 1개 이상, 숫자 1개 이상 포함 (대소문자 구분 없음), 특수문자 허용, 8자 이상
@@ -79,10 +79,10 @@ export default function Register({ role }: Props) {
           className="flex-1 rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
         />
       </div>
-      {/*       
+
       <div>
         <button
-          onClick={handleVerify}
+          onClick={handleSendCode}
           className="rounded-md bg-[#6b5545] px-4 py-2 text-center text-base font-medium text-white hover:bg-[#5a4638]"
         >
           인증하기
@@ -95,17 +95,17 @@ export default function Register({ role }: Props) {
           placeholder="인증번호"
           value={verificationCode}
           onChange={e => setVerificationCode(e.target.value)}
-          disabled={!isVerified}
+          // disabled={!isVerified}
           className="flex-1 rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none disabled:bg-gray-200"
         />
         <button
           onClick={handleVerifyCode}
-          disabled={!isVerified}
+          // disabled={!isVerified}
           className="rounded-md bg-[#6b5545] px-4 py-2 text-center text-base font-medium text-white hover:bg-[#5a4638] disabled:bg-gray-400"
         >
           확인
         </button>
-      </div> */}
+      </div>
 
       <div>
         <input
