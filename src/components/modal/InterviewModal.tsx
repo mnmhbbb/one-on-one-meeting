@@ -74,7 +74,6 @@ export const InterviewModal = () => {
       const interviewDateTime = new Date(
         `${interview.date.split(" ")[0]}T${interview.date.split(" ")[1]}`
       );
-      console.log(now, interviewDateTime);
 
       return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
     }

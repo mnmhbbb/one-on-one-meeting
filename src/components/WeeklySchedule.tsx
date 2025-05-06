@@ -27,7 +27,6 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
 
   const handleClick = (date: Date, event: InterviewInfo | undefined) => {
-    console.log(event);
     if (!event) {
       if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) openProfessorSearch();
       // TODO: 면담신청모달 if (props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR)
