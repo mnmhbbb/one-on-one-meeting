@@ -14,13 +14,15 @@ interface ProfessorNoticeProps {
 const ProfessorNotice = ({ notice, checklist }: ProfessorNoticeProps) => {
   return (
     <>
-      <div className="mb-4 flex flex-col space-y-1">
+      <div className="mb-4 flex flex-col space-y-1 text-left">
         <h3 className="text-base font-semibold">교수님 공지사항</h3>
-        <div className="bg-primary w-full p-3 text-sm whitespace-pre-line text-white">{notice}</div>
+        <div className="bg-primary w-full p-3 text-left text-sm whitespace-pre-line text-white">
+          {notice}
+        </div>
       </div>
-      <div className="flex flex-col space-y-1">
+      <div className="flex flex-col space-y-1 text-left">
         <h3 className="text-base font-semibold">확인사항</h3>
-        <div className="bg-primary w-full p-3 text-sm whitespace-pre-line text-white">
+        <div className="bg-primary w-full p-3 text-left text-sm whitespace-pre-line text-white">
           {checklist}
         </div>
       </div>
