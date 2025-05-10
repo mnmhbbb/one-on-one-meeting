@@ -1,10 +1,16 @@
+import dayjs from "dayjs";
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
+import "dayjs/locale/ko";
 
 import "./globals.css";
+import ClientLocaleSetter from "@/components/ClientLocaleSetter";
 import { InterviewModal } from "@/components/modal/InterviewModal";
 import ProfessorSearchModal from "@/components/modal/ProfessorSearchModal";
 import NavigationBar from "@/components/header-navigation/NavigationBar";
+
+// 전역 locale 설정
+dayjs.locale("ko");
 
 const sans = Open_Sans({ subsets: ["latin"] });
 
@@ -24,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${sans.className} antialiased`}>
+        <ClientLocaleSetter />
         <NavigationBar />
         <main>{children}</main>
         <InterviewModal />

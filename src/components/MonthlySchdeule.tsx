@@ -18,8 +18,6 @@ import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/utils/data/mockData";
 
-dayjs.locale("ko");
-
 const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
 
 interface MonthlyScheduleProps {
