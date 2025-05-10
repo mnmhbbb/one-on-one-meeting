@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { memo, useCallback } from "react";
 
-import { InterviewStatus } from "@/common/const";
+import { InterviewModalType, InterviewStatus } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
 import {
   Table,
@@ -19,12 +19,15 @@ interface InterviewTableProps {
   events: InterviewInfo[];
 }
 
+/**
+ * 학생의 면담 신청현황 테이블
+ */
 const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
   const open = useInterviewModalStore(state => state.open);
 
   const handleClick = useCallback(
     (event: InterviewInfo) => {
-      open(event.id, event.status);
+      open(event.id, event.status as InterviewModalType);
     },
     [open]
   );
@@ -48,7 +51,7 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
           .map((event, index) => (
             <TableRow key={index} role="button" onClick={() => handleClick(event)}>
               <TableCell className="w-[20%] px-6 font-medium">
-                <StatusBadge status={event.status} />
+                <StatusBadge status={event.status as InterviewStatus} />
                 <br />
                 <div className="mt-1 w-full text-center text-sm">
                   {`${format(new Date(event.date), "yyyy.MM.dd")} (${format(
