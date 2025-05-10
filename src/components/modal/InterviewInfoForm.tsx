@@ -36,7 +36,8 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
   const [status, setStatus] = useState<InterviewStatus | string>(interviewInfo?.status ?? ""); // 면담 상태
   const [purpose, setPurpose] = useState(interviewInfo?.purpose); // 면담 목적
   const [reason, setReason] = useState(interviewInfo?.reason); // 면담 희망 내용
-  const [cancelReason, setCancelReason] = useState(interviewInfo?.cancellationReason); // 면담 취소/거절 사유
+  const [cancelReason, setCancelReason] = useState(interviewInfo?.cancellationReason); // 면담 취소 사유
+  const [rejectReason, setRejectReason] = useState(interviewInfo?.rejectionReason); // 면담 거절 사유
 
   const prevInterviewInfo = useRef(interviewInfo);
 
@@ -137,35 +138,36 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
                 : "면담 확정, 면담 취소, 면담 거절만 선택 가능합니다."}
             </p>
           )}
-
-          {/* 면담 취소 사유 조회 */}
-          {interviewInfo?.cancellationReason && (
-            <div className="mb-4 flex w-full flex-col items-start space-y-1">
-              <label className="text-base font-medium">면담 취소 사유</label>
-              <Input
-                required
-                disabled
-                placeholder="면담 취소 사유를 입력해주세요."
-                value={cancelReason}
-                onChange={e => setCancelReason(e.target.value)}
-              />
-            </div>
-          )}
-
-          {/* TODO: 확인요청, 면담일이 도래하지 않은 면담확정일 경우만 입력 가능 처리 필요 */}
-          {/* (교수 권한) 면담 거절 사유 입력 & 조회 */}
-          {/* {status === InterviewStatus.REJECTED && (
-            <div className="mb-4 flex w-full flex-col items-start space-y-1">
-              <label className="text-base font-medium">면담 거절 사유</label>
-              <Input
-                required
-                placeholder="면담 거절 사유를 입력해주세요."
-                value={cancelReason}
-                onChange={e => setCancelReason(e.target.value)}
-              />
-            </div>
-          )} */}
         </div>
+
+        {/* TODO: 확인요청, 면담일이 도래하지 않은 면담확정일 경우만 입력 가능 처리 필요 */}
+        {/* 면담 취소 사유 조회 */}
+        {interviewInfo?.cancellationReason && (
+          <div className="mb-4 flex w-full flex-col items-start space-y-1">
+            <label className="text-base font-medium">면담 취소 사유</label>
+            <Input
+              required
+              disabled
+              placeholder="면담 취소 사유를 입력해주세요."
+              value={cancelReason}
+              onChange={e => setCancelReason(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* 면담 거절 사유 조회 */}
+        {interviewInfo?.rejectionReason && (
+          <div className="mb-4 flex w-full flex-col items-start space-y-1">
+            <label className="text-base font-medium">면담 거절 사유</label>
+            <Input
+              required
+              disabled
+              placeholder="면담 거절 사유를 입력해주세요."
+              value={rejectReason}
+              onChange={e => setRejectReason(e.target.value)}
+            />
+          </div>
+        )}
       </div>
     </>
   );
