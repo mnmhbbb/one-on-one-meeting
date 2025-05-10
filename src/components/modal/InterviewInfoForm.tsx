@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
@@ -14,15 +13,19 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useUserStore } from "@/store/userStore";
-import "dayjs/locale/ko";
 
 interface InterviewInfoFormProps {
-  isBeforeInterviewDate?: boolean;
+  interviewDatetimeList: string[]; // 면담일시 목록
+  isBeforeInterviewDate?: boolean; // 면담일이 지났는지 여부
+  interviewDatetimeGuideText?: string; // 면담일시 하위 가이드 문구
 }
 
-const InterviewInfoForm = ({ isBeforeInterviewDate }: InterviewInfoFormProps) => {
+/**
+ * 면담 정보 확인 & 입력
+ */
+const InterviewInfoForm = (props: InterviewInfoFormProps) => {
   const userRole = useUserStore(state => state.role);
-  const { interviewInfo, selectedTime, setInterviewInfo } = useInterviewModalStore(
+  const { interviewInfo, setInterviewInfo } = useInterviewModalStore(
     useShallow(state => ({
       interviewInfo: state.interviewInfo,
       selectedTime: state.selectedTime,
@@ -50,11 +53,11 @@ const InterviewInfoForm = ({ isBeforeInterviewDate }: InterviewInfoFormProps) =>
   useEffect(() => {
     if (!prevInterviewInfo.current) return;
 
-    // '확인요청', '기록된 면담'은 직접 변경 불가
-    if (status === InterviewStatus.REQUESTED || status === InterviewStatus.RECORDED) {
-      alert(`${STATUS_LABELS[status]} 상태는 선택 불가합니다.`);
-      return;
-    }
+    // FIXME: '확인요청', '기록된 면담'은 직접 변경 불가
+    // if (status === InterviewStatus.REQUESTED || status === InterviewStatus.RECORDED) {
+    //   alert(`${STATUS_LABELS[status]} 상태는 선택 불가합니다.`);
+    //   return;
+    // }
 
     // 인풋 변화 시, 스토어에 저장된 interviewInfo 업데이트
     setInterviewInfo({
@@ -65,23 +68,17 @@ const InterviewInfoForm = ({ isBeforeInterviewDate }: InterviewInfoFormProps) =>
     });
   }, [status, purpose, reason, prevInterviewInfo, setInterviewInfo]);
 
-  // 면담 시간 포맷 설정
-  const formattedSelectedTimeList = useMemo(() => {
-    if (!interviewInfo?.date) return [];
-    const baseDate = dayjs(interviewInfo.date).locale("ko").format("YYYY년 MM월 DD일 dddd");
-    return selectedTime.map(time => `${baseDate} ${time}`);
-  }, [selectedTime, interviewInfo?.date]);
-
   return (
     <>
       <div>
-        {formattedSelectedTimeList.map(time => (
+        {props.interviewDatetimeList.map(time => (
           <div key={time} className="text-left text-sm font-bold">
             {time}
           </div>
         ))}
-
-        <p className="text-left text-sm">면담 신청 정보를 확인해주세요.</p>
+        {props.interviewDatetimeGuideText && (
+          <p className="text-left text-sm">{props.interviewDatetimeGuideText}</p>
+        )}
       </div>
       <Separator className="!my-4" />
       <div>
@@ -115,7 +112,10 @@ const InterviewInfoForm = ({ isBeforeInterviewDate }: InterviewInfoFormProps) =>
         <div className="mb-4 flex flex-col items-start space-y-1">
           <label className="text-base font-medium">면담 상태</label>
           <Select
-            disabled={userRole === UserRole.PROFESSOR && status !== InterviewStatus.CONFIRMED}
+            disabled={
+              (userRole === UserRole.PROFESSOR && status !== InterviewStatus.REQUESTED) ||
+              !props.isBeforeInterviewDate
+            }
             value={status}
             onValueChange={setStatus}
           >
@@ -130,11 +130,13 @@ const InterviewInfoForm = ({ isBeforeInterviewDate }: InterviewInfoFormProps) =>
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-gray-500">
-            {isStudent
-              ? "※ 변경 저장 - 확인 요청 / 면담 삭제 - 면담 취소"
-              : "면담 확정, 면담 취소, 면담 거절만 선택 가능합니다."}
-          </p>
+          {props.isBeforeInterviewDate && (
+            <p className="text-xs text-gray-500">
+              {isStudent
+                ? "※ 변경 저장 - 확인 요청 / 면담 삭제 - 면담 취소"
+                : "면담 확정, 면담 취소, 면담 거절만 선택 가능합니다."}
+            </p>
+          )}
 
           {/* 면담 취소 사유 조회 */}
           {interviewInfo?.cancellationReason && (

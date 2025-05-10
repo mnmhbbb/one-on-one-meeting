@@ -3,7 +3,6 @@
 import dayjs from "dayjs";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import "dayjs/locale/ko";
 
 import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import ProfessorNotice from "@/components/modal/ProfessorNotice";
@@ -73,10 +72,15 @@ const RequestInterviewView = () => {
 
   // 1단계 면담 날짜 포맷팅
   const formattedDate = useMemo(() => {
-    return interviewInfo?.date
-      ? dayjs(interviewInfo.date).locale("ko").format("YYYY년 MM월 DD일 dddd")
-      : "";
+    return interviewInfo?.date ? dayjs(interviewInfo.date).format("YYYY년 MM월 DD일 dddd") : "";
   }, [interviewInfo?.date]);
+
+  // 선택된 면담 시간 포맷 설정
+  const formattedSelectedTimeList = useMemo(() => {
+    if (!interviewInfo?.date) return [];
+    const baseDate = dayjs(interviewInfo.date).format("YYYY년 MM월 DD일 dddd");
+    return selectedTime.map(time => `${baseDate} ${time}`);
+  }, [selectedTime, interviewInfo?.date]);
 
   return (
     <>
@@ -109,7 +113,11 @@ const RequestInterviewView = () => {
       {/* 면담 신청 정보 확인 */}
       {step === 2 && (
         <div className="mt-4 max-h-[50vh] overflow-y-scroll p-1">
-          <InterviewInfoForm isBeforeInterviewDate />
+          <InterviewInfoForm
+            isBeforeInterviewDate
+            interviewDatetimeList={formattedSelectedTimeList}
+            interviewDatetimeGuideText="면담 신청 정보를 확인해주세요."
+          />
           <div className="mt-2 mb-8">
             <ProfessorNotice notice={professorNotice} checklist={professorCheckList} />
           </div>
