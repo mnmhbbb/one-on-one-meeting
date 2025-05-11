@@ -5,8 +5,6 @@ import "dayjs/locale/ko";
 
 import "./globals.css";
 import ClientLocaleSetter from "@/components/ClientLocaleSetter";
-import { InterviewModal } from "@/components/modal/InterviewModal";
-import ProfessorSearchModal from "@/components/modal/ProfessorSearchModal";
 import NavigationBar from "@/components/header-navigation/NavigationBar";
 
 // 전역 locale 설정
@@ -22,6 +20,9 @@ export const metadata: Metadata = {
   description: "학생과 교수님의 면담 일정을 효율적으로 예약하고 관리하세요.",
 };
 
+/**
+ * 모든 페이지 공통 레이아웃
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,8 +34,6 @@ export default function RootLayout({
         <ClientLocaleSetter />
         <NavigationBar />
         <main>{children}</main>
-        <InterviewModal />
-        <ProfessorSearchModal />
       </body>
     </html>
   );

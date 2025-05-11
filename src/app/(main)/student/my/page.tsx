@@ -1,5 +1,3 @@
-"use client";
-
 import ScheduleFrame from "@/components/ScheduleFrame";
 import ScheduleView from "@/components/ScheduleView";
 import StudentsHeader from "@/components/StudentsHeader";
