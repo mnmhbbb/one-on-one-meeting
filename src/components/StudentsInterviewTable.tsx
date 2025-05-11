@@ -65,8 +65,7 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
                 <div>
                   {event.professor} 교수님
                   <br />
-                  [면담 일정] {event.date.split(" ")[1]} ~
-                  {format(new Date(event.date), "HH:mm", { locale: ko })}
+                  [면담 일정] {event.time.join(", ")}
                   <br />
                   <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
                     [면담 사유] {event.reason}

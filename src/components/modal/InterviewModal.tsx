@@ -69,9 +69,8 @@ export const InterviewModal = () => {
       if (!interview) return null;
 
       const now = new Date();
-      const interviewDateTime = new Date(
-        `${interview.date.split(" ")[0]}T${interview.date.split(" ")[1]}`
-      );
+      const [startTime] = interview.time[0].split(" ~ ");
+      const interviewDateTime = new Date(`${interview.date}T${startTime}`);
 
       return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
     }

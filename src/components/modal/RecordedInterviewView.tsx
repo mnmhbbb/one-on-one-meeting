@@ -36,12 +36,9 @@ const RecordedInterviewView = () => {
   const formattedInterviewDatetimeList = useMemo(() => {
     if (!interviewInfo?.date) return [];
 
-    const [dateStr, timeRange] = interviewInfo?.date.split(" ");
-    const baseDate = dayjs(dateStr).format("YYYY년 MM월 DD일 dddd");
-    const formattedDate = `${baseDate} ${timeRange}`;
-
-    return [formattedDate];
-  }, [interviewInfo?.date]);
+    const baseDate = dayjs(interviewInfo?.date).format("YYYY년 MM월 DD일 dddd");
+    return interviewInfo?.time.map(time => `${baseDate} ${time}`);
+  }, [interviewInfo?.date, interviewInfo?.time]);
 
   return (
     <>

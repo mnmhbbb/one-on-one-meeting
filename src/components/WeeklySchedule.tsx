@@ -45,7 +45,15 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
   const findEvent = (date: Date, time: string) => {
     const dateStr = format(date, "yyyy-MM-dd");
     const [startTime] = time.split(" - ");
-    return props.events.find(event => event.date === `${dateStr} ${startTime}`);
+    return props.events.find(event => {
+      return (
+        event.date === dateStr &&
+        event.time.some(timeSlot => {
+          const [slotStartTime] = timeSlot.split(" ~ ");
+          return slotStartTime === startTime;
+        })
+      );
+    });
   };
 
   return (
