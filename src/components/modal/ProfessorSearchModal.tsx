@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { memo, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { memo, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { Button } from "@/components/ui/button";
@@ -24,8 +23,33 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
+interface Professor {
+  id: string;
+  name: string;
+  department: string;
+  isFavorite: boolean;
+}
+
+const DEPARTMENTS = [
+  { value: "all", label: "전체" },
+  { value: "콘텐츠IT", label: "콘텐츠IT학과" },
+  { value: "빅데이터", label: "빅데이터학과" },
+  { value: "스마트IoT", label: "스마트IoT학과" },
+];
+
+// TODO: API 연동 후 제거
+const MOCK_PROFESSORS: Professor[] = [
+  { id: "1", name: "김철수 교수님", department: "콘텐츠IT", isFavorite: true },
+  { id: "2", name: "이영희 교수님", department: "빅데이터", isFavorite: true },
+  { id: "3", name: "박지민 교수님", department: "스마트IoT", isFavorite: false },
+  { id: "4", name: "최수진 교수님", department: "콘텐츠IT", isFavorite: false },
+  { id: "5", name: "정민호 교수님", department: "빅데이터", isFavorite: false },
+];
+
 const ProfessorSearchModal = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const { isProfessorSearchOpen, closeProfessorSearch, setPathname } = useInterviewModalStore(
     useShallow(state => ({
       isProfessorSearchOpen: state.isProfessorSearchOpen,
@@ -39,6 +63,31 @@ const ProfessorSearchModal = () => {
     setPathname(pathname);
   }, [pathname, setPathname]);
 
+  const handleProfessorClick = (professorId: string) => {
+    const targetPath = `/student/professor/${professorId}`;
+    // 이미 해당 교수 페이지에 있으면 모달 닫기
+    if (pathname === targetPath) {
+      closeProfessorSearch();
+    } else {
+      router.push(targetPath);
+    }
+  };
+
+  const filteredProfessors = MOCK_PROFESSORS.filter(
+    professor => selectedDepartment === "all" || professor.department === selectedDepartment
+  );
+
+  const renderProfessorCard = (professor: Professor) => (
+    <div
+      key={professor.id}
+      onClick={() => handleProfessorClick(professor.id)}
+      className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100"
+    >
+      <div className="font-semibold">{professor.name}</div>
+      <div className="text-sm text-gray-500">{professor.department}학과</div>
+    </div>
+  );
+
   return (
     <Dialog open={isProfessorSearchOpen} onOpenChange={closeProfessorSearch}>
       <DialogContent className="sm:max-w-md">
@@ -48,17 +97,18 @@ const ProfessorSearchModal = () => {
         </DialogHeader>
         <div className="space-y-4">
           <Input placeholder="교수님을 검색하세요." className="mb-3" />
-          <Select>
+          <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="학과를 선택하세요" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="콘텐츠IT">콘텐츠IT</SelectItem>
-              <SelectItem value="빅데이터">빅데이터</SelectItem>
-              <SelectItem value="스마트IoT">스마트IoT</SelectItem>
+              {DEPARTMENTS.map(dept => (
+                <SelectItem key={dept.value} value={dept.value}>
+                  {dept.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          {/* 이 부분에 Tabs로 즐겨찾기 / 전체보기 */}
           <Tabs defaultValue="favorite">
             <TabsList className="w-full">
               <TabsTrigger value="favorite">즐겨찾기</TabsTrigger>
@@ -66,32 +116,12 @@ const ProfessorSearchModal = () => {
             </TabsList>
             <TabsContent value="favorite">
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
-                <Link href="/student/professor/1">
-                  <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
-                    <div className="font-semibold">OOO 교수님</div>
-                    <div className="text-sm text-gray-500">OOOO학과</div>
-                  </div>
-                </Link>
-                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
-                  <div className="font-semibold">OOO 교수님</div>
-                  <div className="text-sm text-gray-500">OOOO학과</div>
-                </div>
+                {filteredProfessors.filter(p => p.isFavorite).map(renderProfessorCard)}
               </div>
             </TabsContent>
             <TabsContent value="all">
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
-                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
-                  <div className="font-semibold">OOO 교수님</div>
-                  <div className="text-sm text-gray-500">OOOO학과</div>
-                </div>
-                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
-                  <div className="font-semibold">OOO 교수님</div>
-                  <div className="text-sm text-gray-500">OOOO학과</div>
-                </div>
-                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
-                  <div className="font-semibold">OOO 교수님</div>
-                  <div className="text-sm text-gray-500">OOOO학과</div>
-                </div>
+                {filteredProfessors.map(renderProfessorCard)}
               </div>
             </TabsContent>
           </Tabs>
