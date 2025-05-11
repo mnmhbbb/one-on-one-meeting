@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { lazy, memo, Suspense, useEffect, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { INTERVIEW_MODAL_TYPE, InterviewModalType } from "@/common/const";
@@ -95,3 +95,5 @@ export const InterviewModal = () => {
     </Dialog>
   );
 };
+
+export default memo(InterviewModal);
