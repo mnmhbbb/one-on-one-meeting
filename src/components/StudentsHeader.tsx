@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
 
+import ProfessorSearchModal from "@/components/modal/ProfessorSearchModal";
 import { Button } from "@/components/ui/button";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
@@ -45,6 +46,7 @@ const StudentsHeader = () => {
             교수님을 검색하세요.
           </Button>
         </div>
+        <ProfessorSearchModal />
       </div>
     </>
   );
