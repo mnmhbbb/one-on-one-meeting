@@ -40,7 +40,6 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
   const handleClick = (date: Date, events: InterviewInfo[]) => {
     if (events.length === 0) {
       if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) openProfessorSearch();
-      // TODO: 면담신청모달 if (props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR)
     } else {
       if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) {
         router.push("/student/interview-requests?tab=day");
