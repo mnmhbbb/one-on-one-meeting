@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
-
-import { Button } from "@/components/ui/button";
+import UserNavActions from "./UserNavActions";
 
 const NavigationBar = () => {
   return (
@@ -21,14 +20,7 @@ const NavigationBar = () => {
           </h1>
         </div>
       </Link>
-      <div className="flex items-center gap-4">
-        <Link href="/my" className="text-xs sm:text-sm md:text-base">
-          👤 내 정보
-        </Link>
-        <Button variant="outline" size="sm" className="text-xs sm:text-sm md:text-base">
-          로그아웃
-        </Button>
-      </div>
+      <UserNavActions />
     </nav>
   );
 };
