@@ -1,6 +1,8 @@
 "use client";
 
-import { memo } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { memo, useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { Button } from "@/components/ui/button";
@@ -23,12 +25,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 const ProfessorSearchModal = () => {
-  const { isProfessorSearchOpen, closeProfessorSearch } = useInterviewModalStore(
+  const pathname = usePathname();
+  const { isProfessorSearchOpen, closeProfessorSearch, setPathname } = useInterviewModalStore(
     useShallow(state => ({
       isProfessorSearchOpen: state.isProfessorSearchOpen,
       closeProfessorSearch: state.closeProfessorSearch,
+      setPathname: state.setPathname,
     }))
   );
+
+  // 검색 모달이 열려있는 상태에서 페이지 변경 시 모달 닫음
+  useEffect(() => {
+    setPathname(pathname);
+  }, [pathname, setPathname]);
 
   return (
     <Dialog open={isProfessorSearchOpen} onOpenChange={closeProfessorSearch}>
@@ -57,10 +66,12 @@ const ProfessorSearchModal = () => {
             </TabsList>
             <TabsContent value="favorite">
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
-                <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
-                  <div className="font-semibold">OOO 교수님</div>
-                  <div className="text-sm text-gray-500">OOOO학과</div>
-                </div>
+                <Link href="/student/professor/1">
+                  <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
+                    <div className="font-semibold">OOO 교수님</div>
+                    <div className="text-sm text-gray-500">OOOO학과</div>
+                  </div>
+                </Link>
                 <div className="cursor-pointer rounded-lg border p-4 hover:bg-gray-100">
                   <div className="font-semibold">OOO 교수님</div>
                   <div className="text-sm text-gray-500">OOOO학과</div>
