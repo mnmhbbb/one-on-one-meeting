@@ -20,6 +20,7 @@ const NavigationBar = () => {
           </h1>
         </div>
       </Link>
+      {/*TODO: 내 정보(구현 되면 넣기), 로그아웃 버튼 로그인 되고 나면 바로 보이도록 하기*/}
       <UserNavActions />
     </nav>
   );

@@ -1,10 +1,11 @@
 import nodemailer from "nodemailer";
 
 export async function sendVerificationEmail(email: string, code: string) {
+  const isSecure = Number(process.env.EMAIL_PORT) === 465;
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: Number(process.env.EMAIL_PORT) || 465,
-    secure: false,
+    secure: isSecure,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -15,6 +16,7 @@ export async function sendVerificationEmail(email: string, code: string) {
     from: `"Knock Knock" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "이메일 인증 코드 안내",
+    text: `Knock Knock 이메일 인증 코드입니다: ${code}\n유효 시간: 10분`,
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
         <h2>Knock Knock 이메일 인증</h2>
