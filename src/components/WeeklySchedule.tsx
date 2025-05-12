@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { DAYS, InterviewStatus, RoleViewType, TIMES } from "@/common/const";
+import { DAYS, INTERVIEW_MODAL_TYPE, InterviewStatus, RoleViewType, TIMES } from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
@@ -25,18 +25,29 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
     }))
   );
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
+  const openInterviewModal = useInterviewModalStore(state => state.open);
 
   const handleClick = (date: Date, event: InterviewInfo | undefined) => {
     if (!event) {
-      if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) openProfessorSearch();
-      // TODO: 면담신청모달 if (props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR)
-    } else {
-      if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) {
+      openProfessorSearch();
+      return;
+    }
+    const handlers: Partial<Record<RoleViewType, () => void>> = {
+      [RoleViewType.STUDENT_ON_STUDENT]: () => {
         router.push("/student/interview-requests?tab=day");
         setCurrentDate(date);
-      }
+      },
+      [RoleViewType.STUDENT_ON_PROFESSOR]: () => {
+        openInterviewModal(event.id, INTERVIEW_MODAL_TYPE.LIST);
+      },
+    };
+
+    const handler = handlers[props.roleViewType];
+    if (handler) {
+      handler();
     }
   };
+
   // 현재 주의 월요일부터 금요일까지의 날짜 배열 생성
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // 1은 월요일
   const weekDates = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
