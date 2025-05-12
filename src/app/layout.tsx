@@ -23,9 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${sans.className} antialiased`}>
+      <body className={`${sans.className} bg-gray-100 antialiased`}>
         <NavigationBar />
-        <main>{children}</main>
+        <main className="overflow-hidden">{children}</main>
         <InterviewModal />
         <ProfessorSearchModal />
       </body>

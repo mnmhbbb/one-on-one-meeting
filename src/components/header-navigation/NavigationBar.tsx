@@ -5,18 +5,18 @@ import UserNavActions from "./UserNavActions";
 
 const NavigationBar = () => {
   return (
-    <nav className="m-6 flex items-center justify-between">
+    <nav className="bg-primary flex w-full items-center justify-between p-3">
       <Link href="/">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center">
           <Image
-            src="/logo_long.png"
+            src="/logo_long3.png"
             alt="KNOCK Logo"
             width={200}
-            height={60}
-            className="h-15 w-auto" // 비율 유지하면서 높이 맞춤
+            height={48}
+            className="h-12 w-auto" // 비율 유지하면서 높이 맞춤
           />
-          <h1 className="text-sm font-bold whitespace-nowrap text-[#6b5545] sm:text-base md:text-3xl">
-            |&nbsp;&nbsp;면담 예약 사이트
+          <h1 className="text-sm font-bold whitespace-nowrap text-white sm:text-base md:text-2xl">
+            |&nbsp;면담 예약 사이트
           </h1>
         </div>
       </Link>
