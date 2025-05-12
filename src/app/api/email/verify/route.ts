@@ -25,18 +25,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "코드 만료됨" }, { status: 400 });
   }
 
-  // 2. 이미 회원가입한 유저인지 확인
-  const { data: userData } = await supabase
-    .from("professors")
-    .select("*")
-    .eq("email", email)
-    .single();
-
-  if (userData) {
-    return NextResponse.json({ message: "이미 회원가입된 이메일입니다." }, { status: 400 });
-  }
-
-  // 3. 인증 코드 사용 처리
+  // 2. 인증 코드 사용 처리
   const { error: updateError } = await supabase
     .from("email_verification_codes")
     .update({ used: true })

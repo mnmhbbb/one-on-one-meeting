@@ -100,7 +100,7 @@ export default function Register({ role }: Props) {
           placeholder="인증번호"
           value={verificationCode}
           onChange={e => setVerificationCode(e.target.value)}
-          disabled={isVerified}
+          readOnly={isVerified}
           className="flex-1 rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none disabled:bg-gray-200"
         />
         <button
