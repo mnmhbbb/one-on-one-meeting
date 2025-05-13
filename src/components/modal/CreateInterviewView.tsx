@@ -88,7 +88,7 @@ const CreateInterviewView = () => {
             <p className="text-left text-sm">면담시간을 선택해주세요.</p>
           </div>
           <Separator className="!my-4" />
-          <div className="mb-5 h-[300px] overflow-y-scroll">
+          <div className="mb-5 h-[300px] overflow-y-auto">
             <TimeSelect timeList={timeInfoList} />
           </div>
           <div className="flex justify-end gap-4">
@@ -101,7 +101,7 @@ const CreateInterviewView = () => {
 
       {/* 면담 신청 정보 확인 */}
       {step === 2 && (
-        <div className="mt-4 max-h-[50vh] overflow-y-scroll p-1">
+        <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
           <InterviewInfoForm
             isBeforeInterviewDate
             interviewDatetimeList={formattedSelectedTimeList}

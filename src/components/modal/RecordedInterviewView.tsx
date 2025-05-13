@@ -48,7 +48,7 @@ const RecordedInterviewView = () => {
 
       {/* 면담 신청 정보 확인 */}
       {step === 1 && (
-        <div className="mt-4 max-h-[50vh] overflow-y-scroll p-1">
+        <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
           <InterviewInfoForm interviewDatetimeList={formattedInterviewDatetimeList} />
           <div className="flex justify-end">
             <Button onClick={() => handleStepChange(2)}>다음</Button>
@@ -58,7 +58,7 @@ const RecordedInterviewView = () => {
 
       {/* 면담 기록 입력 */}
       {step === 2 && (
-        <div className="mt-4 max-h-[50vh] overflow-y-scroll p-1">
+        <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
           <div>
             {formattedInterviewDatetimeList.map(time => (
               <div key={time} className="text-left text-sm font-bold">
