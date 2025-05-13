@@ -51,6 +51,7 @@ export const INTERVIEW_MODAL_TYPE = {
   // 추가 모달 타입
   CREATE: "create", // 신규 신청
   LIST: "list", // 목록 조회
+  REJECTION_REASON: "rejection_reason", // 거절 사유 입력
 } as const;
 
 export type InterviewModalType = (typeof INTERVIEW_MODAL_TYPE)[keyof typeof INTERVIEW_MODAL_TYPE];

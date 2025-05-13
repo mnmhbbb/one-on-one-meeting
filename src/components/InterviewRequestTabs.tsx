@@ -13,8 +13,9 @@ import { useState, useMemo, memo, useEffect } from "react";
 
 import { InterviewStatus } from "@/common/const";
 import DateSelector from "@/components/DateSelector";
+import ProfessorInterviewTable from "@/components/ProfessorInterviewTable";
 import StatusFilterGroup from "@/components/StatusFilterGroup";
-import StudentsInterviewTable from "@/components/StudentsInterviewTable";
+import StudentInterviewTable from "@/components/StudentInterviewTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDateStore } from "@/store/dateStore";
@@ -26,7 +27,7 @@ const TABS = [
   { value: "day", label: "Day" },
 ];
 
-const InterviewRequestTabs = () => {
+const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) => {
   const currentDate = useDateStore(state => state.currentDate);
   const [selectedTab, setSelectedTab] = useState<"month" | "week" | "day">("month");
   const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
@@ -104,7 +105,11 @@ const InterviewRequestTabs = () => {
               <div></div>
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
-            <StudentsInterviewTable events={monthEvents} />
+            {isStudent ? (
+              <StudentInterviewTable events={monthEvents} />
+            ) : (
+              <ProfessorInterviewTable events={monthEvents} />
+            )}
           </CardContent>
         </Card>
       </TabsContent>
@@ -123,7 +128,11 @@ const InterviewRequestTabs = () => {
               <div></div>
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
-            <StudentsInterviewTable events={weekEvents} />
+            {isStudent ? (
+              <StudentInterviewTable events={weekEvents} />
+            ) : (
+              <ProfessorInterviewTable events={weekEvents} />
+            )}
           </CardContent>
         </Card>
       </TabsContent>
@@ -142,7 +151,11 @@ const InterviewRequestTabs = () => {
               <div></div>
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
-            <StudentsInterviewTable events={dayEvents} />
+            {isStudent ? (
+              <StudentInterviewTable events={dayEvents} />
+            ) : (
+              <ProfessorInterviewTable events={dayEvents} />
+            )}
           </CardContent>
         </Card>
       </TabsContent>

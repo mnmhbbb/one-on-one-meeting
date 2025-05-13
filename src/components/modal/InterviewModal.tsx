@@ -20,6 +20,7 @@ const RejectInterviewView = lazy(() => import("@/components/modal/RejectIntervie
 const RecordedInterviewView = lazy(() => import("@/components/modal/RecordedInterviewView"));
 const CreateInterviewView = lazy(() => import("@/components/modal/CreateInterviewView"));
 const InterviewListView = lazy(() => import("@/components/modal/InterviewListView"));
+const RejectionReason = lazy(() => import("@/components/modal/RejectionReason"));
 
 export const InterviewModal = () => {
   const { isOpen, type, close, interviewId, setInterviewInfo } = useInterviewModalStore(
@@ -57,6 +58,7 @@ export const InterviewModal = () => {
     [INTERVIEW_MODAL_TYPE.RECORDED]: RecordedInterviewView,
     [INTERVIEW_MODAL_TYPE.CREATE]: CreateInterviewView,
     [INTERVIEW_MODAL_TYPE.LIST]: InterviewListView,
+    [INTERVIEW_MODAL_TYPE.REJECTION_REASON]: RejectionReason,
   } satisfies Record<InterviewModalType, React.ComponentType>;
 
   // 면담 모달 타입에 따라 모달 뷰 컴포넌트 적용

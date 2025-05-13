@@ -22,7 +22,7 @@ interface InterviewTableProps {
 /**
  * 학생의 면담 신청현황 테이블
  */
-const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
+const StudentInterviewTable = ({ events }: InterviewTableProps) => {
   const open = useInterviewModalStore(state => state.open);
 
   const handleClick = useCallback(
@@ -84,4 +84,4 @@ const StudentsInterviewTable = ({ events }: InterviewTableProps) => {
   );
 };
 
-export default memo(StudentsInterviewTable);
+export default memo(StudentInterviewTable);

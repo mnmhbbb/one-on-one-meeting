@@ -6,7 +6,7 @@ const InterviewRequestsPage = () => {
   return (
     <ScheduleFrame>
       <StudentsHeader />
-      <InterviewRequestTabs />
+      <InterviewRequestTabs isStudent />
     </ScheduleFrame>
   );
 };
