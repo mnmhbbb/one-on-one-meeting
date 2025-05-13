@@ -1,7 +1,10 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { login } from "../../actions/login";
 import { LockKeyhole, Mail } from "lucide-react";
+import Link from "next/link";
+
+import RedirectInput from "@/components/auth/RedirectInput";
+import { Button } from "@/components/ui/button";
+
+import { login } from "../../actions/login";
 
 export default function StudentLoginPage() {
   return (
@@ -14,6 +17,7 @@ export default function StudentLoginPage() {
           로그인 하기
         </h1>
         <form className="relative z-10 space-y-5">
+          <RedirectInput />
           <div className="relative">
             <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
               <Mail size={20} />

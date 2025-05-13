@@ -34,20 +34,22 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname === "/" ||
     PUBLIC_KEYWORDS.some(keyword => request.nextUrl.pathname.includes(keyword));
 
-  // 로그인하지 않은 상태에서 보호된(private) 페이지에 접근하면 메인 페이지로 리다이렉트
+  // 로그인하지 않은 상태에서 보호된(private) 페이지에 접근하면 리다이렉트
   if (!user && !isPublicPage) {
-    const url = request.nextUrl.clone(); // 원본 URL 객체를 수정하지 않기 위해 복제본 생성
-    url.pathname = "/";
+    const url = request.nextUrl.clone(); // 원본 URL 객체 복사
 
-    // 1. "/" 경로로 접근 후, 로그인
-    if (request.nextUrl.pathname === "/student/login") {
-      url.searchParams.set("redirectTo", "/student/my");
-    } else if (request.nextUrl.pathname === "/professor/login") {
-      url.searchParams.set("redirectTo", "/professor/consultation-requests");
-    }
-
-    // 2. 보호된 페이지로 접근 후, 로그인
-    else {
+    /**
+     * 현재 접근 경로에 따라 학생용/교수용 로그인 페이지로 리다이렉트하되,
+     * 로그인 후 이동할 대상 경로(redirectTo)를 설정
+     */
+    if (request.nextUrl.pathname.startsWith("/student")) {
+      url.pathname = "/student/login";
+      url.searchParams.set("redirectTo", request.nextUrl.pathname);
+    } else if (request.nextUrl.pathname.startsWith("/professor")) {
+      url.pathname = "/professor/login";
+      url.searchParams.set("redirectTo", request.nextUrl.pathname);
+    } else {
+      url.pathname = "/";
       url.searchParams.set("redirectTo", request.nextUrl.pathname);
     }
 
