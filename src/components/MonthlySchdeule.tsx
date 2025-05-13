@@ -12,13 +12,17 @@ import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { InterviewStatus, RoleViewType, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import {
+  InterviewStatus,
+  RoleViewType,
+  STATUS_COLORS,
+  STATUS_LABELS,
+  INTERVIEW_MODAL_TYPE,
+} from "@/common/const";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/utils/data/mockData";
-
-dayjs.locale("ko");
 
 const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
 
@@ -36,18 +40,29 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
     }))
   );
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
+  const openInterviewModal = useInterviewModalStore(state => state.open);
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
 
   const handleClick = (date: Date, events: InterviewInfo[]) => {
     if (events.length === 0) {
-      if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) openProfessorSearch();
-      // TODO: 면담신청모달 if (props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR)
-    } else {
-      if (props.roleViewType === RoleViewType.STUDENT_ON_STUDENT) {
+      openProfessorSearch();
+      return;
+    }
+
+    const handlers: Partial<Record<RoleViewType, () => void>> = {
+      [RoleViewType.STUDENT_ON_STUDENT]: () => {
         router.push("/student/interview-requests?tab=day");
         setCurrentDate(date);
-      }
+      },
+      [RoleViewType.STUDENT_ON_PROFESSOR]: () => {
+        openInterviewModal(events[0].id, INTERVIEW_MODAL_TYPE.LIST);
+      },
+    };
+
+    const handler = handlers[props.roleViewType];
+    if (handler) {
+      handler();
     }
   };
 

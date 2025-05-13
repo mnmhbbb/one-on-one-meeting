@@ -9,14 +9,11 @@ import ProfessorSearchModal from "@/components/modal/ProfessorSearchModal";
 import { Button } from "@/components/ui/button";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
-const StudentsHeader = () => {
+const ProfessorScheduleHeaderForStudent = () => {
   const pathname = usePathname();
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
 
-  const links = [
-    { href: "/student/my", label: "MY" },
-    { href: "/student/interview-requests", label: "신청현황" },
-  ];
+  const links = [{ href: "/student/my", label: "MY" }];
 
   return (
     <>
@@ -34,8 +31,8 @@ const StudentsHeader = () => {
             </Link>
           ))}
         </div>
-        {/* TODO: 학생 이름 표시 */}
-        <h2 className="mb-4 text-center text-xl font-semibold">OOO님의 면담 일정</h2>
+        {/* TODO: 교수님 이름 표시 */}
+        <h2 className="mb-4 text-center text-xl font-semibold">OOO 교수님의 면담 일정</h2>
         <div className="flex justify-end">
           <Button
             onClick={openProfessorSearch}
@@ -52,4 +49,4 @@ const StudentsHeader = () => {
   );
 };
 
-export default memo(StudentsHeader);
+export default memo(ProfessorScheduleHeaderForStudent);

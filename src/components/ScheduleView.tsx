@@ -1,13 +1,14 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
-import { RoleViewType } from "@/common/const";
+import { RoleViewType, UserRole } from "@/common/const";
 import DateSelector from "@/components/DateSelector";
 import MonthlySchedule from "@/components/MonthlySchdeule";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import WeeklySchedule from "@/components/WeeklySchedule";
+import { useUserStore } from "@/store/userStore";
 import { EVENTS } from "@/utils/data/mockData";
 
 const TABS = [
@@ -15,8 +16,22 @@ const TABS = [
   { value: "week", label: "Week" },
 ];
 
-const ScheduleView = () => {
+const ScheduleView = (props: { professorId?: string }) => {
+  const userRole = useUserStore(state => state.role);
+
   const [viewType, setViewType] = useState<"month" | "week">("month");
+  const [roleViewType, setRoleViewType] = useState<RoleViewType>(RoleViewType.STUDENT_ON_STUDENT);
+
+  // TODO: roleViewType에 따라 api 데이터 호출 필요
+  useEffect(() => {
+    if (userRole === UserRole.PROFESSOR) {
+      setRoleViewType(RoleViewType.PROFESSOR_ON_PROFESSOR);
+    } else if (props.professorId) {
+      setRoleViewType(RoleViewType.STUDENT_ON_PROFESSOR);
+    } else {
+      setRoleViewType(RoleViewType.STUDENT_ON_STUDENT);
+    }
+  }, [props.professorId, userRole]);
 
   return (
     <Tabs defaultValue="month" onValueChange={value => setViewType(value as "month" | "week")}>
@@ -34,7 +49,7 @@ const ScheduleView = () => {
               <DateSelector viewType={viewType} />
               <div></div>
             </div>
-            <MonthlySchedule events={EVENTS} roleViewType={RoleViewType.STUDENT_ON_STUDENT} />
+            <MonthlySchedule events={EVENTS} roleViewType={roleViewType} />
           </CardContent>
         </Card>
       </TabsContent>
@@ -52,7 +67,7 @@ const ScheduleView = () => {
               <DateSelector viewType={viewType} />
               <div></div>
             </div>
-            <WeeklySchedule events={EVENTS} roleViewType={RoleViewType.STUDENT_ON_STUDENT} />
+            <WeeklySchedule events={EVENTS} roleViewType={roleViewType} />
           </CardContent>
         </Card>
       </TabsContent>

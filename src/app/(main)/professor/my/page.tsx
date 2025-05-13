@@ -1,13 +1,11 @@
-"use client";
-
+import ProfessorHeader from "@/components/ProfessorHeader";
 import ScheduleFrame from "@/components/ScheduleFrame";
 import ScheduleView from "@/components/ScheduleView";
-import StudentsHeader from "@/components/StudentsHeader";
 
 const MyPage = () => {
   return (
     <ScheduleFrame>
-      <StudentsHeader />
+      <ProfessorHeader />
       <ScheduleView />
     </ScheduleFrame>
   );
