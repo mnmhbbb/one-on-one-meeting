@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { lazy, memo, Suspense, useEffect, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { INTERVIEW_MODAL_TYPE, InterviewModalType } from "@/common/const";
@@ -17,8 +17,6 @@ import { EVENTS } from "@/utils/data/mockData";
 // Lazy load components
 const RequestInterviewView = lazy(() => import("@/components/modal/RequestInterviewView"));
 const RejectInterviewView = lazy(() => import("@/components/modal/RejectInterviewView"));
-const CancelInterviewView = lazy(() => import("@/components/modal/CancelInterviewView"));
-const ConfirmInterviewView = lazy(() => import("@/components/modal/ConfirmInterviewView"));
 const RecordedInterviewView = lazy(() => import("@/components/modal/RecordedInterviewView"));
 const CreateInterviewView = lazy(() => import("@/components/modal/CreateInterviewView"));
 const InterviewListView = lazy(() => import("@/components/modal/InterviewListView"));
@@ -54,8 +52,8 @@ export const InterviewModal = () => {
   const modalViewMap = {
     [INTERVIEW_MODAL_TYPE.REQUESTED]: RequestInterviewView,
     [INTERVIEW_MODAL_TYPE.REJECTED]: RejectInterviewView,
-    [INTERVIEW_MODAL_TYPE.CANCELLED]: CancelInterviewView,
-    [INTERVIEW_MODAL_TYPE.CONFIRMED]: ConfirmInterviewView, // 미사용
+    [INTERVIEW_MODAL_TYPE.CANCELLED]: RejectInterviewView, // reject랑 동일 컴포넌트(interviewModalStore에서 interviewInfo.status로 워딩 분기처리하기)
+    [INTERVIEW_MODAL_TYPE.CONFIRMED]: () => <></>, // 아래에서 분기처리 하기 떄문에 빈 컴포넌트
     [INTERVIEW_MODAL_TYPE.RECORDED]: RecordedInterviewView,
     [INTERVIEW_MODAL_TYPE.CREATE]: CreateInterviewView,
     [INTERVIEW_MODAL_TYPE.LIST]: InterviewListView,
@@ -71,9 +69,8 @@ export const InterviewModal = () => {
       if (!interview) return null;
 
       const now = new Date();
-      const interviewDateTime = new Date(
-        `${interview.date.split(" ")[0]}T${interview.date.split(" ")[1]}`
-      );
+      const [startTime] = interview.time[0].split(" ~ ");
+      const interviewDateTime = new Date(`${interview.date}T${startTime}`);
 
       return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
     }
@@ -98,3 +95,5 @@ export const InterviewModal = () => {
     </Dialog>
   );
 };
+
+export default memo(InterviewModal);

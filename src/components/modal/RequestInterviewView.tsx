@@ -3,21 +3,26 @@
 import dayjs from "dayjs";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import "dayjs/locale/ko";
 
+import { UserRole } from "@/common/const";
 import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import ProfessorNotice from "@/components/modal/ProfessorNotice";
 import TimeSelect from "@/components/modal/TimeSelect";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { useUserStore } from "@/store/userStore";
 import { availableInterviewTime, professorCheckList, professorNotice } from "@/utils/data/mockData";
 
 /**
  * 면담 상태: 확인 요청 & 면담 확정(면담 시간 이전)
  */
 const RequestInterviewView = () => {
+  const MAX_REASON_LENGTH = 100;
+
+  const userRole = useUserStore(state => state.role);
   const { interviewInfo, selectedTime } = useInterviewModalStore(
     useShallow(state => ({
       interviewInfo: state.interviewInfo,
@@ -25,7 +30,7 @@ const RequestInterviewView = () => {
     }))
   );
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(() => (userRole === UserRole.STUDENT ? 1 : 2));
   const [cancelReason, setCancelReason] = useState(""); // 면담 취소 사유
   const [timeInfoList, setTimeInfoList] = useState(() => availableInterviewTime); // TODO: 최초 로드 시 interviewInfo.date의 교수 면담 가능 시간 불러오기
 
@@ -56,10 +61,6 @@ const RequestInterviewView = () => {
     setStep(step);
   }, []);
 
-  const handleCancelReasonChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCancelReason(e.target.value);
-  }, []);
-
   const handleNextStep = useCallback(() => {
     handleStepChange(2);
     // TODO: 현재 선택된 시간을 interviewInfo에 반영, 이후 저장할 때 그대로 저장하기 위함
@@ -73,10 +74,15 @@ const RequestInterviewView = () => {
 
   // 1단계 면담 날짜 포맷팅
   const formattedDate = useMemo(() => {
-    return interviewInfo?.date
-      ? dayjs(interviewInfo.date).locale("ko").format("YYYY년 MM월 DD일 dddd")
-      : "";
+    return interviewInfo?.date ? dayjs(interviewInfo.date).format("YYYY년 MM월 DD일 dddd") : "";
   }, [interviewInfo?.date]);
+
+  // 선택된 면담 시간 포맷 설정
+  const formattedSelectedTimeList = useMemo(() => {
+    if (!interviewInfo?.date) return [];
+    const baseDate = dayjs(interviewInfo.date).format("YYYY년 MM월 DD일 dddd");
+    return selectedTime.map(time => `${baseDate} ${time}`);
+  }, [selectedTime, interviewInfo?.date]);
 
   return (
     <>
@@ -109,19 +115,29 @@ const RequestInterviewView = () => {
       {/* 면담 신청 정보 확인 */}
       {step === 2 && (
         <div className="mt-4 max-h-[50vh] overflow-y-scroll p-1">
-          <InterviewInfoForm isBeforeInterviewDate />
+          <InterviewInfoForm
+            isBeforeInterviewDate
+            interviewDatetimeList={formattedSelectedTimeList}
+            interviewDatetimeGuideText="면담 신청 정보를 확인해주세요."
+          />
           <div className="mt-2 mb-8">
             <ProfessorNotice notice={professorNotice} checklist={professorCheckList} />
           </div>
-          <div className="flex justify-between gap-4">
-            <Button onClick={() => handleStepChange(1)}>이전</Button>
-            <div className="flex gap-4">
-              <Button variant="outline" onClick={() => handleStepChange(3)}>
-                면담취소
-              </Button>
+          {userRole === UserRole.STUDENT ? (
+            <div className="flex justify-between gap-4">
+              <Button onClick={() => handleStepChange(1)}>이전</Button>
+              <div className="flex gap-4">
+                <Button variant="outline" onClick={() => handleStepChange(3)}>
+                  면담취소
+                </Button>
+                <Button>저장</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-end">
               <Button>저장</Button>
             </div>
-          </div>
+          )}
         </div>
       )}
 
@@ -129,13 +145,13 @@ const RequestInterviewView = () => {
       {step === 3 && (
         <div className="mt-4 p-1">
           <div className="mb-1 text-left text-base font-bold">면담 취소 사유</div>
-          <input
-            type="text"
+          <Textarea
             required
             value={cancelReason}
-            onChange={handleCancelReasonChange}
+            onChange={e => setCancelReason(e.target.value)}
             placeholder="면담 취소 사유를 입력해주세요."
-            className="mb-4 w-full rounded-md border border-[#c6b9b1] px-2 py-1.5 text-sm"
+            maxLength={MAX_REASON_LENGTH}
+            className="mb-4 w-full text-sm whitespace-pre-line"
           />
           <div className="flex justify-end gap-4">
             <Button>저장</Button>
