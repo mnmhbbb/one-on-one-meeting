@@ -16,10 +16,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "인증 정보 없음" }, { status: 404 });
   }
 
-  if (codeEntry.used) {
-    return NextResponse.json({ message: "이미 인증됨" }, { status: 400 });
-  }
-
   if (codeEntry.code !== inputCode) {
     return NextResponse.json({ message: "코드 불일치" }, { status: 400 });
   }

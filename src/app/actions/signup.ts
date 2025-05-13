@@ -65,6 +65,7 @@ export async function signup(formData: FormData): Promise<void> {
     department,
     phone_num: phoneNum || null,
     notification_email: email,
+    email: email,
   };
 
   if (role === "student") {

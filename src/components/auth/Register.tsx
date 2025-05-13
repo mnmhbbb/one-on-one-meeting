@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
+import { LockKeyhole, Mail, User, Phone, BookOpen, GraduationCap, MapPin } from "lucide-react";
 
 type Props = {
   role: "student" | "professor";
@@ -19,10 +20,10 @@ export default function Register({ role }: Props) {
   const [department, setDepartment] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [isVerified, setIsVerified] = useState(false);
-  const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [interviewLocation, setInterviewLocation] = useState("");
 
-  const handleSendCode = async () => {
+  const handleSendCode = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     const res = await fetch("/api/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -33,7 +34,8 @@ export default function Register({ role }: Props) {
     alert(result.message);
   };
 
-  const handleVerifyCode = async () => {
+  const handleVerifyCode = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     const res = await fetch("/api/email/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -41,13 +43,18 @@ export default function Register({ role }: Props) {
     });
 
     const result = await res.json();
+    console.log(result);
     if (res.ok) {
-      setIsCodeVerified(true);
+      setIsVerified(true);
       alert(result.message);
     } else {
       alert(result.message);
     }
   };
+
+  useEffect(() => {
+    console.log("isVerified 상태:", isVerified);
+  }, [isVerified]);
 
   useEffect(() => {
     // 영문자 1개 이상, 숫자 1개 이상 포함 (대소문자 구분 없음), 특수문자 허용, 8자 이상
@@ -67,73 +74,95 @@ export default function Register({ role }: Props) {
   }, [password, confirmPassword]);
 
   return (
-    <>
-      <div className="flex gap-2">
-        <input
-          type="email"
-          name="user_id"
-          placeholder="아이디(이메일)"
-          value={userId}
-          onChange={e => setUserId(e.target.value)}
-          required
-          className="flex-1 rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
-        />
+    <div className="space-y-5">
+      <div className="relative">
+        <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+          <Mail size={20} />
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="email"
+            name="user_id"
+            placeholder="아이디(이메일)"
+            value={userId}
+            onChange={e => setUserId(e.target.value)}
+            required
+            className="flex-1 rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
+            readOnly={isVerified}
+          />
+          <button
+            onClick={handleSendCode}
+            disabled={isVerified}
+            className="w-28 rounded-full bg-[#6b5545] px-4 py-2 text-center text-base font-medium text-white shadow-md transition-all duration-300 hover:bg-[#5a4638] hover:shadow-lg disabled:bg-gray-400"
+          >
+            인증하기
+          </button>
+        </div>
+      </div>
+
+      <div className="relative">
+        <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+          <Mail size={20} />
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="인증번호"
+            value={verificationCode}
+            onChange={e => setVerificationCode(e.target.value)}
+            readOnly={isVerified}
+            className="flex-1 rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none disabled:bg-gray-200"
+          />
+          <button
+            onClick={handleVerifyCode}
+            disabled={isVerified}
+            className="w-28 rounded-full bg-[#6b5545] px-4 py-2 text-center text-base font-medium text-white shadow-md transition-all duration-300 hover:bg-[#5a4638] hover:shadow-lg disabled:bg-gray-400"
+          >
+            확인
+          </button>
+        </div>
       </div>
 
       <div>
-        <button
-          onClick={handleSendCode}
-          className="rounded-md bg-[#6b5545] px-4 py-2 text-center text-base font-medium text-white hover:bg-[#5a4638]"
-        >
-          인증하기
-        </button>
-      </div>
-
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="인증번호"
-          value={verificationCode}
-          onChange={e => setVerificationCode(e.target.value)}
-          // disabled={!isVerified}
-          className="flex-1 rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none disabled:bg-gray-200"
-        />
-        <button
-          onClick={handleVerifyCode}
-          // disabled={!isVerified}
-          className="rounded-md bg-[#6b5545] px-4 py-2 text-center text-base font-medium text-white hover:bg-[#5a4638] disabled:bg-gray-400"
-        >
-          확인
-        </button>
+        <div className="relative">
+          <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+            <LockKeyhole size={20} />
+          </div>
+          <input
+            type="password"
+            name="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+            className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
+          />
+        </div>
+        {passwordError && <p className="mt-1 text-center text-sm text-red-500">{passwordError}</p>}
       </div>
 
       <div>
-        <input
-          type="password"
-          name="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
-        />
-        {passwordError && <p className="mt-1 text-sm text-red-500">{passwordError}</p>}
+        <div className="relative">
+          <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+            <LockKeyhole size={20} />
+          </div>
+          <input
+            type="password"
+            name="confirm_password"
+            placeholder="비밀번호 확인"
+            value={confirmPassword}
+            onChange={e => setConfirmPassword(e.target.value)}
+            required
+            className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
+          />
+        </div>
+        {confirmError && <p className="mt-1 text-center text-sm text-red-500">{confirmError}</p>}
       </div>
 
-      <div>
-        <input
-          type="password"
-          name="confirm_password"
-          placeholder="비밀번호 확인"
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
-          required
-          className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
-        />
-        {confirmError && <p className="mt-1 text-sm text-red-500">{confirmError}</p>}
-      </div>
-
-      <div>
+      <div className="relative">
+        <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+          <User size={20} />
+        </div>
         <input
           type="text"
           name="name"
@@ -141,11 +170,14 @@ export default function Register({ role }: Props) {
           value={name}
           onChange={e => setName(e.target.value)}
           required
-          className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
+          className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
         />
       </div>
 
-      <div>
+      <div className="relative">
+        <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+          <GraduationCap size={20} />
+        </div>
         <input
           type="text"
           name="sign_num"
@@ -153,11 +185,14 @@ export default function Register({ role }: Props) {
           value={signNum}
           onChange={e => setSignNum(e.target.value)}
           required
-          className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
+          className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
         />
       </div>
 
-      <div>
+      <div className="relative">
+        <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+          <BookOpen size={20} />
+        </div>
         <input
           type="text"
           name="department"
@@ -165,23 +200,29 @@ export default function Register({ role }: Props) {
           value={department}
           onChange={e => setDepartment(e.target.value)}
           required
-          className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
+          className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
         />
       </div>
 
-      <div>
+      <div className="relative">
+        <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+          <Phone size={20} />
+        </div>
         <input
           type="text"
           name="phone_num"
           placeholder="전화번호"
           value={phoneNum}
           onChange={e => setPhoneNum(e.target.value)}
-          className="w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base focus:border-[#6b5545] focus:outline-none"
+          className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
         />
       </div>
 
-      <div>
-        {role === "professor" && (
+      {role === "professor" && (
+        <div className="relative">
+          <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+            <MapPin size={20} />
+          </div>
           <input
             type="text"
             name="interview_location"
@@ -189,11 +230,11 @@ export default function Register({ role }: Props) {
             value={interviewLocation}
             onChange={e => setInterviewLocation(e.target.value)}
             required
-            className="mb-2 w-full rounded-full border border-gray-300 bg-white px-5 py-4 text-base"
+            className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
           />
-        )}
-        <input type="hidden" name="role" value={role} />
-      </div>
-    </>
+        </div>
+      )}
+      <input type="hidden" name="role" value={role} />
+    </div>
   );
 }
