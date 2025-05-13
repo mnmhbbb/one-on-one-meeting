@@ -17,7 +17,7 @@ export default function Register({ role }: Props) {
   const [confirmError, setConfirmError] = useState("");
   const [name, setName] = useState("");
   const [signNum, setSignNum] = useState("");
-  const [department, setDepartment] = useState("");
+  const [college, setCollege] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [interviewLocation, setInterviewLocation] = useState("");
@@ -181,7 +181,7 @@ export default function Register({ role }: Props) {
         <input
           type="text"
           name="sign_num"
-          placeholder="학번"
+          placeholder="교번"
           value={signNum}
           onChange={e => setSignNum(e.target.value)}
           required
@@ -195,10 +195,10 @@ export default function Register({ role }: Props) {
         </div>
         <input
           type="text"
-          name="department"
-          placeholder="학과"
-          value={department}
-          onChange={e => setDepartment(e.target.value)}
+          name="college"
+          placeholder="학부"
+          value={college}
+          onChange={e => setCollege(e.target.value)}
           required
           className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
         />
