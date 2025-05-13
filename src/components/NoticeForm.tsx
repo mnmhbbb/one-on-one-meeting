@@ -18,7 +18,7 @@ const NoticeForm = () => {
         <div className="mt-2 grid grid-cols-2 gap-12">
           <div className="flex flex-col gap-3 rounded-xl bg-[#F7F7F7] p-6 shadow-xl">
             <Textarea
-              className="h-[20rem] resize-none overflow-y-scroll border-none p-0 !text-base shadow-none outline-none focus-visible:ring-0"
+              className="h-[20rem] overflow-y-scroll border-none p-0 !text-base shadow-none outline-none focus-visible:ring-0"
               placeholder="공지 내용을 입력하세요."
               value={notice}
               onChange={e => setNotice(e.target.value)}
