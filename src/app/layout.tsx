@@ -33,7 +33,7 @@ export default function RootLayout({
       <body className={`${sans.className} bg-gray-100 antialiased`}>
         <ClientLocaleSetter />
         <NavigationBar />
-        <main className="overflow-hidden">{children}</main>
+        <main>{children}</main>
       </body>
     </html>
   );
