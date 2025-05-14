@@ -37,6 +37,7 @@ export async function login(formData: FormData): Promise<void> {
     throw new Error("이메일 인증이 완료되지 않았습니다. 이메일을 확인해 주세요.");
   }
 
+  // TODO: accessToken 기간 줄이기
   revalidatePath("/", "layout");
   redirect(redirectTo ?? "/");
 }
