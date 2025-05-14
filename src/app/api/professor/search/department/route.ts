@@ -4,8 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 {
   /*================== 교수 검색 API====================*/
 }
-
-// GET: 학부, 교수 이름, 즐겨찾기 여부
+// GET: 학부 불러오기
 export async function GET() {
   const supabase = await createClient();
   const { data, error } = await supabase.from("department").select("college");

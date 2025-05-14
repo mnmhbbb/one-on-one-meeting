@@ -17,6 +17,7 @@ export default function Register({ role }: Props) {
   const [confirmError, setConfirmError] = useState("");
   const [name, setName] = useState("");
   const [signNum, setSignNum] = useState("");
+  const [department, setDepartment] = useState("");
   const [college, setCollege] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [isVerified, setIsVerified] = useState(false);
@@ -181,7 +182,7 @@ export default function Register({ role }: Props) {
         <input
           type="text"
           name="sign_num"
-          placeholder="교번"
+          placeholder={role === "student" ? "학번" : "교번"}
           value={signNum}
           onChange={e => setSignNum(e.target.value)}
           required
@@ -189,20 +190,39 @@ export default function Register({ role }: Props) {
         />
       </div>
 
-      <div className="relative">
-        <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
-          <BookOpen size={20} />
+      {role === "student" && (
+        <div className="relative">
+          <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+            <BookOpen size={20} />
+          </div>
+          <input
+            type="text"
+            name="department"
+            placeholder="학과"
+            value={department}
+            onChange={e => setDepartment(e.target.value)}
+            required
+            className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
+          />
         </div>
-        <input
-          type="text"
-          name="college"
-          placeholder="학부"
-          value={college}
-          onChange={e => setCollege(e.target.value)}
-          required
-          className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
-        />
-      </div>
+      )}
+
+      {role === "professor" && (
+        <div className="relative">
+          <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
+            <BookOpen size={20} />
+          </div>
+          <input
+            type="text"
+            name="college"
+            placeholder="학부"
+            value={college}
+            onChange={e => setCollege(e.target.value)}
+            required
+            className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
+          />
+        </div>
+      )}
 
       <div className="relative">
         <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
