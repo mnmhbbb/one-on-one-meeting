@@ -18,7 +18,7 @@ const NoticeForm = () => {
         <div className="mt-2 grid grid-cols-2 gap-12">
           <div className="flex flex-col gap-3 rounded-xl bg-[#F7F7F7] p-6 shadow-xl">
             <Textarea
-              className="h-[20rem] overflow-y-scroll border-none p-0 !text-base shadow-none outline-none focus-visible:ring-0"
+              className="h-[20rem] overflow-y-auto border-none p-0 !text-base shadow-none outline-none focus-visible:ring-0"
               placeholder="공지 내용을 입력하세요."
               value={notice}
               onChange={e => setNotice(e.target.value)}
@@ -39,7 +39,7 @@ const NoticeForm = () => {
             </p>
             <Separator className="mt-2 mb-1.5" />
             <b className="text-primary mb-1.5 inline-block text-lg">교수님 공지사항</b>
-            <div className="bg-primary h-[15rem] w-full overflow-y-scroll p-3 text-left text-base font-semibold whitespace-pre-line text-white">
+            <div className="bg-primary h-[15rem] w-full overflow-y-auto p-3 text-left text-base font-semibold whitespace-pre-line text-white">
               {notice}
             </div>
           </div>

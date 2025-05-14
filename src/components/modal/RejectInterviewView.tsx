@@ -38,7 +38,7 @@ const RejectInterviewView = () => {
         <DialogTitle className="text-left text-2xl font-bold">{headerText}</DialogTitle>
       </DialogHeader>
 
-      <div className="mt-4 max-h-[50vh] overflow-y-scroll p-1">
+      <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
         <InterviewInfoForm interviewDatetimeList={formattedInterviewDatetimeList} />
         <ProfessorNotice notice={professorNotice} checklist={professorCheckList} />
         <div className="mt-5 flex justify-end">
