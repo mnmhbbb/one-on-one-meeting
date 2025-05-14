@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +10,51 @@ import { Textarea } from "@/components/ui/textarea";
 
 const NoticeForm = () => {
   const [notice, setNotice] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fetchNotice = async () => {
+    try {
+      const res = await fetch("/api/interview/notice");
+      if (!res.ok) throw new Error("공지 조회 실패");
+      const { data } = await res.json();
+      if (data) {
+        setNotice(data.notice_content || "");
+      }
+    } catch (error) {
+      console.error("공지 불러오기 실패:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotice();
+  }, []);
+
+  // 저장 버튼 핸들러
+  const handleSave = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/interview/notice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          notice_content: notice,
+          last_update_at: new Date().toISOString(),
+        }),
+      });
+
+      if (!res.ok) throw new Error("공지 업데이트 실패");
+
+      alert("공지사항이 저장되었습니다.");
+      await fetchNotice(); // 저장 후 최신 상태로 재조회
+    } catch (error) {
+      console.error(error);
+      alert("공지 저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Card className="rounded-l-none">
@@ -24,7 +69,9 @@ const NoticeForm = () => {
               onChange={e => setNotice(e.target.value)}
               maxLength={500}
             />
-            <Button className="ml-auto flex max-w-fit">저장</Button>
+            <Button className="ml-auto flex max-w-fit" onClick={handleSave} disabled={isSubmitting}>
+              저장
+            </Button>
           </div>
 
           <div className="rounded-xl bg-[#F7F7F7] p-6 shadow-xl">
