@@ -31,7 +31,9 @@ const ProfessorHeader = () => {
           ))}
         </div>
         {/* TODO: 교수 이름 표시 */}
-        <h2 className="mb-4 text-center text-xl font-semibold">OOO 교수님의 면담 일정</h2>
+        <h2 className="mb-4 text-center text-xl font-semibold">
+          OOO 교수님의 면담 일정 {pathname === "/professor/schedule" && "관리"}
+        </h2>
       </div>
     </>
   );

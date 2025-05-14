@@ -8,6 +8,7 @@ import {
   isSameMonth,
   isWithinInterval,
 } from "date-fns";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, useMemo, memo, useEffect } from "react";
 
@@ -16,6 +17,7 @@ import DateSelector from "@/components/DateSelector";
 import ProfessorInterviewTable from "@/components/ProfessorInterviewTable";
 import StatusFilterGroup from "@/components/StatusFilterGroup";
 import StudentInterviewTable from "@/components/StudentInterviewTable";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDateStore } from "@/store/dateStore";
@@ -102,7 +104,13 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
                 ))}
               </TabsList>
               <DateSelector viewType="month" />
-              <div></div>
+              {!isStudent && (
+                <div className="flex items-center justify-end">
+                  <Button variant="outline" className="w-[60%]">
+                    <Link href="/professor/schedule">일정 보기</Link>
+                  </Button>
+                </div>
+              )}
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
             {isStudent ? (
