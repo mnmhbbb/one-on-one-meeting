@@ -30,13 +30,6 @@ interface Professor {
   isFavorite: boolean;
 }
 
-const DEPARTMENTS = [
-  { value: "all", label: "전체" },
-  { value: "콘텐츠IT", label: "콘텐츠IT학과" },
-  { value: "빅데이터", label: "빅데이터학과" },
-  { value: "스마트IoT", label: "스마트IoT학과" },
-];
-
 // TODO: API 연동 후 제거
 const MOCK_PROFESSORS: Professor[] = [
   { id: "1", name: "김철수 교수님", department: "콘텐츠IT", isFavorite: true },
@@ -57,6 +50,29 @@ const ProfessorSearchModal = () => {
       setPathname: state.setPathname,
     }))
   );
+  const [colleges, setColleges] = useState<{ value: string; label: string }[]>([]);
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+      try {
+        const res = await fetch("/api/professor/search");
+        const { colleges } = await res.json();
+
+        const formatted = [{ value: "all", label: "전체" }].concat(
+          colleges.map((c: string) => ({
+            value: c,
+            label: c,
+          }))
+        );
+
+        setColleges(formatted);
+      } catch (e) {
+        console.error("학과 목록을 불러오지 못했습니다.", e);
+      }
+    };
+
+    fetchColleges();
+  }, []);
 
   // 검색 모달이 열려있는 상태에서 페이지 변경 시 모달 닫음
   useEffect(() => {
@@ -102,7 +118,7 @@ const ProfessorSearchModal = () => {
               <SelectValue placeholder="학과를 선택하세요" />
             </SelectTrigger>
             <SelectContent>
-              {DEPARTMENTS.map(dept => (
+              {colleges.map(dept => (
                 <SelectItem key={dept.value} value={dept.value}>
                   {dept.label}
                 </SelectItem>

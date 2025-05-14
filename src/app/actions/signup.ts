@@ -15,10 +15,12 @@ export async function signup(formData: FormData): Promise<void> {
   const name = formData.get("name") as string;
   const signNum = formData.get("sign_num") as string;
   const department = formData.get("department") as string;
+  const college = formData.get("college") as string;
   const phoneNum = (formData.get("phone_num") as string) || null;
   const interviewLocation = formData.get("interview_location") as string;
   const role = formData.get("role") as "student" | "professor";
 
+  console;
   if (password !== confirmPassword) {
     throw new Error("비밀번호가 일치하지 않습니다.");
   }
@@ -62,26 +64,27 @@ export async function signup(formData: FormData): Promise<void> {
     id: userId,
     name,
     sign_num: signNum,
-    department,
     phone_num: phoneNum || null,
     notification_email: email,
     email: email,
   };
 
   if (role === "student") {
-    const { error } = await supabase.from("students").insert(commonData);
+    const { error } = await supabase.from("students").insert({
+      ...commonData,
+      department,
+    });
     if (error) throw error;
   } else if (role === "professor") {
     const { error } = await supabase.from("professors").insert({
       ...commonData,
-      interviewLocation,
+      college,
+      interview_location: interviewLocation,
     });
     if (error) throw error;
   } else {
     throw new Error(`지원되지 않는 역할입니다: ${role}`);
   }
-
-  // TODO: 이메일 인증 완료된 사용자인지 확인하는 로직 추가하기
 
   revalidatePath("/", "layout");
 
