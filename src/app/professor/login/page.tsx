@@ -18,6 +18,7 @@ export default function ProfessorLoginPage() {
         </h1>
         <form className="relative z-10 space-y-5">
           <RedirectInput />
+          <input type="hidden" name="role" value="professor" />
           <div className="relative">
             <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
               <Mail size={20} />

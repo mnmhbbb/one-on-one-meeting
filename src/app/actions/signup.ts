@@ -59,7 +59,7 @@ export async function signup(formData: FormData): Promise<void> {
     throw new Error("이메일 인증 상태 갱신 실패");
   }
 
-  // 학생, 교수 테이블에 추가 정보 저장
+  // 학생, 교수 테이블에 공통 정보 저장
   const commonData = {
     id: userId,
     name,
@@ -69,19 +69,41 @@ export async function signup(formData: FormData): Promise<void> {
     email: email,
   };
 
+  // 학생 추가 정보 저장
   if (role === "student") {
     const { error } = await supabase.from("students").insert({
       ...commonData,
       department,
     });
     if (error) throw error;
-  } else if (role === "professor") {
-    const { error } = await supabase.from("professors").insert({
+    const { error: updateError } = await supabase
+      .from("students")
+      .update({ is_verified: true })
+      .eq("email", email);
+
+    if (updateError) throw updateError;
+  }
+
+  // 교수 추가 정보 및 기본 생성 로직
+  else if (role === "professor") {
+    const { error: dataError } = await supabase.from("professors").insert({
       ...commonData,
       college,
       interview_location: interviewLocation,
     });
-    if (error) throw error;
+    if (dataError) throw dataError;
+
+    const { error: noticeError } = await supabase.from("professor_notice").insert({
+      professor_id: userId,
+    });
+    if (noticeError) throw noticeError;
+
+    const { error: updateError } = await supabase
+      .from("professors")
+      .update({ is_verified: true })
+      .eq("email", email);
+
+    if (updateError) throw updateError;
   } else {
     throw new Error(`지원되지 않는 역할입니다: ${role}`);
   }
