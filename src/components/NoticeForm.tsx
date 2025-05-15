@@ -36,7 +36,7 @@ const NoticeForm = () => {
 
     try {
       const res = await fetch("/api/interview/notice", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           notice_content: notice,
