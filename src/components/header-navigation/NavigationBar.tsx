@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
+
 import UserNavActions from "./UserNavActions";
 
 const NavigationBar = () => {
@@ -13,7 +14,7 @@ const NavigationBar = () => {
             alt="KNOCK Logo"
             width={200}
             height={48}
-            className="h-12 w-auto" // 비율 유지하면서 높이 맞춤
+            className="h-7 w-auto lg:h-12" // 비율 유지하면서 높이 맞춤
           />
           <h1 className="text-sm font-bold whitespace-nowrap text-white sm:text-base md:text-2xl">
             |&nbsp;면담 예약 사이트

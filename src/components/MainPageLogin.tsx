@@ -1,8 +1,8 @@
 "use client";
 
-import type React from "react";
-import { useRouter } from "next/navigation";
 import { GraduationCap, Users, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -24,17 +24,17 @@ export default function MainPageLogin() {
 
   return (
     <div className="w-full flex-1 flex-col bg-gray-100">
-      <div className="flex w-full flex-col items-center justify-center px-10 py-25 md:px-6">
+      <div className="flex w-full flex-col items-center justify-center px-10 py-10 md:px-6 lg:py-25">
         <div className="mb-12 flex flex-col items-center justify-center text-center">
           <h1 className="mb-5 text-3xl font-bold tracking-tight text-[#493a2e] sm:text-3xl md:text-5xl">
             저희 사이트를 찾아주셔서 감사합니다.
           </h1>
-          <p className="mx-auto text-lg text-slate-600 md:text-2xl">
+          <p className="mx-auto text-lg break-keep text-slate-600 md:text-2xl">
             교수 - 학생 간에 불필요한 연락없이 실시간으로 면담을 예약하세요.
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-3 lg:gap-10">
           <UserTypeCard
             title="학생"
             description={
@@ -88,7 +88,7 @@ function UserTypeCard({ title, description, icon, onClick, gradient, index }: Us
   return (
     <div className="flex justify-center">
       <Card
-        className="relative flex h-full w-[500px] flex-col items-center justify-between rounded-xl border-0 bg-white p-6 text-center shadow-[0_15px_30px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 ease-in-out hover:scale-[1.02] hover:transform-gpu hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)]"
+        className="relative flex h-full w-[500px] flex-col items-center justify-between gap-0 rounded-xl border-0 bg-white p-6 text-center shadow-[0_15px_30px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 ease-in-out hover:scale-[1.02] hover:transform-gpu hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)]"
         style={{ borderRight: "none", borderLeft: "none" }}
       >
         {/* 상단 그라데이션 라인 */}
@@ -101,7 +101,7 @@ function UserTypeCard({ title, description, icon, onClick, gradient, index }: Us
             </div>
           </div>
           <h3 className="text-2xl font-bold text-slate-900">{title}</h3>
-          <p className="mt-2 text-center text-xl leading-relaxed break-words whitespace-normal text-slate-600">
+          <p className="mt-2 text-center text-lg leading-relaxed break-words whitespace-normal text-slate-600 lg:text-xl">
             {description}
           </p>
         </div>

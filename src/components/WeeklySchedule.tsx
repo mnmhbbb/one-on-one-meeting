@@ -69,7 +69,7 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-[100px_1fr] border-b pb-2">
+      <div className="grid grid-cols-[45px_1fr] border-b pb-2 md:grid-cols-[100px_1fr]">
         <div className="text-sm font-semibold text-gray-400">시간</div>
         <div className="grid grid-cols-5 gap-2 text-center text-sm font-semibold text-gray-600">
           {weekDates.map((date, i) => (
@@ -81,7 +81,7 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-[100px_1fr]">
+      <div className="grid grid-cols-[45px_1fr] md:grid-cols-[100px_1fr]">
         {/* 시간대 컬럼 */}
         <div className="space-y-2">
           {TIMES.map((time, i) => (

@@ -20,12 +20,12 @@ const StudentsHeader = () => {
 
   return (
     <>
-      <div className="grid grid-cols-3 items-end gap-2">
+      <div className="hidden grid-cols-3 items-end gap-0 md:grid md:gap-2">
         <div className="flex h-fit gap-2">
           {links.map(link => (
             <Link
               key={link.href}
-              className={`flex items-center rounded-md rounded-b-none border border-b-0 px-8 py-1.5 ${
+              className={`flex items-center rounded-md rounded-b-none border border-b-0 px-4 py-1 text-sm whitespace-nowrap md:px-8 md:py-1.5 md:text-base ${
                 pathname === link.href ? "bg-stone-600 text-white" : ""
               }`}
               href={link.href}
@@ -35,7 +35,9 @@ const StudentsHeader = () => {
           ))}
         </div>
         {/* TODO: 학생 이름 표시 */}
-        <h2 className="mb-4 text-center text-xl font-semibold">OOO님의 면담 일정</h2>
+        <h2 className="mb-4 text-center text-xl font-semibold whitespace-nowrap">
+          OOO님의 면담 일정
+        </h2>
         <div className="flex justify-end">
           <Button
             onClick={openProfessorSearch}
@@ -47,6 +49,38 @@ const StudentsHeader = () => {
           </Button>
         </div>
         <ProfessorSearchModal />
+      </div>
+      <div className="flex flex-col-reverse gap-0 md:hidden md:gap-2">
+        <div className="flex h-fit gap-2">
+          {links.map(link => (
+            <Link
+              key={link.href}
+              className={`flex items-center rounded-md rounded-b-none border border-b-0 px-6 py-1.5 text-sm whitespace-nowrap md:px-8 md:text-base ${
+                pathname === link.href ? "bg-stone-600 text-white" : ""
+              }`}
+              href={link.href}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+        {/* TODO: 학생 이름 표시 */}
+        <div className="flex items-end justify-between gap-0">
+          <h2 className="mb-5 text-center text-xl font-semibold whitespace-nowrap md:mb-4">
+            OOO님의 면담 일정
+          </h2>
+          <div className="flex justify-end">
+            <Button
+              onClick={openProfessorSearch}
+              variant="outline"
+              className="max-w-auto mb-4 max-w-fit gap-0 text-xs text-neutral-400 md:text-sm"
+            >
+              <Search className="mr-1 h-3 w-3 md:mr-2 md:h-4 md:w-4" />
+              교수님을 검색하세요.
+            </Button>
+          </div>
+          <ProfessorSearchModal />
+        </div>
       </div>
     </>
   );
