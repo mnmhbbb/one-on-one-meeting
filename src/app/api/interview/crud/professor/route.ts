@@ -20,7 +20,17 @@ export async function GET(req: NextRequest) {
   try {
     const { data, error } = await supabase
       .from("create_interview")
-      .select("*")
+      .select(
+        `
+      *,
+      professor_notice (
+        notice_content
+      ),
+      interview_guide (
+        guide_content
+      )
+    `
+      )
       .eq("professor_id", user.id)
       .gte("interview_date", start)
       .lte("interview_date", end);
