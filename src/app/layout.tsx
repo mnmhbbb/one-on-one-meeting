@@ -6,6 +6,7 @@ import "dayjs/locale/ko";
 import "./globals.css";
 import ClientLocaleSetter from "@/components/ClientLocaleSetter";
 import NavigationBar from "@/components/header-navigation/NavigationBar";
+import { FetchUser } from "@/components/auth/FetchUser";
 
 // 전역 locale 설정
 dayjs.locale("ko");
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${sans.className} bg-gray-100 antialiased`}>
+        <FetchUser />
         <ClientLocaleSetter />
         <NavigationBar />
         <main>{children}</main>
