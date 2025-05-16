@@ -1,11 +1,11 @@
 import InterviewRequestTabs from "@/components/InterviewRequestTabs";
 import ScheduleFrame from "@/components/ScheduleFrame";
-import StudentsHeader from "@/components/StudentsHeader";
+import StudentHeader from "@/components/StudentHeader";
 
 const InterviewRequestsPage = () => {
   return (
     <ScheduleFrame>
-      <StudentsHeader />
+      <StudentHeader />
       <InterviewRequestTabs isStudent />
     </ScheduleFrame>
   );
