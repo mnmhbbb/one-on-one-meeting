@@ -51,6 +51,7 @@ const ProfessorSearchModal = () => {
 
   // 학과 불러오기
   useEffect(() => {
+    if (!isProfessorSearchOpen) return;
     const fetchColleges = async () => {
       try {
         const res = await fetch("/api/professor/search/department");
@@ -70,7 +71,7 @@ const ProfessorSearchModal = () => {
     };
 
     fetchColleges();
-  }, []);
+  }, [isProfessorSearchOpen]);
 
   // 즐겨찾기 토글 요청
   const toggleFavorite = async (professorId: string) => {
@@ -98,6 +99,7 @@ const ProfessorSearchModal = () => {
 
   // 즐겨찾기, 전체 가져오기
   useEffect(() => {
+    if (!isProfessorSearchOpen) return;
     const fetchData = async () => {
       const [allRes, favRes] = await Promise.all([
         fetch("/api/professor/search/all").then(res => res.json()),
@@ -110,7 +112,7 @@ const ProfessorSearchModal = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isProfessorSearchOpen]);
 
   // 검색 모달이 열려있는 상태에서 페이지 변경 시 모달 닫음
   useEffect(() => {

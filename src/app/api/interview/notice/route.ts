@@ -4,7 +4,7 @@ import { getSessionUser } from "@/utils/auth/getSessionUser";
 {
   /*================== 교수 공지사항 관련 API====================*/
 }
-// GET: 공지사항 불러오기
+// GET: 교수 페이지의 공지사항 불러오기
 export async function GET() {
   const { user, supabase, response } = await getSessionUser();
   if (!user) return response;
@@ -21,8 +21,8 @@ export async function GET() {
   return NextResponse.json({ data });
 }
 
-// POST: 공지사항 등록하기
-export async function POST(req: NextRequest) {
+// PUT: 공지사항 업데이트
+export async function PUT(req: NextRequest) {
   const { user, supabase, response } = await getSessionUser();
   if (!user) return response;
 

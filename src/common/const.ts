@@ -38,11 +38,11 @@ export const STATUS_COLORS: Record<InterviewStatus, string> = {
 };
 
 export const STATUS_LABELS: Record<InterviewStatus, string> = {
-  [InterviewStatus.REQUESTED]: "확정 요청",
+  [InterviewStatus.REQUESTED]: "확정 대기",
   [InterviewStatus.CONFIRMED]: "면담 확정",
   [InterviewStatus.REJECTED]: "면담 거절",
   [InterviewStatus.CANCELLED]: "면담 취소",
-  [InterviewStatus.RECORDED]: "기록된 면담",
+  [InterviewStatus.RECORDED]: "면담 기록 완료",
 };
 
 export const INTERVIEW_MODAL_TYPE = {
