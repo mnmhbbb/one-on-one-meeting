@@ -46,3 +46,44 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
   }
 }
+
+// PUT: 면담 상태 업데이트
+export async function PUT(req: NextRequest) {
+  const { user, supabase, response } = await getSessionUser();
+  if (!user) return response;
+
+  try {
+    const body = await req.json();
+
+    const requiredKeys = ["student_id", "professor_id", "interview_date", "interview_state"];
+
+    const hasAllRequired = requiredKeys.every(
+      key => key in body && body[key] !== null && body[key] !== ""
+    );
+
+    if (!hasAllRequired) {
+      return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from("create_interview")
+      .update({
+        interview_state: body.interview_state,
+      })
+      .match({
+        student_id: body.student_id,
+        professor_id: body.professor_id,
+        interview_date: body.interview_date,
+      })
+      .select();
+
+    if (error) {
+      console.error(error);
+      return NextResponse.json({ message: "면담 업데이트 실패" }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: "면담 업데이트 완료", data }, { status: 201 });
+  } catch (err) {
+    return NextResponse.json({ message: "서버 오류" }, { status: 500 });
+  }
+}
