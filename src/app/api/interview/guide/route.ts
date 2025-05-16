@@ -4,7 +4,7 @@ import { getSessionUser } from "@/utils/auth/getSessionUser";
 {
   /*================== 안내사항 API====================*/
 }
-// GET: 안내사항 불러오기
+// GET: 안내사항 불러오기(나중에 어드민 생기면 사용할 듯)
 export async function GET() {
   const { user, supabase, response } = await getSessionUser();
   if (!user) return response;

@@ -1,12 +1,13 @@
 "use client";
 
+import { useUserStore } from "@/store/userStore";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
 
 const ProfessorHeader = () => {
   const pathname = usePathname();
-
+  const name = useUserStore(state => state.userInfo?.name);
   const links = [
     { href: "/professor/notice", label: "공지 등록" },
     ...(pathname === "/professor/interview-requests"
@@ -30,9 +31,8 @@ const ProfessorHeader = () => {
             </Link>
           ))}
         </div>
-        {/* TODO: 교수 이름 표시 */}
         <h2 className="mb-4 text-center text-xl font-semibold">
-          OOO 교수님의 면담 일정 {pathname === "/professor/schedule" && "관리"}
+          {name} 교수님의 면담 일정 {pathname === "/professor/schedule" && "관리"}
         </h2>
       </div>
     </>
