@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 
@@ -75,7 +76,7 @@ const UserNavActions = () => {
 
   return (
     <div className="flex items-center gap-4">
-      <Link href={linkHref} className="text-xs sm:text-sm md:text-base">
+      <Link href={linkHref} className="text-xs text-white sm:text-sm md:text-base">
         👤 내 정보
       </Link>
       <Button

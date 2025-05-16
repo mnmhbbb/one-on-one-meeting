@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { memo, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -44,9 +43,9 @@ const ProfessorSearchModal = () => {
       setPathname: state.setPathname,
     }))
   );
+  const [searchWord, setSearchWord] = useState<string>("");
   const [colleges, setColleges] = useState<{ value: string; label: string }[]>([]);
   const [professors, setProfessors] = useState<Professor[]>([]);
-  // DB에서 가져온 즐겨찾기 교수들의 id만 모아서 저장
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   // 학과 불러오기
@@ -129,9 +128,16 @@ const ProfessorSearchModal = () => {
     }
   };
 
-  const filteredProfessors = professors.filter(
-    professor => selectedDepartment === "all" || professor.college === selectedDepartment
-  );
+  // 즐겨찾기 교수 목록
+  const favoriteProfessors = professors
+    .filter(professor => favoriteIds.has(professor.id))
+    .filter(professor => selectedDepartment === "all" || professor.college === selectedDepartment)
+    .filter(professor => searchWord === "" || professor.name.includes(searchWord));
+
+  // 전체 교수 목록
+  const AllProfessors = professors
+    .filter(professor => selectedDepartment === "all" || professor.college === selectedDepartment)
+    .filter(professor => searchWord === "" || professor.name.includes(searchWord));
 
   const renderProfessorCard = (professor: Professor) => {
     const isFavorite = favoriteIds.has(professor.id);
@@ -166,7 +172,12 @@ const ProfessorSearchModal = () => {
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <Input placeholder="교수님을 검색하세요." className="mb-3" />
+          <Input
+            placeholder="교수님을 검색하세요."
+            onChange={e => setSearchWord(e.target.value)}
+            value={searchWord}
+            className="mb-3"
+          />
           <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="학과를 선택하세요" />
@@ -186,12 +197,24 @@ const ProfessorSearchModal = () => {
             </TabsList>
             <TabsContent value="favorite">
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
-                {filteredProfessors.filter(p => favoriteIds.has(p.id)).map(renderProfessorCard)}
+                {favoriteProfessors.length > 0 ? (
+                  favoriteProfessors.map(renderProfessorCard)
+                ) : (
+                  <div className="py-4 text-center text-gray-500">
+                    {searchWord ? "검색 결과가 없습니다." : "즐겨찾기한 교수가 없습니다."}
+                  </div>
+                )}
               </div>
             </TabsContent>
             <TabsContent value="all">
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
-                {filteredProfessors.map(renderProfessorCard)}
+                {AllProfessors.length > 0 ? (
+                  AllProfessors.map(renderProfessorCard)
+                ) : (
+                  <div className="py-4 text-center text-gray-500">
+                    {searchWord ? "검색 결과가 없습니다." : "등록된 교수가 없습니다."}
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>

@@ -8,8 +8,11 @@ import { memo } from "react";
 import ProfessorSearchModal from "@/components/modal/ProfessorSearchModal";
 import { Button } from "@/components/ui/button";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { useUserStore } from "@/store/userStore";
 
-const StudentsHeader = () => {
+const StudentHeader = () => {
+  const userName = useUserStore(state => state.userInfo?.name);
+
   const pathname = usePathname();
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
 
@@ -20,6 +23,7 @@ const StudentsHeader = () => {
 
   return (
     <>
+      {/* 데스크탑 화면(모바일과 화면 배치가 다름) */}
       <div className="hidden grid-cols-3 items-end gap-0 md:grid md:gap-2">
         <div className="flex h-fit gap-2">
           {links.map(link => (
@@ -34,9 +38,8 @@ const StudentsHeader = () => {
             </Link>
           ))}
         </div>
-        {/* TODO: 학생 이름 표시 */}
         <h2 className="mb-4 text-center text-xl font-semibold whitespace-nowrap">
-          OOO님의 면담 일정
+          {userName}님의 면담 일정
         </h2>
         <div className="flex justify-end">
           <Button
@@ -50,6 +53,7 @@ const StudentsHeader = () => {
         </div>
         <ProfessorSearchModal />
       </div>
+      {/* 모바일 화면(화면 배치를 다르게 하기 위함) */}
       <div className="flex flex-col-reverse gap-0 md:hidden md:gap-2">
         <div className="flex h-fit gap-2">
           {links.map(link => (
@@ -64,10 +68,9 @@ const StudentsHeader = () => {
             </Link>
           ))}
         </div>
-        {/* TODO: 학생 이름 표시 */}
         <div className="flex items-end justify-between gap-0">
           <h2 className="mb-5 text-center text-xl font-semibold whitespace-nowrap md:mb-4">
-            OOO님의 면담 일정
+            {userName}님의 면담 일정
           </h2>
           <div className="flex justify-end">
             <Button
@@ -86,4 +89,4 @@ const StudentsHeader = () => {
   );
 };
 
-export default memo(StudentsHeader);
+export default memo(StudentHeader);
