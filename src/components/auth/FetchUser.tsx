@@ -1,25 +1,35 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+
+import { userApi } from "@/api/user";
 import { useUserStore } from "@/store/userStore";
+
+import LoadingUI from "../LoadingUI";
 
 export const FetchUser = () => {
   const setUserInfo = useUserStore(state => state.setUserInfo);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const res = await fetch("/api/user");
-        if (!res.ok) return;
-        const { user, role } = await res.json();
-        setUserInfo({ ...user, role });
-      } catch (e) {
-        console.error("유저 정보 불러오기 실패", e);
-      }
-    };
+  const { data: userData, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: userApi.getCurrentUser,
+    retry: false,
+  });
 
-    fetchUserInfo();
-  }, []);
+  // 유저 정보를 store에 반영
+  useEffect(() => {
+    if (userData) {
+      const { user, role } = userData;
+      setUserInfo({ ...user, role });
+    }
+  }, [userData, setUserInfo]);
+
+  if (isLoading) {
+    return <LoadingUI />;
+  }
 
   return null;
 };
+
+export default FetchUser;

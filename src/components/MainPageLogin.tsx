@@ -3,12 +3,17 @@
 import { GraduationCap, Users, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
+import { useEffect } from "react";
 
+import { UserRole } from "@/common/const";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useUserStore } from "@/store/userStore";
 
 export default function MainPageLogin() {
   const router = useRouter();
+
+  const userRole = useUserStore(state => state.role);
 
   const handleStudentClick = () => {
     router.push("/student/login");
@@ -21,6 +26,17 @@ export default function MainPageLogin() {
   const handleAdminClick = () => {
     router.push("/admin/login");
   };
+
+  // 로그인 상태일 땐 학생/교수 메인 페이지로 이동
+  useEffect(() => {
+    if (userRole) {
+      if (userRole === UserRole.STUDENT) {
+        router.push("/student/my");
+      } else if (userRole === UserRole.PROFESSOR) {
+        router.push("/professor/my");
+      }
+    }
+  }, [userRole, router]);
 
   return (
     <div className="w-full flex-1 flex-col bg-gray-100">

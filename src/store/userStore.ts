@@ -6,10 +6,12 @@ interface UserState {
   userInfo: UserInfo | null;
   role: UserRole | null;
   setUserInfo: (userInfo: UserInfo) => void;
+  clearUserInfo: () => void;
 }
 
 export const useUserStore = createStore<UserState>(set => ({
   userInfo: null,
   role: null,
   setUserInfo: (userInfo: UserInfo) => set({ userInfo, role: userInfo.role }),
+  clearUserInfo: () => set({ userInfo: null, role: null }),
 }));

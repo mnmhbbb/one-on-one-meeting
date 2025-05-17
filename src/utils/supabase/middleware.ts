@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { UserRole } from "@/common/const";
+
 export async function updateSession(request: NextRequest) {
   const supabaseResponse = NextResponse.next({ request });
 
@@ -28,6 +30,7 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const userRole = user?.identities?.[0].identity_data?.role;
 
   const PUBLIC_KEYWORDS = ["/login", "/register", "/find-password"];
   const isPublicPage =
@@ -54,6 +57,15 @@ export async function updateSession(request: NextRequest) {
     }
 
     return NextResponse.redirect(url);
+  }
+
+  // 학생 유저가 교수 페이지에 접근하려고 하면 리다이렉트
+  if (userRole === UserRole.STUDENT && request.nextUrl.pathname.startsWith("/professor")) {
+    return NextResponse.redirect(new URL("/student/my", request.url));
+  }
+  // 교수 유저가 학생 페이지에 접근하려고 하면 리다이렉트
+  if (userRole === UserRole.PROFESSOR && request.nextUrl.pathname.startsWith("/student")) {
+    return NextResponse.redirect(new URL("/professor/my", request.url));
   }
 
   // 세션을 갱신한 후 페이지를 계속해서 처리
