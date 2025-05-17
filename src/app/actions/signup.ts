@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
-import { createClient } from "@/utils/supabase/server";
-import { supabaseAdmin } from "@/utils/supabase/admin";
 import { redirect } from "next/navigation";
+
+import { supabaseAdmin } from "@/utils/supabase/admin";
+import { createClient } from "@/utils/supabase/server";
 
 export async function signup(formData: FormData): Promise<void> {
   const supabase = await createClient();
@@ -20,7 +20,6 @@ export async function signup(formData: FormData): Promise<void> {
   const interviewLocation = formData.get("interview_location") as string;
   const role = formData.get("role") as "student" | "professor";
 
-  console;
   if (password !== confirmPassword) {
     throw new Error("비밀번호가 일치하지 않습니다.");
   }

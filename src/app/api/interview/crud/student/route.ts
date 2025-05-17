@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
+
 import { getSessionUser } from "@/utils/auth/getSessionUser";
 
 {
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ message: "면담 예약 완료", data }, { status: 201 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
   }
 }
@@ -149,7 +150,7 @@ export async function PUT(req: NextRequest) {
     }
 
     return NextResponse.json({ message: "면담 업데이트 완료", data }, { status: 201 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
   }
 }

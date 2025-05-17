@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
+
 import { getSessionUser } from "@/utils/auth/getSessionUser";
 
 {
@@ -28,7 +29,11 @@ export async function PUT(req: NextRequest) {
       interview_date: body.interview_date,
     };
 
-    let updateFields: Record<string, any> = {
+    const updateFields: {
+      interview_accept: boolean;
+      interview_reject_reason?: string;
+      interview_close_at?: string;
+    } = {
       interview_accept: body.interview_accept,
     };
 
@@ -56,7 +61,7 @@ export async function PUT(req: NextRequest) {
     }
 
     return NextResponse.json({ message: "면담 수락/거절 완료", data }, { status: 201 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
   }
 }

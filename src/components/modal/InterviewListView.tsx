@@ -17,7 +17,6 @@ import { useUserStore } from "@/store/userStore";
  */
 const InterviewListView = () => {
   const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
-  const userId = useUserStore(state => state.userInfo?.id);
   const userRole = useUserStore(state => state.role);
   const openInterviewModal = useInterviewModalStore(state => state.open);
 

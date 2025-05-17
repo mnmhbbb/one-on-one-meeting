@@ -100,7 +100,7 @@ interface UserTypeCardProps {
   index: number;
 }
 
-function UserTypeCard({ title, description, icon, onClick, gradient, index }: UserTypeCardProps) {
+function UserTypeCard({ title, description, icon, onClick, gradient }: UserTypeCardProps) {
   return (
     <div className="flex justify-center">
       <Card

@@ -22,7 +22,7 @@ const UserNavActions = () => {
 
   if (!userInfo || !role) return null;
 
-  const linkHref = role === "student" ? "/student/my" : "/professor/consultation-requests";
+  // const linkHref = role === "student" ? "/student/my" : "/professor/consultation-requests";
 
   return (
     <div className="flex items-center gap-4">

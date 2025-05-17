@@ -1,8 +1,8 @@
 "use client";
 
+import { LockKeyhole, Mail, User, Phone, BookOpen, GraduationCap, MapPin } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { LockKeyhole, Mail, User, Phone, BookOpen, GraduationCap, MapPin } from "lucide-react";
 
 type Props = {
   role: "student" | "professor";

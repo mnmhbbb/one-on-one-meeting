@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
+
 import { getSessionUser } from "@/utils/auth/getSessionUser";
 
 {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+
 import { sendVerificationEmail } from "@/utils/email/sendVerificationEmail";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: Request) {
   const { email } = await req.json();
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
   try {
     await sendVerificationEmail(email, code);
     return NextResponse.json({ message: "이메일로 인증 코드가 전송되었습니다." });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ message: "이메일 전송 실패" }, { status: 500 });
   }
 }

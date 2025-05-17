@@ -1,4 +1,8 @@
+import { Suspense } from "react";
+
+import { UserRole } from "@/common/const";
 import LoginForm from "@/components/auth/LoginForm";
+import LoadingUI from "@/components/LoadingUI";
 
 export default function ProfessorLoginPage() {
   return (
@@ -10,7 +14,9 @@ export default function ProfessorLoginPage() {
         <h1 className="mb-7 text-center text-2xl font-bold text-[#493a2e] sm:text-3xl md:text-4xl">
           로그인 하기
         </h1>
-        <LoginForm role="professor" />
+        <Suspense fallback={<LoadingUI />}>
+          <LoginForm role={UserRole.PROFESSOR} />
+        </Suspense>
       </div>
     </div>
   );
