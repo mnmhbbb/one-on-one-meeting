@@ -1,9 +1,12 @@
 "use client";
 
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { memo, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
+import { Professor, professorApi } from "@/api/professor";
+import LoadingUI from "@/components/LoadingUI";
 import {
   Dialog,
   DialogContent,
@@ -22,19 +25,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
-interface Professor {
-  id: string;
-  email: string;
-  name: string;
-  college: string;
-  phone_num: string;
-  interview_location: string;
-  isFavorite: boolean;
-}
-
 const ProfessorSearchModal = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const { isProfessorSearchOpen, closeProfessorSearch, setPathname } = useInterviewModalStore(
     useShallow(state => ({
@@ -44,74 +38,50 @@ const ProfessorSearchModal = () => {
     }))
   );
   const [searchWord, setSearchWord] = useState<string>("");
-  const [colleges, setColleges] = useState<{ value: string; label: string }[]>([]);
-  const [professors, setProfessors] = useState<Professor[]>([]);
-  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
-  // 학과 불러오기
-  useEffect(() => {
-    if (!isProfessorSearchOpen) return;
-    const fetchColleges = async () => {
-      try {
-        const res = await fetch("/api/professor/search/department");
-        const { colleges } = await res.json();
+  // 학과 목록 조회
+  const { data: collegesData, isLoading: isCollegesLoading } = useQuery({
+    queryKey: ["departments"],
+    queryFn: async () => {
+      const res = await professorApi.getDepartments();
+      if (!res) return [];
+      return [{ value: "all", label: "전체" }].concat(
+        res.colleges.map((c: string) => ({
+          value: c,
+          label: c,
+        }))
+      );
+    },
+    enabled: isProfessorSearchOpen,
+  });
 
-        const formatted = [{ value: "all", label: "전체" }].concat(
-          colleges.map((c: string) => ({
-            value: c,
-            label: c,
-          }))
-        );
+  // 즐겨찾기 토글
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: (professorId: string) => professorApi.postBookmark(professorId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favoriteProfessors"] });
+    },
+  });
 
-        setColleges(formatted);
-      } catch (e) {
-        console.error("학과 목록을 불러오지 못했습니다.", e);
-      }
-    };
+  // 전체 교수 목록 조회
+  const { data: professorsData, isLoading: isProfessorsLoading } = useQuery({
+    queryKey: ["professors"],
+    queryFn: async () => {
+      const res = await professorApi.getProfessors();
+      return res?.professors ?? [];
+    },
+    enabled: isProfessorSearchOpen,
+  });
 
-    fetchColleges();
-  }, [isProfessorSearchOpen]);
-
-  // 즐겨찾기 토글 요청
-  const toggleFavorite = async (professorId: string) => {
-    try {
-      const res = await fetch("/api/professor/search/bookmark", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ professor_id: professorId }),
-      });
-
-      const result = await res.json();
-      setFavoriteIds(prev => {
-        const updated = new Set<string>(prev);
-        if (result.status === "added") {
-          updated.add(professorId);
-        } else {
-          updated.delete(professorId);
-        }
-        return updated;
-      });
-    } catch (err) {
-      console.error("즐겨찾기 토글 실패", err);
-    }
-  };
-
-  // 즐겨찾기, 전체 가져오기
-  useEffect(() => {
-    if (!isProfessorSearchOpen) return;
-    const fetchData = async () => {
-      const [allRes, favRes] = await Promise.all([
-        fetch("/api/professor/search/all").then(res => res.json()),
-        fetch("/api/professor/search/bookmark").then(res => res.json()),
-      ]);
-
-      const favoriteSet = new Set<string>(favRes.professors.map((p: Professor) => p.id));
-      setFavoriteIds(favoriteSet);
-      setProfessors(allRes.professors);
-    };
-
-    fetchData();
-  }, [isProfessorSearchOpen]);
+  // 즐겨찾기 교수 목록 조회
+  const { data: favoriteProfessorsData, isLoading: isFavoriteProfessorsLoading } = useQuery({
+    queryKey: ["favoriteProfessors"],
+    queryFn: async () => {
+      const res = await professorApi.getFavoriteProfessors();
+      return res?.professors ?? [];
+    },
+    enabled: isProfessorSearchOpen,
+  });
 
   // 검색 모달이 열려있는 상태에서 페이지 변경 시 모달 닫음
   useEffect(() => {
@@ -120,7 +90,6 @@ const ProfessorSearchModal = () => {
 
   const handleProfessorClick = (professorId: string) => {
     const targetPath = `/student/professor/${professorId}`;
-    // 이미 해당 교수 페이지에 있으면 모달 닫기
     if (pathname === targetPath) {
       closeProfessorSearch();
     } else {
@@ -128,19 +97,22 @@ const ProfessorSearchModal = () => {
     }
   };
 
+  const toggleFavorite = (professorId: string) => {
+    toggleFavoriteMutation.mutate(professorId);
+  };
+
   // 즐겨찾기 교수 목록
-  const favoriteProfessors = professors
-    .filter(professor => favoriteIds.has(professor.id))
+  const favoriteProfessors = (favoriteProfessorsData ?? [])
     .filter(professor => selectedDepartment === "all" || professor.college === selectedDepartment)
     .filter(professor => searchWord === "" || professor.name.includes(searchWord));
 
   // 전체 교수 목록
-  const AllProfessors = professors
+  const allProfessors = (professorsData ?? [])
     .filter(professor => selectedDepartment === "all" || professor.college === selectedDepartment)
     .filter(professor => searchWord === "" || professor.name.includes(searchWord));
 
   const renderProfessorCard = (professor: Professor) => {
-    const isFavorite = favoriteIds.has(professor.id);
+    const isFavorite = (favoriteProfessorsData ?? []).some(p => p.id === professor.id);
 
     return (
       <div
@@ -164,6 +136,8 @@ const ProfessorSearchModal = () => {
     );
   };
 
+  const isLoading = isCollegesLoading || isProfessorsLoading || isFavoriteProfessorsLoading;
+
   return (
     <Dialog open={isProfessorSearchOpen} onOpenChange={closeProfessorSearch}>
       <DialogContent className="sm:max-w-md">
@@ -171,6 +145,7 @@ const ProfessorSearchModal = () => {
           <DialogTitle>교수 검색창</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
+        {isLoading && <LoadingUI />}
         <div className="space-y-4">
           <Input
             placeholder="교수님을 검색하세요."
@@ -183,7 +158,7 @@ const ProfessorSearchModal = () => {
               <SelectValue placeholder="학과를 선택하세요" />
             </SelectTrigger>
             <SelectContent>
-              {colleges.map(dept => (
+              {collegesData?.map(dept => (
                 <SelectItem key={dept.value} value={dept.value}>
                   {dept.label}
                 </SelectItem>
@@ -208,8 +183,8 @@ const ProfessorSearchModal = () => {
             </TabsContent>
             <TabsContent value="all">
               <div className="max-h-[300px] space-y-2 overflow-y-auto">
-                {AllProfessors.length > 0 ? (
-                  AllProfessors.map(renderProfessorCard)
+                {allProfessors.length > 0 ? (
+                  allProfessors.map(renderProfessorCard)
                 ) : (
                   <div className="py-4 text-center text-gray-500">
                     {searchWord ? "검색 결과가 없습니다." : "등록된 교수가 없습니다."}
