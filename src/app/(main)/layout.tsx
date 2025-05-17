@@ -1,4 +1,3 @@
-import FetchUser from "@/components/auth/FetchUser";
 import CloseModalsOnRouteChange from "@/components/CloseModalsOnRouteChange";
 import InterviewModal from "@/components/modal/InterviewModal";
 
@@ -13,7 +12,6 @@ export default function MainLayout({
   return (
     <>
       {children}
-      <FetchUser />
       <InterviewModal />
       <CloseModalsOnRouteChange />
     </>
