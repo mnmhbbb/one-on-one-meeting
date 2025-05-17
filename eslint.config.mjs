@@ -62,6 +62,7 @@ const config = [
       semi: ["error", "always"],
       "no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
       "no-trailing-spaces": "error",
+      "@typescript-eslint/no-explicit-any": "warn",
 
       // Prettier와의 연동
       "prettier/prettier": "error",
