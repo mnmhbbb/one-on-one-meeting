@@ -1,84 +1,35 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
+import { userApi } from "@/api/user";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/client";
+import { useUserStore } from "@/store/userStore";
 
 const UserNavActions = () => {
-  const supabase = createClient();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState<"student" | "professor" | null>(null);
-
-  useEffect(() => {
-    const init = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        setIsLoggedIn(true);
-
-        // 유저 정보 가져오기
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        const role = user?.user_metadata?.role;
-        console.log("role = ", role);
-        if (role === "student" || role === "professor") {
-          setUserRole(role);
-        }
-      }
-    };
-
-    init();
-
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setIsLoggedIn(!!session);
-
-      if (session) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        const role = user?.user_metadata?.role;
-        if (role === "student" || role === "professor") {
-          setUserRole(role);
-        }
-      } else {
-        setUserRole(null);
-      }
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, [supabase]);
+  const router = useRouter();
+  const userInfo = useUserStore(state => state.userInfo);
+  const role = useUserStore(state => state.role);
+  const clearUserInfo = useUserStore(state => state.clearUserInfo);
 
   const handleLogout = async () => {
-    console.log("로그아웃 시도 중...");
-    const res = await fetch("/api/logout", {
-      method: "POST",
-      credentials: "include", // 쿠키 포함 필수
-    });
-
-    if (res.ok) {
-      console.log("로그아웃 성공");
-      window.location.href = "/";
-    } else {
-      const data = await res.json();
-      console.error("로그아웃 실패:", data.error);
+    const res = await userApi.logout();
+    if (res) {
+      clearUserInfo();
+      router.push("/");
     }
   };
 
-  if (!isLoggedIn || !userRole) return null;
+  if (!userInfo || !role) return null;
 
-  const linkHref = userRole === "student" ? "/student/my" : "/professor/consultation-requests";
+  const linkHref = role === "student" ? "/student/my" : "/professor/consultation-requests";
 
   return (
     <div className="flex items-center gap-4">
-      <Link href={linkHref} className="text-xs text-white sm:text-sm md:text-base">
+      {/* TODO: 페이지 추가 필요 */}
+      {/* <Link href={linkHref} className="text-xs text-white sm:text-sm md:text-base">
         👤 내 정보
-      </Link>
+      </Link> */}
       <Button
         variant="outline"
         size="sm"
