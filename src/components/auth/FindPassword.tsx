@@ -1,4 +1,6 @@
-export default function FindPasswordPage() {
+"use client";
+
+export const FindPassword = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 px-4 text-center">
       <h1 className="mb-4 text-4xl font-bold text-gray-800">🚧 구현 예정입니다</h1>
@@ -8,4 +10,6 @@ export default function FindPasswordPage() {
       </p>
     </div>
   );
-}
+};
+
+export default FindPassword;

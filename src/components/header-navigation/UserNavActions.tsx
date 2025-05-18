@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { userApi } from "@/utils/api/user";
 const UserNavActions = () => {
   const router = useRouter();
   const userInfo = useUserStore(state => state.userInfo);
-  const role = useUserStore(state => state.role);
   const clearUserInfo = useUserStore(state => state.clearUserInfo);
 
   const handleLogout = async () => {
@@ -20,16 +20,13 @@ const UserNavActions = () => {
     }
   };
 
-  if (!userInfo || !role) return null;
-
-  // const linkHref = role === "student" ? "/student/my" : "/professor/consultation-requests";
+  if (!userInfo) return null;
 
   return (
     <div className="flex items-center gap-4">
-      {/* TODO: 페이지 추가 필요 */}
-      {/* <Link href={linkHref} className="text-xs text-white sm:text-sm md:text-base">
+      <Link href="/mypage" className="text-xs text-white sm:text-sm md:text-base">
         👤 내 정보
-      </Link> */}
+      </Link>
       <Button
         variant="outline"
         size="sm"
