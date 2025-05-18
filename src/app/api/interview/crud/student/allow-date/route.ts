@@ -20,7 +20,14 @@ export async function POST(req: NextRequest) {
   try {
     const { data, error } = await supabase
       .from("professor_interview_allow_date")
-      .select("*")
+      .select(
+        `
+        *,
+        professors (
+          name
+        )
+        `
+      )
       .eq("professor_id", professor_id)
       .gte("allow_date", start)
       .lte("allow_date", end);
@@ -30,7 +37,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "조회 실패" }, { status: 500 });
     }
 
-    return NextResponse.json({ data }, { status: 200 });
+    const renamedData = data.map(({ professors, ...rest }) => ({
+      ...rest,
+      professor_name: professors?.name,
+    }));
+
+    return NextResponse.json({ renamedData }, { status: 200 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });

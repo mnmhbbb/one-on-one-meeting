@@ -24,6 +24,9 @@ export async function GET(req: NextRequest) {
       .select(
         `
       *,
+      professors (
+        name
+      ),
       professor_notice (
         notice_content
       ),
@@ -41,7 +44,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "조회 실패" }, { status: 500 });
     }
 
-    return NextResponse.json({ data }, { status: 200 });
+    const renamedData = data.map(({ professors, professor_notice, interview_guide, ...rest }) => ({
+      ...rest,
+      professor_name: professors?.name,
+      professor_notice: professor_notice?.notice_content,
+      interview_guide: interview_guide?.guide_content,
+    }));
+
+    return NextResponse.json({ renamedData }, { status: 200 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
