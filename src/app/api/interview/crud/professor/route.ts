@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
       interview_guide: interview_guide?.guide_content,
     }));
 
-    return NextResponse.json({ renamedData }, { status: 200 });
+    return NextResponse.json({ data: renamedData }, { status: 200 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
