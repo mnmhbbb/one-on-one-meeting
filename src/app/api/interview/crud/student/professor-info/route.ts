@@ -5,6 +5,29 @@ import { getSessionUser } from "@/utils/auth/getSessionUser";
 {
   /*================== 교수 예약 활성화 API====================*/
 }
+// GET: 학생 페이지에서 교수 페이지 들어가면 교수 정보 불러오기
+export async function GET(req: NextRequest) {
+  const { user, supabase, response } = await getSessionUser();
+  if (!user) return response;
+
+  const { searchParams } = new URL(req.url);
+  const professor_id = searchParams.get("professor_id");
+
+  try {
+    const { data, error } = await supabase.from("professors").select("*").eq("id", professor_id);
+
+    if (error) {
+      console.error(error);
+      return NextResponse.json({ message: "조회 실패" }, { status: 500 });
+    }
+
+    return NextResponse.json({ data }, { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ message: "서버 오류" }, { status: 500 });
+  }
+}
+
 // POST: 학생 페이지에서 교수 예약 활성화 Date 불러오기
 export async function POST(req: NextRequest) {
   const { user, supabase, response } = await getSessionUser();
@@ -42,7 +65,7 @@ export async function POST(req: NextRequest) {
       professor_name: professors?.name,
     }));
 
-    return NextResponse.json({ renamedData }, { status: 200 });
+    return NextResponse.json({ data: renamedData }, { status: 200 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });

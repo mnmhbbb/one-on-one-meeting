@@ -106,6 +106,7 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
           const dayEvents = props.events.filter(e => e.date.startsWith(dateStr)).slice(0, 3);
 
           return (
+            // TODO: 현재 달이 아닌 경우는 날짜 이동만(교수 검색창, 신청 현황 이동 동작 X)
             <div
               key={i}
               className={cn(

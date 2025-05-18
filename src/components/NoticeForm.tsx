@@ -79,7 +79,7 @@ const NoticeForm = () => {
             <p className="text-sm text-gray-500">
               <b className="text-primary text-lg">학생에게 보이는 화면 예시 입니다.</b>
               <br /> ※ 공지 외 정보는{" "}
-              <Link href="/professor/my" className="underline">
+              <Link href="/mypage" className="underline">
                 내 정보
               </Link>{" "}
               에서 수정해주세요.
