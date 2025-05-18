@@ -121,7 +121,7 @@ const ProfessorSearchModal = () => {
         className="group relative cursor-pointer rounded-lg border p-4 hover:bg-gray-100"
       >
         <div className="font-semibold">{professor.name}</div>
-        <div className="text-sm text-gray-500">{professor.college}학과</div>
+        <div className="text-sm text-gray-500">{professor.college}</div>
 
         <div
           onClick={e => {
