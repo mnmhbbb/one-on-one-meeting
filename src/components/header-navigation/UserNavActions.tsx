@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 
-import { userApi } from "@/api/user";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/store/userStore";
+import { userApi } from "@/utils/api/user";
 
 const UserNavActions = () => {
   const router = useRouter();

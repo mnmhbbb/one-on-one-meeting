@@ -4,9 +4,9 @@ import { LockKeyhole, Mail } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { userApi } from "@/api/user";
 import { UserRole } from "@/common/const";
 import { Button } from "@/components/ui/button";
+import { userApi } from "@/utils/api/user";
 
 interface LoginFormProps {
   role: UserRole;

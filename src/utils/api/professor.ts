@@ -1,15 +1,7 @@
 import axiosInstance from "@/lib/axios";
+import { Professor } from "@/types/user";
 
 import { tryApiWithToast } from "./common";
-
-export interface Professor {
-  id: string;
-  email: string;
-  name: string;
-  college: string;
-  phone_num: string;
-  interview_location: string;
-}
 
 export const professorApi = {
   getDepartments: async (): Promise<{ colleges: string[] } | null> => {

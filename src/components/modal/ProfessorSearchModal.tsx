@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { memo, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { Professor, professorApi } from "@/api/professor";
 import LoadingUI from "@/components/LoadingUI";
 import {
   Dialog,
@@ -24,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { Professor } from "@/types/user";
+import { professorApi } from "@/utils/api/professor";
 
 const ProfessorSearchModal = () => {
   const pathname = usePathname();

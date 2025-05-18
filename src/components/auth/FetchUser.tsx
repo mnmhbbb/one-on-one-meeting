@@ -3,8 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-import { userApi } from "@/api/user";
 import { useUserStore } from "@/store/userStore";
+import { userApi } from "@/utils/api/user";
 
 import LoadingUI from "../LoadingUI";
 

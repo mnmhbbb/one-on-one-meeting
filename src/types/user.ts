@@ -9,3 +9,23 @@ export interface UserInfo {
   department: string;
   signNum: string;
 }
+
+export interface UserResponse {
+  user: UserInfo;
+  role: UserRole;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
+export interface Professor {
+  id: string;
+  email: string;
+  name: string;
+  college: string;
+  phone_num: string;
+  interview_location: string;
+}
