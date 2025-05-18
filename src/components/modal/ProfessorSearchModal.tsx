@@ -23,14 +23,18 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { useProfessorsStore } from "@/store/professorsStore";
 import { Professor } from "@/types/user";
 import { professorApi } from "@/utils/api/professor";
 
 const ProfessorSearchModal = () => {
+  const queryClient = useQueryClient();
+
   const pathname = usePathname();
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
+
+  const setProfessors = useProfessorsStore(state => state.setProfessors);
+  const setSelectedProfessor = useProfessorsStore(state => state.setSelectedProfessor);
   const { isProfessorSearchOpen, closeProfessorSearch, setPathname } = useInterviewModalStore(
     useShallow(state => ({
       isProfessorSearchOpen: state.isProfessorSearchOpen,
@@ -38,6 +42,8 @@ const ProfessorSearchModal = () => {
       setPathname: state.setPathname,
     }))
   );
+
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [searchWord, setSearchWord] = useState<string>("");
 
   // 학과 목록 조회
@@ -84,12 +90,21 @@ const ProfessorSearchModal = () => {
     enabled: isProfessorSearchOpen,
   });
 
+  // professors 스토어에 교수 목록 저장
+  useEffect(() => {
+    if (isProfessorSearchOpen) {
+      setProfessors(professorsData ?? []);
+    }
+  }, [isProfessorSearchOpen, setProfessors, professorsData]);
+
   // 검색 모달이 열려있는 상태에서 페이지 변경 시 모달 닫음
   useEffect(() => {
     setPathname(pathname);
   }, [pathname, setPathname]);
 
   const handleProfessorClick = (professorId: string) => {
+    setSelectedProfessor(professorsData?.find(p => p.id === professorId) ?? null);
+
     const targetPath = `/student/professor/${professorId}`;
     if (pathname === targetPath) {
       closeProfessorSearch();
