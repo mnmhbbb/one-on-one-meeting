@@ -4,7 +4,6 @@ import { Open_Sans } from "next/font/google";
 import "dayjs/locale/ko";
 
 import "./globals.css";
-import FetchUser from "@/components/auth/FetchUser";
 import ClientLocaleSetter from "@/components/ClientLocaleSetter";
 import ErrorToast from "@/components/ErrorToast";
 import NavigationBar from "@/components/header-navigation/NavigationBar";
@@ -35,7 +34,6 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${sans.className} bg-gray-100 antialiased`}>
         <QueryProvider>
-          <FetchUser />
           <NavigationBar />
           <main>{children}</main>
         </QueryProvider>

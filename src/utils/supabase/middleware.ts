@@ -59,6 +59,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // 로그인 상태에서 공개 페이지에 접근하면 리다이렉트
+  if (user && isPublicPage) {
+    if (userRole === UserRole.STUDENT) {
+      return NextResponse.redirect(new URL("/student/my", request.url));
+    } else if (userRole === UserRole.PROFESSOR) {
+      return NextResponse.redirect(new URL("/professor/my", request.url));
+    }
+  }
+
   // 학생 유저가 교수 페이지에 접근하려고 하면 리다이렉트
   if (userRole === UserRole.STUDENT && request.nextUrl.pathname.startsWith("/professor")) {
     return NextResponse.redirect(new URL("/student/my", request.url));
