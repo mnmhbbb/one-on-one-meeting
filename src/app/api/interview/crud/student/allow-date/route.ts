@@ -5,8 +5,8 @@ import { getSessionUser } from "@/utils/auth/getSessionUser";
 {
   /*================== 교수 예약 활성화 API====================*/
 }
-// GET: 학생 페이지에서 교수 예약 활성화 Date 불러오기
-export async function GET(req: NextRequest) {
+// POST: 학생 페이지에서 교수 예약 활성화 Date 불러오기
+export async function POST(req: NextRequest) {
   const { user, supabase, response } = await getSessionUser();
   if (!user) return response;
 

@@ -24,6 +24,9 @@ export async function GET(req: NextRequest) {
       .select(
         `
       *,
+      professors (
+        name
+      ),
       professor_notice (
         notice_content
       ),
