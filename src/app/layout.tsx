@@ -5,9 +5,9 @@ import "dayjs/locale/ko";
 
 import "./globals.css";
 import ClientLocaleSetter from "@/components/ClientLocaleSetter";
-import ErrorToast from "@/components/ErrorToast";
 import NavigationBar from "@/components/header-navigation/NavigationBar";
 import QueryProvider from "@/components/providers/QueryProvider";
+import Toast from "@/components/Toast";
 
 // 전역 locale 설정
 dayjs.locale("ko");
@@ -38,7 +38,7 @@ export default function RootLayout({
           <main>{children}</main>
         </QueryProvider>
         <ClientLocaleSetter />
-        <ErrorToast />
+        <Toast />
       </body>
     </html>
   );
