@@ -4,7 +4,7 @@ import ChangePassword from "@/components/mypage/ChangePassword";
 import MyPage from "@/components/mypage/MyPage";
 import { useState } from "react";
 
-export default function MyPageTabSection() {
+export const MyPageTabSection = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
   const tabList = [
@@ -38,4 +38,5 @@ export default function MyPageTabSection() {
       </div>
     </>
   );
-}
+};
+export default MyPageTabSection;

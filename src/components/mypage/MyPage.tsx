@@ -8,16 +8,20 @@ import { useMutation } from "@tanstack/react-query";
 import { userApi } from "@/utils/api/user";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useShallow } from "zustand/react/shallow";
 import LoadingUI from "../LoadingUI";
 
-export const MyPage = () => {
+const MyPage = () => {
   const router = useRouter();
 
-  const userInfo = useUserStore(state => state.userInfo);
-  const role = userInfo?.role;
-  console.log("렌더링 시점 userInfo:", userInfo);
-  const setUserInfo = useUserStore(state => state.setUserInfo);
+  const { userInfo, setUserInfo } = useUserStore(
+    useShallow(state => ({
+      userInfo: state.userInfo,
+      setUserInfo: state.setUserInfo,
+    }))
+  );
 
+  const role = userInfo?.role;
   const [phoneNum, setPhoneNum] = useState("");
   const [notificationEmail, setNotificationEmail] = useState("");
   const [department, setDepartment] = useState("");
@@ -36,8 +40,15 @@ export const MyPage = () => {
     mutationFn: userApi.updateUserInfo,
     onSuccess: data => {
       if (data) {
-        console.log("업데이트된 userInfo:", data);
-        setUserInfo(data);
+        // 전역 상태 업데이트
+        setUserInfo({ ...data });
+
+        // 로컬 상태 업데이트
+        setPhoneNum(data.phone_num || "");
+        setNotificationEmail(data.notification_email || "");
+        setDepartment(data.department || "");
+        setCollege(data.college || "");
+        setLocation(data.interview_location || "");
         alert("정보가 저장되었습니다.");
       }
     },
@@ -48,7 +59,6 @@ export const MyPage = () => {
 
   const handleSave = () => {
     if (!userInfo) return;
-
     const payload: any = {
       id: userInfo.id,
       role,
@@ -74,10 +84,10 @@ export const MyPage = () => {
       setCollege(userInfo.college || "");
       setLocation(userInfo.interview_location || "");
     }
-  }, [userInfo?.id]);
+  }, [userInfo]);
 
-  if (!userInfo) {
-    return LoadingUI;
+  if (!userInfo || !userInfo.role) {
+    return <LoadingUI />;
   }
 
   return (
