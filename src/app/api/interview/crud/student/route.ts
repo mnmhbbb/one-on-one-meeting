@@ -91,7 +91,6 @@ export async function POST(req: NextRequest) {
       .eq("professor_id", body.professor_id)
       .eq("allow_date", body.interview_date);
 
-    console.log(allowDate);
     if (allowError) {
       console.error(allowError);
       return NextResponse.json({ message: "면담 가능 날짜 조회 실패" }, { status: 500 });
