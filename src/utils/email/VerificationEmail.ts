@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export async function sendVerificationEmail(email: string, code: string) {
+export async function VerificationEmail(email: string, code: string) {
   const isSecure = Number(process.env.EMAIL_PORT) === 465;
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
