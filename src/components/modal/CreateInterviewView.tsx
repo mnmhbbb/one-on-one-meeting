@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -24,7 +24,6 @@ import { interviewApi } from "@/utils/api/interview";
  * 면담 신청 모달(확정 요청 모달과 거의 동일함)
  */
 const CreateInterviewView = () => {
-  const queryClient = useQueryClient();
   const userRole = useUserStore(state => state.role);
   const userId = useUserStore(state => state.userInfo?.id ?? "");
   const selectedProfessor = useProfessorsStore(state => state.selectedProfessor);
@@ -46,7 +45,6 @@ const CreateInterviewView = () => {
       const result = await interviewApi.createInterview(data);
       if (result) {
         setToast("면담이 성공적으로 신청되었습니다.", "success");
-        queryClient.invalidateQueries({ queryKey: ["interviews"] }); // 면담 목록 캐시 무효화
         close();
       }
       return result;

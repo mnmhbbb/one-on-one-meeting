@@ -1,9 +1,8 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 
 import { InterviewStatus, UserRole } from "@/common/const";
 import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
@@ -26,29 +25,28 @@ import { interviewApi } from "@/utils/api/interview";
 const RequestInterviewView = () => {
   const MAX_REASON_LENGTH = 100;
 
-  const queryClient = useQueryClient();
-
   const userRole = useUserStore(state => state.role);
-  const { interviewInfo, selectedTime } = useInterviewModalStore(
-    useShallow(state => ({
-      interviewInfo: state.interviewInfo,
-      selectedTime: state.selectedTime,
-    }))
-  );
+  const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
+  const selectedTime = useInterviewModalStore(state => state.selectedTime);
+  const close = useInterviewModalStore(state => state.close);
   const professorAllowDateList = useDateStore(state => state.professorAllowDateList);
+  const setToast = useToastStore(state => state.setToast);
+  const setUpdateTarget = useDateStore(state => state.setUpdateTarget);
 
   const [step, setStep] = useState(() => (userRole === UserRole.STUDENT ? 1 : 2));
   const [cancelReason, setCancelReason] = useState(""); // 면담 취소 사유
-
-  const setToast = useToastStore(state => state.setToast);
 
   const updateInterviewMutation = useMutation({
     mutationFn: async (data: InterviewUpdateBody) => {
       const result = await interviewApi.updateInterview(data);
       if (result) {
-        setToast("면담이 성공적으로 신청되었습니다.", "success");
-        queryClient.invalidateQueries({ queryKey: ["interviews"] }); // 면담 목록 캐시 무효화
+        setToast("면담 내용이 변경되었습니다.", "success");
         close();
+
+        // 면담 목록 업데이트
+        setUpdateTarget(
+          userRole === UserRole.PROFESSOR ? "professorInterview" : "studentInterview"
+        );
       }
       return result;
     },
@@ -84,6 +82,7 @@ const RequestInterviewView = () => {
 
   // 면담 저장
   const handleSave = useCallback(() => {
+    console.log("aaa", interviewInfo);
     updateInterviewMutation.mutate({
       id: interviewInfo?.id ?? "",
       student_id: interviewInfo?.student_id ?? "",
