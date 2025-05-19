@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios";
-import { InterviewInfo, InterviewRequestBody } from "@/types/interview";
+import { InterviewCreateBody, InterviewInfo, InterviewUpdateBody } from "@/types/interview";
 import { Professor, ProfessorAllowDate } from "@/types/user";
 
 import { tryApiWithToast } from "./common";
@@ -27,6 +27,7 @@ export const interviewApi = {
       })
     );
   },
+  // 교수 기본 정보
   getProfessorInfo: async (professor_id: string): Promise<{ data: Professor } | null> => {
     return await tryApiWithToast(() =>
       axiosInstance.get<{ data: Professor }>("/interview/crud/student/professor-info", {
@@ -60,10 +61,21 @@ export const interviewApi = {
   },
   // 면담 저장
   createInterview: async (
-    interview: InterviewRequestBody
+    interview: InterviewCreateBody
   ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
     return await tryApiWithToast(() =>
       axiosInstance.post<{ data: InterviewInfo[]; message: string }>(
+        "/interview/crud/student",
+        interview
+      )
+    );
+  },
+  // 면담 수정
+  updateInterview: async (
+    interview: InterviewUpdateBody
+  ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.put<{ data: InterviewInfo[]; message: string }>(
         "/interview/crud/student",
         interview
       )

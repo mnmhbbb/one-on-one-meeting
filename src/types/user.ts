@@ -46,3 +46,13 @@ export interface MyPageUserInfo {
   notification_email: string;
   interview_location: string;
 }
+
+export interface ProfessorAllowDate {
+  id: string;
+  professor_id: string;
+  professor_name: string;
+  allow_day: string;
+  allow_date: string;
+  allow_time: string[];
+  applied_interview_time: string[] | null;
+}

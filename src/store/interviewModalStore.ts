@@ -7,7 +7,6 @@ type InterviewModalState = {
 
   isOpen: boolean;
   isProfessorSearchOpen: boolean; // 교수 검색 모달 열림 여부
-  interviewId: string | null;
   type: InterviewModalType | null;
   interviewInfo: InterviewInfo | null;
 
@@ -15,7 +14,7 @@ type InterviewModalState = {
 
   setPathname: (path: string) => void;
 
-  open: (id: string, type: InterviewModalType) => void;
+  open: (info: InterviewInfo | null, type: InterviewModalType) => void;
   close: () => void;
   openProfessorSearch: () => void;
   closeProfessorSearch: () => void;
@@ -29,7 +28,6 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
 
   isOpen: false,
   isProfessorSearchOpen: false,
-  interviewId: null,
   type: null,
   interviewInfo: null,
 
@@ -43,18 +41,17 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
         set({ isProfessorSearchOpen: false });
       }
       if (get().isOpen) {
-        set({ isOpen: false, interviewId: null, type: null });
+        set({ isOpen: false, type: null });
       }
     }
     set({ pathname: newPath });
   },
 
-  open: (id, type) => set({ isOpen: true, interviewId: id, type }),
-  close: () =>
-    set({ isOpen: false, interviewId: null, type: null, selectedTime: [], interviewInfo: null }),
+  open: (info, type) =>
+    set({ isOpen: true, type, interviewInfo: info, selectedTime: info?.interview_time ?? [] }),
+  close: () => set({ isOpen: false, type: null, selectedTime: [], interviewInfo: null }),
   openProfessorSearch: () => set({ isProfessorSearchOpen: true }),
   closeProfessorSearch: () => set({ isProfessorSearchOpen: false }),
-  setInterviewInfo: info => set({ interviewInfo: info }),
-
+  setInterviewInfo: info => set({ interviewInfo: info, selectedTime: info.interview_time }),
   setSelectedTime: (time: string[]) => set({ selectedTime: time }),
 }));
