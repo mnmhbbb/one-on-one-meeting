@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getSessionUser } from "@/utils/auth/getSessionUser";
 
@@ -40,4 +40,54 @@ export async function GET() {
 
   // 4. 응답: role + 데이터
   return NextResponse.json({ role, user: data }, { status: 200 });
+}
+
+// PUT: 유저 정보 업데이트
+export async function PUT(req: NextRequest) {
+  const { user, supabase, response } = await getSessionUser();
+  if (!user) return response;
+
+  const tableMap = {
+    student: { table: "students" },
+    professor: { table: "professors" },
+  };
+
+  try {
+    const body = await req.json();
+    const { role, id } = body;
+
+    const mapping = tableMap[role as "student" | "professor"];
+
+    if (!mapping) {
+      return NextResponse.json({ message: "잘못된 역할(role)" }, { status: 400 });
+    }
+
+    let updateFields: Record<string, string> = {};
+
+    if (role === "student") {
+      if ("department" in body) updateFields.department = body.department;
+      if ("phone_num" in body) updateFields.phone_num = body.phone_num;
+      if ("notification_email" in body) updateFields.notification_email = body.notification_email;
+    } else if (role === "professor") {
+      if ("college" in body) updateFields.college = body.college;
+      if ("phone_num" in body) updateFields.phone_num = body.phone_num;
+      if ("notification_email" in body) updateFields.notification_email = body.notification_email;
+      if ("interview_location" in body) updateFields.interview_location = body.interview_location;
+    }
+
+    const { data, error } = await supabase
+      .from(mapping.table)
+      .update(updateFields)
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      console.error(error);
+      return NextResponse.json({ message: "유저 정보 업데이트 실패" }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: "유저 정보 업데이트 완료", data }, { status: 201 });
+  } catch {
+    return NextResponse.json({ message: "서버 오류" }, { status: 500 });
+  }
 }

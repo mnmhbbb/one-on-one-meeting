@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios";
-import { LoginRequest, UserResponse } from "@/types/user";
+import { LoginRequest, MyPageUserInfo, UserResponse } from "@/types/user";
 
 import { tryApiWithToast } from "./common";
 
@@ -14,5 +14,9 @@ export const userApi = {
 
   logout: async (): Promise<void | null> => {
     return await tryApiWithToast(() => axiosInstance.post("/logout"));
+  },
+
+  updateUserInfo: async (userData: MyPageUserInfo): Promise<MyPageUserInfo | null> => {
+    return await tryApiWithToast(() => axiosInstance.put<MyPageUserInfo>("/user", userData));
   },
 };

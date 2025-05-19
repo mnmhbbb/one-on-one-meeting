@@ -7,7 +7,11 @@ export interface UserInfo {
   name: string;
   email: string;
   department: string;
-  signNum: string;
+  college: string;
+  sign_num: string;
+  phone_num: string;
+  notification_email: string;
+  interview_location: string;
 }
 
 export interface UserResponse {
@@ -27,5 +31,18 @@ export interface Professor {
   name: string;
   college: string;
   phone_num: string;
+  interview_location: string;
+}
+
+export interface MyPageUserInfo {
+  id: string;
+  role: UserRole;
+  name: string;
+  email: string;
+  department: string;
+  college: string;
+  sign_num: string;
+  phone_num: string;
+  notification_email: string;
   interview_location: string;
 }
