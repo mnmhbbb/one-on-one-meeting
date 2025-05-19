@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "조회 실패" }, { status: 500 });
     }
 
-    return NextResponse.json({ data }, { status: 200 });
+    return NextResponse.json({ data: data[0] }, { status: 200 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
