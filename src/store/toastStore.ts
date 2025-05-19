@@ -1,19 +1,22 @@
 import { create } from "zustand";
 
-interface ErrorState {
-  error: {
+type ToastType = "success" | "error" | "info" | "warning";
+
+interface ToastState {
+  toast: {
     message: string | null;
+    type: ToastType;
     status?: number;
   } | null;
-  setError: (message: string | null, status?: number) => void;
+  setToast: (message: string | null, type?: ToastType, status?: number) => void;
 }
 
 /**
- * 전역에서 에러 상태를 관리하기 위한 스토어
+ * 전역에서 토스트 상태를 관리하기 위한 스토어
  */
-export const useErrorStore = create<ErrorState>(set => ({
-  error: null,
-  setError: (message, status) => {
+export const useToastStore = create<ToastState>(set => ({
+  toast: null,
+  setToast: (message, type, status) => {
     // 401 에러 시 토스트 노출없이 즉시 리다이렉트
     if (status === 401 && typeof window !== "undefined") {
       const pathname = window.location.pathname;
@@ -25,6 +28,6 @@ export const useErrorStore = create<ErrorState>(set => ({
       return;
     }
 
-    set({ error: message ? { message, status } : null });
+    set({ toast: message ? { message, type: type!, status } : null });
   },
 }));

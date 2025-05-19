@@ -2,7 +2,7 @@
 
 import { useState, useCallback, memo } from "react";
 
-import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import { InterviewStatus, STATUS_COLORS } from "@/common/const";
 import { cn } from "@/lib/utils";
 
 interface StatusFilterGroupProps {
@@ -65,7 +65,7 @@ const StatusFilterGroup = ({ onFilterChange }: StatusFilterGroupProps) => {
               : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
           )}
         >
-          {STATUS_LABELS[status]}
+          {status}
         </button>
       ))}
     </div>

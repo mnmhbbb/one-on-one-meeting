@@ -1,14 +1,24 @@
 "use client";
 
 import dayjs from "dayjs";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
-import { INTERVIEW_MODAL_TYPE, UserRole } from "@/common/const";
+import {
+  INTERVIEW_MODAL_TYPE,
+  InterviewModalType,
+  InterviewStatus,
+  UserRole,
+} from "@/common/const";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { useProfessorsStore } from "@/store/professorsStore";
 import { useUserStore } from "@/store/userStore";
+import { InterviewInfo } from "@/types/interview";
+
+import StatusBadge from "../StatusBadge";
 
 /**
  * 면담 목록 조회 모달
@@ -19,32 +29,52 @@ const InterviewListView = () => {
   const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
   const userRole = useUserStore(state => state.role);
   const openInterviewModal = useInterviewModalStore(state => state.open);
+  const interviewList = useDateStore(state => state.interviewList);
+  const selectedProfessor = useProfessorsStore(state => state.selectedProfessor);
 
-  // TODO:
+  const [studentInterviewList, setStudentInterviewList] = useState<InterviewInfo[]>([]);
+  const [professorInterviewList, setProfessorInterviewList] = useState<InterviewInfo[]>([]);
+
   useEffect(() => {
     if (userRole === UserRole.STUDENT) {
-      // userId의 interviewInfo.date의 interviewInfo?.professor 면담 목록 api 호출
+      const filteredInterviewList = interviewList.filter(
+        interview => interview.interview_date === interviewInfo?.interview_date
+      );
+      setStudentInterviewList(filteredInterviewList);
       return;
     }
 
     if (userRole === UserRole.PROFESSOR) {
-      // interviewInfo.date의 일정 api 호출 조회
+      const filteredInterviewList = interviewList.filter(
+        interview => interview.interview_date === interviewInfo?.interview_date
+      );
+      setProfessorInterviewList(filteredInterviewList);
       return;
     }
-  }, [userRole]);
+  }, [userRole, interviewInfo, interviewList]);
 
   const formattedDate = useMemo(() => {
-    return interviewInfo?.date ? dayjs(interviewInfo.date).format("YYYY년 MM월 DD일 dddd") : "";
-  }, [interviewInfo?.date]);
+    return interviewInfo?.interview_date
+      ? dayjs(interviewInfo.interview_date).format("YYYY년 MM월 DD일 dddd")
+      : "";
+  }, [interviewInfo]);
 
+  // 새 면담 등록하기
   const openCreateInterviewModal = () => {
-    openInterviewModal("", INTERVIEW_MODAL_TYPE.CREATE);
+    openInterviewModal(null, INTERVIEW_MODAL_TYPE.CREATE);
+  };
+
+  // 면담 클릭: 면담 모달 오픈
+  const handleClickInterview = (interview: InterviewInfo) => () => {
+    openInterviewModal(interview, interview.interview_state as InterviewModalType);
   };
 
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-left text-2xl font-bold">OOO님 교수님 면담 조회</DialogTitle>
+        <DialogTitle className="text-left text-2xl font-bold">
+          {selectedProfessor?.name}님 교수님 면담 조회
+        </DialogTitle>
       </DialogHeader>
       <div className="mt-4 p-1">
         <div className="flex items-center justify-between">
@@ -54,8 +84,33 @@ const InterviewListView = () => {
           </Button>
         </div>
         <Separator className="!my-4" />
-        {/* TODO: 면담 데이터 목록 출력 */}
-        {/* TODO: 클릭하면 해당 면담 type 모달 오픈 */}
+
+        {userRole === UserRole.STUDENT &&
+          studentInterviewList.map(interview => (
+            <div
+              key={interview.id}
+              className="mb-3 flex w-full cursor-pointer items-center justify-around rounded-xl bg-gray-50 p-4 shadow-sm hover:opacity-80"
+              role="button"
+              onClick={handleClickInterview(interview)}
+            >
+              <div className="flex flex-col items-center gap-2">
+                <StatusBadge status={interview.interview_state as InterviewStatus} />
+                <div>
+                  {interview.interview_time.map(time => (
+                    <div className="text-sm font-bold text-stone-600" key={time}>
+                      {time}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-2 text-base">
+                <div>{interview.professor_name} 교수님</div>
+                <div>{selectedProfessor?.college}</div>
+              </div>
+            </div>
+          ))}
+
+        {/* 교수 일정 목록 */}
       </div>
     </>
   );

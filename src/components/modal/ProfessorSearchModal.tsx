@@ -22,8 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { useProfessorsStore } from "@/store/professorsStore";
 import { Professor } from "@/types/user";
 import { professorApi } from "@/utils/api/professor";
 
@@ -33,8 +33,6 @@ const ProfessorSearchModal = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const setProfessors = useProfessorsStore(state => state.setProfessors);
-  const setSelectedProfessor = useProfessorsStore(state => state.setSelectedProfessor);
   const { isProfessorSearchOpen, closeProfessorSearch, setPathname } = useInterviewModalStore(
     useShallow(state => ({
       isProfessorSearchOpen: state.isProfessorSearchOpen,
@@ -42,6 +40,8 @@ const ProfessorSearchModal = () => {
       setPathname: state.setPathname,
     }))
   );
+  const interviewList = useDateStore(state => state.interviewList);
+  const setInterviewList = useDateStore(state => state.setInterviewList);
 
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [searchWord, setSearchWord] = useState<string>("");
@@ -90,25 +90,20 @@ const ProfessorSearchModal = () => {
     enabled: isProfessorSearchOpen,
   });
 
-  // professors 스토어에 교수 목록 저장
-  useEffect(() => {
-    if (isProfessorSearchOpen) {
-      setProfessors(professorsData ?? []);
-    }
-  }, [isProfessorSearchOpen, setProfessors, professorsData]);
-
   // 검색 모달이 열려있는 상태에서 페이지 변경 시 모달 닫음
   useEffect(() => {
     setPathname(pathname);
   }, [pathname, setPathname]);
 
   const handleProfessorClick = (professorId: string) => {
-    setSelectedProfessor(professorsData?.find(p => p.id === professorId) ?? null);
-
     const targetPath = `/student/professor/${professorId}`;
+    // 이미 해당 교수 페이지에 있을 경우 모달 닫기
     if (pathname === targetPath) {
       closeProfessorSearch();
     } else {
+      // 해당 교수 페이지로 이동
+      // 면담 목록 중 해당 교수의 면담 데이터만 필터링하여 저장
+      setInterviewList(interviewList.filter(interview => interview.professor_id === professorId));
       router.push(targetPath);
     }
   };

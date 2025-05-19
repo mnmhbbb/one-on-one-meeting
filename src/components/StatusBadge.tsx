@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import { InterviewStatus, STATUS_COLORS } from "@/common/const";
 import { cn } from "@/lib/utils";
 
 interface StatusBadgeProps {
@@ -17,7 +17,7 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
         className
       )}
     >
-      {STATUS_LABELS[status]}
+      {status}
     </div>
   );
 };

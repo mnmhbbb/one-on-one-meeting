@@ -1,13 +1,12 @@
 import { InterviewModalType } from "@/common/const";
 import { createStore } from "@/store/store";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/types/interview";
 
 type InterviewModalState = {
   pathname: string;
 
   isOpen: boolean;
   isProfessorSearchOpen: boolean; // 교수 검색 모달 열림 여부
-  interviewId: string | null;
   type: InterviewModalType | null;
   interviewInfo: InterviewInfo | null;
 
@@ -15,12 +14,11 @@ type InterviewModalState = {
 
   setPathname: (path: string) => void;
 
-  open: (id: string, type: InterviewModalType) => void;
+  open: (info: InterviewInfo | null, type: InterviewModalType) => void;
   close: () => void;
   openProfessorSearch: () => void;
   closeProfessorSearch: () => void;
   setInterviewInfo: (info: InterviewInfo) => void;
-  resetInterviewModal: () => void;
 
   setSelectedTime: (time: string[]) => void;
 };
@@ -30,7 +28,6 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
 
   isOpen: false,
   isProfessorSearchOpen: false,
-  interviewId: null,
   type: null,
   interviewInfo: null,
 
@@ -44,24 +41,17 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
         set({ isProfessorSearchOpen: false });
       }
       if (get().isOpen) {
-        set({ isOpen: false, interviewId: null, type: null });
+        set({ isOpen: false, type: null });
       }
     }
     set({ pathname: newPath });
   },
 
-  open: (id, type) => set({ isOpen: true, interviewId: id, type }),
-  close: () => set({ isOpen: false, interviewId: null, type: null }),
+  open: (info, type) =>
+    set({ isOpen: true, type, interviewInfo: info, selectedTime: info?.interview_time ?? [] }),
+  close: () => set({ isOpen: false, type: null, selectedTime: [], interviewInfo: null }),
   openProfessorSearch: () => set({ isProfessorSearchOpen: true }),
   closeProfessorSearch: () => set({ isProfessorSearchOpen: false }),
-  setInterviewInfo: info => set({ interviewInfo: info }),
-  resetInterviewModal: () =>
-    set({
-      isOpen: false,
-      type: null,
-      interviewId: null,
-      interviewInfo: null,
-    }),
-
+  setInterviewInfo: info => set({ interviewInfo: info, selectedTime: info.interview_time }),
   setSelectedTime: (time: string[]) => set({ selectedTime: time }),
 }));

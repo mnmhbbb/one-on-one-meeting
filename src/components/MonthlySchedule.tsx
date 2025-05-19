@@ -12,22 +12,18 @@ import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import {
-  InterviewStatus,
-  RoleViewType,
-  STATUS_COLORS,
-  STATUS_LABELS,
-  INTERVIEW_MODAL_TYPE,
-} from "@/common/const";
+import { InterviewStatus, RoleViewType, STATUS_COLORS, INTERVIEW_MODAL_TYPE } from "@/common/const";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { InterviewInfo, DEFAULT_INTERVIEW_INFO } from "@/types/interview";
+import { ProfessorAllowDate } from "@/types/user";
 
 const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
 
 interface MonthlyScheduleProps {
   events: InterviewInfo[];
+  allowDateList?: ProfessorAllowDate[];
   roleViewType: RoleViewType;
 }
 
@@ -41,22 +37,39 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
   );
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
   const openInterviewModal = useInterviewModalStore(state => state.open);
+  const setInterviewInfo = useInterviewModalStore(state => state.setInterviewInfo);
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
 
   const handleClick = (date: Date, events: InterviewInfo[]) => {
-    if (events.length === 0) {
-      openProfessorSearch();
-      return;
-    }
-
     const handlers: Partial<Record<RoleViewType, () => void>> = {
       [RoleViewType.STUDENT_ON_STUDENT]: () => {
+        // 면담 일정이 없으면 교수 검색 모달
+        if (events.length === 0) {
+          openProfessorSearch();
+          return;
+        }
+        // 면담 일정이 있으면 신청현황으로 이동
         router.push("/student/interview-requests?tab=day");
         setCurrentDate(date);
       },
       [RoleViewType.STUDENT_ON_PROFESSOR]: () => {
-        openInterviewModal(events[0].id, INTERVIEW_MODAL_TYPE.LIST);
+        if (events.length > 0) {
+          // 등록된 면담일정이 있으면 면담 조회 모달
+          openInterviewModal(events[0], INTERVIEW_MODAL_TYPE.LIST);
+          setInterviewInfo(events[0]);
+        } else {
+          // 등록된 면담일정이 없으면 새 면담 신청
+          openInterviewModal(null, INTERVIEW_MODAL_TYPE.CREATE);
+          setInterviewInfo({
+            ...DEFAULT_INTERVIEW_INFO,
+            interview_date: format(date, "yyyy-MM-dd"),
+            interview_state: InterviewStatus.REQUESTED,
+          });
+        }
+      },
+      [RoleViewType.PROFESSOR_ON_PROFESSOR]: () => {
+        openInterviewModal(events[0] || null, INTERVIEW_MODAL_TYPE.LIST);
       },
     };
 
@@ -103,18 +116,31 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
         {allDays.map((date, i) => {
           // 각 날짜에 해당하는 이벤트들을 찾음 (최대 3개까지)
           const dateStr = format(date, "yyyy-MM-dd");
-          const dayEvents = props.events.filter(e => e.date.startsWith(dateStr)).slice(0, 3);
+          const dayEvents = props.events
+            .filter(e => e.interview_date.startsWith(dateStr))
+            .slice(0, 3);
+
+          // 학생 유저가 교수 화면 조회할 경우, 해당 날짜의 면담 가능 여부 확인하여 버튼 활성화
+          const isDateAvailable =
+            props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR
+              ? (props.allowDateList?.some(
+                  allowDate => allowDate.allow_date === dateStr && allowDate.allow_time.length > 0
+                ) ?? false)
+              : true;
 
           return (
             // TODO: 현재 달이 아닌 경우는 날짜 이동만(교수 검색창, 신청 현황 이동 동작 X)
             <div
               key={i}
               className={cn(
-                "relative min-h-[60px] rounded border p-1",
-                !isSameMonth(date, currentDate) && "text-gray-400" // 현재 달의 날짜가 아닌 경우 회색으로 표시
+                "relative min-h-[100px] rounded border p-1",
+                !isSameMonth(date, currentDate) && "text-gray-400", // 현재 달의 날짜가 아닌 경우 회색으로 표시
+                props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR &&
+                  !isDateAvailable &&
+                  "cursor-not-allowed bg-gray-200 opacity-50"
               )}
               role="button"
-              onClick={() => handleClick(date, dayEvents)}
+              onClick={() => isDateAvailable && handleClick(date, dayEvents)}
             >
               {/* 날짜 숫자 표시 */}
               <div className="mb-1 text-xs font-semibold">{format(date, "d")}</div>
@@ -125,10 +151,10 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
                     key={eventIndex}
                     className={cn(
                       "rounded px-1 py-0.5 text-center text-xs",
-                      STATUS_COLORS[event.status as InterviewStatus]
+                      STATUS_COLORS[event.interview_state as InterviewStatus]
                     )}
                   >
-                    {STATUS_LABELS[event.status as InterviewStatus]}
+                    {event.interview_state}
                   </div>
                 ))}
               </div>

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import InterviewDataLoader from "@/components/InterviewDataLoader";
 import InterviewRequestTabs from "@/components/InterviewRequestTabs";
 import LoadingUI from "@/components/LoadingUI";
 import ScheduleFrame from "@/components/ScheduleFrame";
@@ -9,6 +10,7 @@ const InterviewRequestsPage = () => {
   return (
     <ScheduleFrame>
       <StudentHeader />
+      <InterviewDataLoader />
       <Suspense fallback={<LoadingUI />}>
         <InterviewRequestTabs isStudent />
       </Suspense>

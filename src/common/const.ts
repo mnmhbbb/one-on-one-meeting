@@ -19,14 +19,15 @@ export const TIMES: string[] = [
   "16:30 - 17:00",
   "17:00 - 17:30",
   "17:30 - 18:00",
+  "18:00 - 18:30",
 ];
 
 export enum InterviewStatus {
-  REQUESTED = "requested",
-  CONFIRMED = "confirmed",
-  REJECTED = "rejected",
-  CANCELLED = "cancelled",
-  RECORDED = "recorded",
+  REQUESTED = "확정 대기",
+  CONFIRMED = "면담 확정",
+  REJECTED = "면담 거절",
+  CANCELLED = "면담 취소",
+  RECORDED = "면담 기록 완료",
 }
 
 export const STATUS_COLORS: Record<InterviewStatus, string> = {
@@ -37,6 +38,7 @@ export const STATUS_COLORS: Record<InterviewStatus, string> = {
   [InterviewStatus.RECORDED]: "bg-yellow-300",
 };
 
+// FIXME: 이후 삭제
 export const STATUS_LABELS: Record<InterviewStatus, string> = {
   [InterviewStatus.REQUESTED]: "확정 대기",
   [InterviewStatus.CONFIRMED]: "면담 확정",
@@ -67,6 +69,3 @@ export enum UserRole {
   PROFESSOR = "professor",
   ADMIN = "admin",
 }
-
-// FIXME: 확정되면 추가
-export const INTERVIEW_PURPOSES = ["수업 관련", "진로 상담", "과제 문의", "기타"] as const;

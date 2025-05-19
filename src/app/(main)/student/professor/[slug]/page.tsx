@@ -15,7 +15,7 @@ export default async function ProfessorPage({ params }: PageProps) {
 
   return (
     <ScheduleFrame>
-      <ProfessorScheduleHeaderForStudent />
+      <ProfessorScheduleHeaderForStudent professorId={slug} />
       <ScheduleView professorId={slug} />
     </ScheduleFrame>
   );

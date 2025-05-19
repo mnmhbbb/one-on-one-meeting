@@ -1,57 +1,65 @@
 import clsx from "clsx"; // tailwind-merge 또는 clsx 추천
 import { memo, useCallback, useEffect, useState } from "react";
 
+import { TIMES } from "@/common/const";
 import { Button } from "@/components/ui/button";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-
-type TimeSlot = {
-  time: string;
-  type: "available" | "interview" | "impossible";
-};
+import { ProfessorAllowDate } from "@/types/user";
 
 interface TimeSelectProps {
-  timeList: TimeSlot[];
+  timeList: ProfessorAllowDate[];
 }
 
 const TimeSelect = ({ timeList }: TimeSelectProps) => {
+  const selectedTime = useInterviewModalStore(state => state.selectedTime);
+  console.log("🚀 ~ TimeSelect ~ selectedTime:", selectedTime);
+
+  const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
   const setSelectedTime = useInterviewModalStore(state => state.setSelectedTime);
+  const [selected, setSelected] = useState<string[]>(() => selectedTime);
 
-  const [selected, setSelected] = useState<string[]>(
-    timeList.filter(t => t.type === "interview").map(t => t.time)
-  );
+  // interviewInfo의 날짜와 일치하는 시간 목록 찾기
+  const filteredTimeList = timeList.find(time => time.allow_date === interviewInfo?.interview_date);
+  console.log("🚀 ~ TimeSelect ~ timeList:", timeList);
+  console.log("🚀 ~ TimeSelect ~ interviewInfo:", interviewInfo);
 
+  // selected 상태가 변경될 때 setSelectedTime 호출
   useEffect(() => {
-    // 선택된 시간을 스토어에 저장
     setSelectedTime(selected);
   }, [selected, setSelectedTime]);
 
-  const toggleTime = useCallback((time: string, type: TimeSlot["type"]) => {
-    if (type === "impossible") return;
+  const toggleTime = useCallback((time: string) => {
     setSelected(prev => (prev.includes(time) ? prev.filter(t => t !== time) : [...prev, time]));
   }, []);
 
+  if (!filteredTimeList) {
+    return <div>선택된 날짜에 가능한 시간이 없습니다.</div>;
+  }
+
   return (
     <div className="grid grid-cols-2 gap-2">
-      {timeList.map(({ time, type }) => {
+      {TIMES.map(time => {
         const isSelected = selected.includes(time);
-        const isDisabled = type === "impossible";
+        const isAvailable = filteredTimeList.allow_time.includes(time);
+        const isApplied = filteredTimeList.applied_interview_time?.includes(time);
 
         return (
           <Button
             key={time}
             type="button"
             variant="ghost"
-            disabled={isDisabled}
-            onClick={() => toggleTime(time, type)}
+            disabled={!isAvailable || isApplied}
+            onClick={() => toggleTime(time)}
             className={clsx(
               "h-10 rounded-md border border-gray-300 text-sm font-semibold",
-              // 면담 신청 불가능한 시간
-              isDisabled && "cursor-not-allowed border-gray-50 bg-gray-200 text-gray-400",
+              // 면담 신청 불가능한 시간 (허용되지 않거나 이미 신청됨)
+              (!isAvailable || isApplied) &&
+                "cursor-not-allowed border-gray-50 bg-gray-200 text-gray-400",
 
               // 면담 신청 가능한 시간
-              type === "available" && !isSelected && "bg-white",
+              isAvailable && !isApplied && !isSelected && "bg-white",
 
-              // 현재 선택된 시간(기존에 신청한 면담 포함)
+              // 현재 선택된 시간
               isSelected && "bg-primary text-white hover:bg-[#84644f] hover:text-white"
             )}
           >
@@ -62,4 +70,5 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
     </div>
   );
 };
+
 export default memo(TimeSelect);

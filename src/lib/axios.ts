@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CanceledError } from "axios";
 
-import { useErrorStore } from "@/store/errorStore";
+import { useToastStore } from "@/store/toastStore";
 
 export const axiosBase = axios.create({
   baseURL: "/api",
@@ -18,7 +18,7 @@ const onResponse = <T>(res: AxiosResponse<T>): T => {
 
 const onError = async (error: AxiosError | Error): Promise<never> => {
   if (typeof window !== "undefined") {
-    const store = useErrorStore.getState();
+    const store = useToastStore.getState();
 
     if (error instanceof CanceledError) {
       return Promise.reject();
@@ -30,7 +30,7 @@ const onError = async (error: AxiosError | Error): Promise<never> => {
       const message =
         error.response?.data?.message || error.message || "예상치 못한 에러가 발생했습니다.";
       const status = error.response?.status;
-      store.setError(message, status);
+      store.setToast(message, "error", status);
     }
   }
 
