@@ -1,6 +1,6 @@
 import { InterviewModalType } from "@/common/const";
 import { createStore } from "@/store/store";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/types/interview";
 
 type InterviewModalState = {
   pathname: string;
@@ -20,7 +20,6 @@ type InterviewModalState = {
   openProfessorSearch: () => void;
   closeProfessorSearch: () => void;
   setInterviewInfo: (info: InterviewInfo) => void;
-  resetInterviewModal: () => void;
 
   setSelectedTime: (time: string[]) => void;
 };
@@ -51,17 +50,11 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
   },
 
   open: (id, type) => set({ isOpen: true, interviewId: id, type }),
-  close: () => set({ isOpen: false, interviewId: null, type: null }),
+  close: () =>
+    set({ isOpen: false, interviewId: null, type: null, selectedTime: [], interviewInfo: null }),
   openProfessorSearch: () => set({ isProfessorSearchOpen: true }),
   closeProfessorSearch: () => set({ isProfessorSearchOpen: false }),
   setInterviewInfo: info => set({ interviewInfo: info }),
-  resetInterviewModal: () =>
-    set({
-      isOpen: false,
-      type: null,
-      interviewId: null,
-      interviewInfo: null,
-    }),
 
   setSelectedTime: (time: string[]) => set({ selectedTime: time }),
 }));
