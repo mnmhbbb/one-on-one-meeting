@@ -24,22 +24,20 @@ export default function MainPageLogin() {
 
   return (
     <div className="w-full flex-1 flex-col bg-gray-100">
-      <div className="flex w-full flex-col items-center justify-center px-10 py-10 md:px-6 lg:py-25">
-        <div className="mb-12 flex flex-col items-center justify-center text-center">
-          <h1 className="mb-5 text-3xl font-bold tracking-tight text-[#493a2e] sm:text-3xl md:text-5xl">
-            저희 사이트를 찾아주셔서 감사합니다.
+      <div className="flex w-full flex-col items-center justify-center px-10 py-10 md:px-6 lg:py-15">
+        <div className="mb-10 flex flex-col items-center justify-center text-center">
+          <h1 className="mb-6 text-3xl leading-relaxed font-bold tracking-tight text-[#493a2e] sm:text-3xl md:text-5xl md:leading-[4rem]">
+            교수 - 학생 간에 면담 <br />
+            불필요한 절차 없이 실시간으로 예약하세요.
           </h1>
-          <p className="mx-auto text-lg break-keep text-slate-600 md:text-2xl">
-            교수 - 학생 간에 불필요한 연락없이 실시간으로 면담을 예약하세요.
-          </p>
         </div>
 
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-3 lg:gap-10">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2 lg:gap-10">
           <UserTypeCard
             title="학생"
             description={
               <>
-                교수님과의 면접을 예약하고 <br />
+                교수님과의 면담을 예약하고 <br />
                 약속을 관리하세요.
               </>
             }
@@ -53,7 +51,7 @@ export default function MainPageLogin() {
             description={
               <>
                 면담 가능한 시간을 설정하고 <br />
-                학생 면접 요청을 관리하세요.
+                학생 면담 요청을 관리하세요.
               </>
             }
             icon={<Users className="text-primary h-12 w-12" />}
@@ -61,14 +59,14 @@ export default function MainPageLogin() {
             gradient="from-primary to-primary"
             index={1}
           />
-          <UserTypeCard
+          {/* <UserTypeCard
             title="관리자"
             description="서비스 버전은 안 보이게 가리셈"
             icon={<ShieldCheck className="text-primary h-12 w-12" />}
             onClick={handleAdminClick}
             gradient="from-primary to-[#403329]"
             index={2}
-          />
+          /> */}
         </div>
       </div>
     </div>
