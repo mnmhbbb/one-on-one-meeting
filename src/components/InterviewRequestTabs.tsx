@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDateStore } from "@/store/dateStore";
-import { EVENTS } from "@/utils/data/mockData";
 
 const TABS = [
   { value: "month", label: "Month" },
@@ -31,6 +30,7 @@ const TABS = [
 
 const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) => {
   const currentDate = useDateStore(state => state.currentDate);
+  const interviewList = useDateStore(state => state.interviewList);
   const [selectedTab, setSelectedTab] = useState<"month" | "week" | "day">("month");
   const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
     InterviewStatus.REQUESTED,
@@ -51,15 +51,18 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
 
   // 상태 필터링이 적용된 이벤트 목록
   const filteredEvents = useMemo(
-    () => EVENTS.filter(event => selectedStatuses.includes(event.status as InterviewStatus)),
-    [selectedStatuses]
+    () =>
+      interviewList.filter(event =>
+        selectedStatuses.includes(event.interview_state as InterviewStatus)
+      ),
+    [interviewList, selectedStatuses]
   );
 
   // 각 탭에 해당하는 이벤트 필터링
   const monthEvents = useMemo(
     () =>
       filteredEvents.filter(event => {
-        const eventDate = new Date(event.date);
+        const eventDate = new Date(event.interview_date);
         return isSameMonth(eventDate, currentDate);
       }),
     [filteredEvents, currentDate]
@@ -68,7 +71,7 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
   const weekEvents = useMemo(
     () =>
       filteredEvents.filter(event => {
-        const eventDate = new Date(event.date);
+        const eventDate = new Date(event.interview_date);
         const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
         const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
         return isWithinInterval(eventDate, { start: weekStart, end: weekEnd });
@@ -79,7 +82,7 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
   const dayEvents = useMemo(
     () =>
       filteredEvents.filter(event => {
-        const eventDate = new Date(event.date);
+        const eventDate = new Date(event.interview_date);
         const dayStart = startOfDay(currentDate);
         const dayEnd = endOfDay(currentDate);
         return isWithinInterval(eventDate, { start: dayStart, end: dayEnd });

@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { InterviewInfo } from "@/types/interview";
 
 interface InterviewTableProps {
   events: InterviewInfo[];
@@ -27,7 +27,7 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
 
   const handleClick = useCallback(
     (event: InterviewInfo) => {
-      open(event.id, event.status as InterviewModalType);
+      open(event, event.interview_state as InterviewModalType);
     },
     [open]
   );
@@ -47,15 +47,17 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
       </TableHeader>
       <TableBody>
         {events
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .sort(
+            (a, b) => new Date(a.interview_date).getTime() - new Date(b.interview_date).getTime()
+          )
           .map((event, index) => (
             <TableRow key={index} role="button" onClick={() => handleClick(event)}>
               <TableCell className="w-[20%] px-6 font-medium">
-                <StatusBadge status={event.status as InterviewStatus} />
+                <StatusBadge status={event.interview_state as InterviewStatus} />
                 <br />
                 <div className="mt-1 w-full text-center text-sm">
-                  {`${format(new Date(event.date), "yyyy.MM.dd")} (${format(
-                    new Date(event.date),
+                  {`${format(new Date(event.interview_date), "yyyy.MM.dd")} (${format(
+                    new Date(event.interview_date),
                     "EEE",
                     { locale: ko }
                   )})`}
@@ -63,18 +65,18 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[40%] px-6">
                 <div>
-                  {event.professor} 교수님
+                  {event.professor_name} 교수님
                   <br />
-                  [면담 일정] {event.time.join(", ")}
+                  [면담 일정] {event.interview_time.join(", ")}
                   <br />
                   <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
-                    [면담 사유] {event.reason}
+                    [면담 사유] {event.interview_content}
                   </div>
                 </div>
               </TableCell>
               <TableCell className="w-[30%] px-6">
                 <div className="line-clamp-2 max-w-[250px] text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                  {event.status === InterviewStatus.RECORDED && event.memo}
+                  {event.interview_state === InterviewStatus.RECORDED && event.interview_record}
                 </div>
               </TableCell>
             </TableRow>

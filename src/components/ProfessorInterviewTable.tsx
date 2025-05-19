@@ -15,8 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { InterviewInfo } from "@/utils/data/mockData";
-
+import { InterviewInfo } from "@/types/interview";
 interface InterviewTableProps {
   events: InterviewInfo[];
 }
@@ -29,7 +28,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
 
   const handleClick = useCallback(
     (event: InterviewInfo) => {
-      open(event.id, event.status as InterviewModalType);
+      open(event, event.interview_state as InterviewModalType);
     },
     [open]
   );
@@ -42,7 +41,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
   const handleReject = useCallback(
     (event: InterviewInfo, e: React.MouseEvent) => {
       e.stopPropagation();
-      open(event.id, INTERVIEW_MODAL_TYPE.REJECTION_REASON);
+      open(event, INTERVIEW_MODAL_TYPE.REJECTION_REASON);
     },
     [open]
   );
@@ -65,15 +64,17 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
       </TableHeader>
       <TableBody>
         {events
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .sort(
+            (a, b) => new Date(a.interview_date).getTime() - new Date(b.interview_date).getTime()
+          )
           .map((event, index) => (
             <TableRow key={index} role="button" onClick={() => handleClick(event)}>
               <TableCell className="w-[20%] px-6 font-medium">
-                <StatusBadge status={event.status as InterviewStatus} />
+                <StatusBadge status={event.interview_state as InterviewStatus} />
                 <br />
                 <div className="mt-1 w-full text-center text-sm">
-                  {`${format(new Date(event.date), "yyyy.MM.dd")} (${format(
-                    new Date(event.date),
+                  {`${format(new Date(event.interview_date), "yyyy.MM.dd")} (${format(
+                    new Date(event.interview_date),
                     "EEE",
                     { locale: ko }
                   )})`}
@@ -81,39 +82,39 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[30%] px-6">
                 <div>
-                  {event.professor} 교수님
+                  {event.professor_name} 교수님
                   <br />
-                  [면담 일정] {event.time.join(", ")}
+                  [면담 일정] {event.interview_time.join(", ")}
                   <br />
                   <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
-                    [면담 사유] {event.reason}
+                    [면담 사유] {event.interview_content}
                   </div>
                 </div>
               </TableCell>
               <TableCell className="w-[30%] px-6">
-                {event.status === InterviewStatus.CONFIRMED &&
-                  new Date(event.date) < new Date() && (
+                {event.interview_state === InterviewStatus.CONFIRMED &&
+                  new Date(event.interview_date) < new Date() && (
                     <div className="text-primary flex h-full w-full items-center justify-center gap-1 rounded-md bg-[#FDFF9B] px-3 py-7 text-center font-semibold">
                       <CirclePlus className="h-4 w-4" />
                       면담 내용을 기록해보세요!
                     </div>
                   )}
-                {event.status === InterviewStatus.RECORDED && (
+                {event.interview_state === InterviewStatus.RECORDED && (
                   <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                    {event.memo}
+                    {event.interview_record}
                   </div>
                 )}
               </TableCell>
               <TableCell className="w-[20%] px-6">
-                {event.status === InterviewStatus.REQUESTED ? (
+                {event.interview_state === InterviewStatus.REQUESTED ? (
                   <div className="flex justify-between px-2">
                     <Button onClick={e => handleApprove(event, e)}>수락</Button>
                     <Button onClick={e => handleReject(event, e)}>거절</Button>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center">
-                    {event.status === InterviewStatus.RECORDED ||
-                    event.status === InterviewStatus.CONFIRMED ? (
+                    {event.interview_state === InterviewStatus.RECORDED ||
+                    event.interview_state === InterviewStatus.CONFIRMED ? (
                       <Check className="h-7 w-7 text-green-500" />
                     ) : (
                       <X className="h-7 w-7 text-red-500" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, memo, Suspense, useEffect, useMemo } from "react";
+import { lazy, memo, Suspense, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { INTERVIEW_MODAL_TYPE, InterviewModalType } from "@/common/const";
@@ -12,7 +12,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { EVENTS } from "@/utils/data/mockData";
 
 // Lazy load components
 const RequestInterviewView = lazy(() => import("@/components/modal/RequestInterviewView"));
@@ -23,32 +22,18 @@ const InterviewListView = lazy(() => import("@/components/modal/InterviewListVie
 const RejectionReason = lazy(() => import("@/components/modal/RejectionReason"));
 
 export const InterviewModal = () => {
-  const { isOpen, type, close, interviewId, setInterviewInfo } = useInterviewModalStore(
+  const { isOpen, type, close, interviewInfo } = useInterviewModalStore(
     useShallow(state => ({
       isOpen: state.isOpen,
       type: state.type,
       close: state.close,
-      interviewId: state.interviewId,
+      interviewInfo: state.interviewInfo,
       setInterviewInfo: state.setInterviewInfo,
     }))
   );
 
   // 임시
   const isLoading = false;
-
-  useEffect(() => {
-    const interview = EVENTS.find(event => event.id === interviewId);
-    if (interview) {
-      setInterviewInfo(interview);
-    }
-  }, [interviewId, setInterviewInfo]);
-
-  // TODO: 면담 id를 토대로 해당 면담 정보 api 호출하여 intervieModalStore에 저장하기, isLoading도 여기에서 한번에 처리.
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ["interview", interviewId],
-  //   queryFn: () => fetchInterviewDetails(interviewId!), // 비동기 요청
-  //   enabled: isOpen && !!interviewId,
-  // });
 
   const modalViewMap = {
     [INTERVIEW_MODAL_TYPE.REQUESTED]: RequestInterviewView,
@@ -67,18 +52,17 @@ export const InterviewModal = () => {
 
     // '면담 확정'의 경우, 현재 일시 - 면담 일시 > 0 ? RECORDED : REQUESTED
     if (type === INTERVIEW_MODAL_TYPE.CONFIRMED) {
-      const interview = EVENTS.find(event => event.id === interviewId);
-      if (!interview) return null;
+      if (!interviewInfo) return null;
 
       const now = new Date();
-      const [startTime] = interview.time[0].split(" ~ ");
-      const interviewDateTime = new Date(`${interview.date}T${startTime}`);
+      const [startTime] = interviewInfo.interview_time[0].split(" - ");
+      const interviewDateTime = new Date(`${interviewInfo.interview_date}T${startTime}`);
 
       return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
     }
 
     return modalViewMap[type];
-  }, [type, interviewId, modalViewMap]);
+  }, [type, interviewInfo, modalViewMap]);
 
   if (!isOpen || !type) return null; // 모달이 열려있지 않거나 타입이 없으면 렌더링 하지 않음
 

@@ -10,10 +10,13 @@ import StatusBadge from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { InterviewInfo } from "@/utils/data/mockData";
+import { DEFAULT_INTERVIEW_INFO, InterviewInfo } from "@/types/interview";
+import { ProfessorAllowDate } from "@/types/user";
+
 interface WeeklyScheduleProps {
   events: InterviewInfo[];
   roleViewType: RoleViewType;
+  allowDateList?: ProfessorAllowDate[];
 }
 
 const WeeklySchedule = (props: WeeklyScheduleProps) => {
@@ -26,19 +29,37 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
   );
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
   const openInterviewModal = useInterviewModalStore(state => state.open);
+  const setInterviewInfo = useInterviewModalStore(state => state.setInterviewInfo);
 
   const handleClick = (date: Date, event: InterviewInfo | undefined) => {
-    if (!event) {
-      openProfessorSearch();
-      return;
-    }
     const handlers: Partial<Record<RoleViewType, () => void>> = {
       [RoleViewType.STUDENT_ON_STUDENT]: () => {
+        // 면담 일정이 없으면 교수 검색 모달
+        if (!event) {
+          openProfessorSearch();
+          return;
+        }
+        // 면담 일정이 있으면 신청현황으로 이동
         router.push("/student/interview-requests?tab=day");
         setCurrentDate(date);
       },
       [RoleViewType.STUDENT_ON_PROFESSOR]: () => {
-        openInterviewModal(event.id, INTERVIEW_MODAL_TYPE.LIST);
+        // 면담 일정이 있으면 면담 조회 모달
+        if (event) {
+          openInterviewModal(event, INTERVIEW_MODAL_TYPE.LIST);
+          setInterviewInfo(event);
+          return;
+        }
+        // 면담 일정이 없으면 새 면담 신청 모달
+        openInterviewModal(null, INTERVIEW_MODAL_TYPE.CREATE);
+        setInterviewInfo({
+          ...DEFAULT_INTERVIEW_INFO,
+          interview_date: format(date, "yyyy-MM-dd"),
+          interview_state: InterviewStatus.REQUESTED,
+        });
+      },
+      [RoleViewType.PROFESSOR_ON_PROFESSOR]: () => {
+        openInterviewModal(event || null, INTERVIEW_MODAL_TYPE.LIST);
       },
     };
 
@@ -58,9 +79,9 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
     const [startTime] = time.split(" - ");
     return props.events.find(event => {
       return (
-        event.date === dateStr &&
-        event.time.some(timeSlot => {
-          const [slotStartTime] = timeSlot.split(" ~ ");
+        event.interview_date === dateStr &&
+        event.interview_time.some(timeSlot => {
+          const [slotStartTime] = timeSlot.split(" - ");
           return slotStartTime === startTime;
         })
       );
@@ -96,17 +117,31 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
             <div key={dayIndex} className="space-y-2">
               {TIMES.map((time, timeIndex) => {
                 const event = findEvent(date, time);
+                const dateStr = format(date, "yyyy-MM-dd");
+
+                // 학생 유저가 교수 화면 조회할 경우, 해당 날짜의 면담 가능 여부 확인하여 버튼 활성화
+                const isDateAvailable =
+                  props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR
+                    ? (props.allowDateList?.some(
+                        allowDate =>
+                          allowDate.allow_date === dateStr && allowDate.allow_time.length > 0
+                      ) ?? false)
+                    : true;
+
                 return (
                   <div
                     key={`${dayIndex}-${timeIndex}`}
                     className={cn(
                       "mt-2 flex h-5 items-center justify-center rounded-md",
-                      event ? "" : "bg-gray-50"
+                      event ? "" : "bg-gray-50",
+                      props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR &&
+                        !isDateAvailable &&
+                        "cursor-not-allowed bg-gray-200 opacity-50"
                     )}
                     role="button"
                     onClick={() => handleClick(date, event)}
                   >
-                    {event && <StatusBadge status={event.status as InterviewStatus} />}
+                    {event && <StatusBadge status={event.interview_state as InterviewStatus} />}
                   </div>
                 );
               })}
