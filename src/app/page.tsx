@@ -1,11 +1,9 @@
-import { Button } from "@/components/ui/button";
+import MainPageLogin from "@/components/MainPageLogin";
 
-export default function Home() {
+export default async function Home() {
   return (
-    <div>
-      <Button variant="outline">Button1</Button>
-      <Button variant="secondary">Button2</Button>
-      <Button>Button3</Button>
-    </div>
+    <main className="flex justify-center">
+      <MainPageLogin />
+    </main>
   );
 }

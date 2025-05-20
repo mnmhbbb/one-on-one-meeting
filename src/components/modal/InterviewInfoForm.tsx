@@ -1,0 +1,263 @@
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
+
+import { InterviewStatus, STATUS_LABELS, UserRole } from "@/common/const";
+import LoadingUI from "@/components/LoadingUI";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { useUserStore } from "@/store/userStore";
+import { interviewApi } from "@/utils/api/interview";
+
+interface InterviewInfoFormProps {
+  interviewDatetimeList: string[]; // 면담일시 목록
+  isBeforeInterviewDate?: boolean; // 면담일이 지났는지 여부
+  interviewDatetimeGuideText?: string; // 면담일시 하위 가이드 문구
+}
+
+/**
+ * 면담 정보 확인 & 입력
+ */
+const InterviewInfoForm = (props: InterviewInfoFormProps) => {
+  const MAX_REASON_LENGTH = 100;
+
+  const userRole = useUserStore(state => state.role);
+  const { interviewInfo, setInterviewInfo } = useInterviewModalStore(
+    useShallow(state => ({
+      interviewInfo: state.interviewInfo,
+      selectedTime: state.selectedTime,
+      setInterviewInfo: state.setInterviewInfo,
+    }))
+  );
+
+  const [status, setStatus] = useState<InterviewStatus | string>(
+    interviewInfo?.interview_state ?? ""
+  ); // 선택된 면담 상태(from 교수 권한)
+  const [category, setCategory] = useState(interviewInfo?.interview_category); // 면담 목적
+  const [content, setContent] = useState(interviewInfo?.interview_content); // 면담 희망 내용
+  const [cancellationReason, setCancellationReason] = useState(
+    interviewInfo?.interview_cancel_reason
+  ); // 면담 취소 사유
+  const [rejectionReason, setRejectionReason] = useState(interviewInfo?.interview_reject_reason); // 면담 거절 사유
+
+  const prevInterviewInfo = useRef(interviewInfo);
+
+  const isInterviewFormDisabled = useMemo(() => {
+    if (userRole === UserRole.STUDENT) {
+      // 면담 상태가 없거나 확인요청일 땐 false(활성화)
+      if (
+        !interviewInfo?.interview_state ||
+        interviewInfo?.interview_state === InterviewStatus.REQUESTED
+      )
+        return false;
+
+      // 면담확정이면서 면담일이 지나지 않았을 땐 false(활성화)
+      if (
+        interviewInfo?.interview_state === InterviewStatus.CONFIRMED &&
+        props.isBeforeInterviewDate
+      )
+        return false;
+
+      // 그 외 모든 경우는 true(비활성화)
+      return true;
+    }
+    return true;
+  }, [interviewInfo, userRole, props.isBeforeInterviewDate]);
+
+  // 면담상태 select 비활성화 여부(교수 권한)
+  const isInterviewStatusDisabled = useMemo(() => {
+    if (userRole === UserRole.PROFESSOR) {
+      // 확인요청일 땐 false(활성화)
+      if (interviewInfo?.interview_state === InterviewStatus.REQUESTED) return false;
+
+      // 면담확정이면서 면담일이 지나지 않았을 땐 false(활성화)
+      if (
+        interviewInfo?.interview_state === InterviewStatus.CONFIRMED &&
+        props.isBeforeInterviewDate
+      )
+        return false;
+    }
+    return true;
+  }, [interviewInfo?.interview_state, userRole, props.isBeforeInterviewDate]);
+
+  const isStudent = useMemo(() => (userRole === UserRole.STUDENT ? true : false), [userRole]);
+
+  // 인풋 변화 시, 스토어에 저장된 interviewInfo 업데이트
+  // TODO: 성능 개선 필요
+  useEffect(() => {
+    setInterviewInfo({
+      ...prevInterviewInfo.current!,
+      interview_state: interviewInfo?.interview_state ?? "",
+      interview_category: category ?? "",
+      interview_content: content ?? "",
+    });
+  }, [category, content, interviewInfo?.interview_state, setInterviewInfo]);
+
+  // isInterviewStatusDisabled이 false일 때는, 교수님이 선택할 수 있는 면담상태 item을 3가지만 제한함
+  // (면담확정, 면담거절, 면담취소)
+  const interviewStatusItems = useMemo(() => {
+    if (!isInterviewStatusDisabled) {
+      return Object.entries(STATUS_LABELS).filter(
+        ([key]) =>
+          key === InterviewStatus.CONFIRMED ||
+          key === InterviewStatus.REJECTED ||
+          key === InterviewStatus.CANCELLED ||
+          key === InterviewStatus.REQUESTED // 확인요청 텍스트를 보여주기 위해
+      );
+    }
+    return Object.entries(STATUS_LABELS);
+  }, [isInterviewStatusDisabled]);
+
+  const { data: interviewCategory, isLoading } = useQuery({
+    queryKey: ["interview-category"],
+    queryFn: async () => {
+      const res = await interviewApi.getInterviewCategory();
+      return res?.data ?? [];
+    },
+    // 면담 목적(카테고리) 셀렉트 목록은 면담 신청, 면담 확정 상태일 때만 조회
+    enabled:
+      !interviewInfo?.interview_state ||
+      interviewInfo?.interview_state === InterviewStatus.REQUESTED ||
+      interviewInfo?.interview_state === InterviewStatus.CONFIRMED,
+  });
+
+  return (
+    <>
+      <div>
+        {props.interviewDatetimeList.map(time => (
+          <div key={time} className="text-left text-sm font-bold">
+            {time}
+          </div>
+        ))}
+        {props.interviewDatetimeGuideText && (
+          <p className="text-left text-sm">{props.interviewDatetimeGuideText}</p>
+        )}
+      </div>
+      <Separator className="!my-4" />
+      <div>
+        <div className="mb-4 flex flex-col items-start space-y-1">
+          <label className="text-base font-medium">면담 목적</label>
+          <Select disabled={isInterviewFormDisabled} value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="면담 목적 선택" />
+            </SelectTrigger>
+            <SelectContent>
+              {interviewCategory?.map(category => (
+                <SelectItem key={category.id} value={category.interview_category}>
+                  {category.interview_category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="mb-4 flex flex-col items-start space-y-1">
+          <label className="text-base font-medium">면담 희망 내용</label>
+          <Textarea
+            placeholder="예: 과제 문의"
+            value={content}
+            required
+            maxLength={MAX_REASON_LENGTH}
+            className="text-sm whitespace-pre-line"
+            disabled={isInterviewFormDisabled}
+            onChange={e => setContent(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-4 flex flex-col items-start space-y-1">
+          <label className="text-base font-medium">면담 상태</label>
+          <Select
+            disabled={isInterviewStatusDisabled}
+            value={status}
+            defaultValue={interviewInfo?.interview_state}
+            onValueChange={setStatus}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="면담 상태 선택" />
+            </SelectTrigger>
+            <SelectContent>
+              {interviewStatusItems.map(([key, label]) => (
+                <SelectItem key={key} value={key} disabled={key === InterviewStatus.REQUESTED}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {props.isBeforeInterviewDate && isStudent && (
+            <p className="text-xs text-gray-500">※ 변경 저장 - 확인 요청 / 면담 삭제 - 면담 취소</p>
+          )}
+        </div>
+
+        {/* 교수 권한으로 면담 취소 선택한 경우, 사유 인풋 노출 */}
+        {!isInterviewStatusDisabled && status === InterviewStatus.CANCELLED && (
+          <div className="mb-4 flex w-full flex-col items-start space-y-1">
+            <label className="text-base font-medium">면담 취소 사유</label>
+            <Textarea
+              placeholder="면담 취소 사유를 입력해주세요."
+              value={cancellationReason ?? ""}
+              required
+              maxLength={MAX_REASON_LENGTH}
+              className="text-sm whitespace-pre-line"
+              onChange={e => setCancellationReason(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* 교수 권한으로 면담 거절 선택한 경우, 사유 인풋 노출 */}
+        {!isInterviewStatusDisabled && status === InterviewStatus.REJECTED && (
+          <div className="mb-4 flex w-full flex-col items-start space-y-1">
+            <label className="text-base font-medium">면담 거절 사유</label>
+            <Textarea
+              placeholder="면담 거절 사유를 입력해주세요."
+              value={rejectionReason ?? ""}
+              required
+              maxLength={MAX_REASON_LENGTH}
+              className="text-sm whitespace-pre-line"
+              onChange={e => setRejectionReason(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* 면담 취소 사유 조회 */}
+        {interviewInfo?.interview_cancel_reason && (
+          <div className="mb-4 flex w-full flex-col items-start space-y-1">
+            <label className="text-base font-medium">면담 취소 사유</label>
+            <Textarea
+              required
+              disabled
+              placeholder="면담 취소 사유를 입력해주세요."
+              className="text-sm whitespace-pre-line"
+              defaultValue={interviewInfo?.interview_cancel_reason}
+            />
+          </div>
+        )}
+
+        {/* 면담 거절 사유 조회 */}
+        {interviewInfo?.interview_reject_reason && (
+          <div className="mb-4 flex w-full flex-col items-start space-y-1">
+            <label className="text-base font-medium">면담 거절 사유</label>
+            <Textarea
+              required
+              disabled
+              placeholder="면담 거절 사유를 입력해주세요."
+              className="text-sm whitespace-pre-line"
+              defaultValue={interviewInfo?.interview_reject_reason}
+            />
+          </div>
+        )}
+      </div>
+
+      {isLoading && <LoadingUI />}
+    </>
+  );
+};
+
+export default InterviewInfoForm;

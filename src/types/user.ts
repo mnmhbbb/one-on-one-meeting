@@ -1,0 +1,58 @@
+import { UserRole } from "@/common/const";
+
+// 임시
+export interface UserInfo {
+  id: string;
+  role: UserRole;
+  name: string;
+  email: string;
+  department: string;
+  college: string;
+  sign_num: string;
+  phone_num: string;
+  notification_email: string;
+  interview_location: string;
+}
+
+export interface UserResponse {
+  user: UserInfo;
+  role: UserRole;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
+export interface Professor {
+  id: string;
+  email: string;
+  name: string;
+  college: string;
+  phone_num: string;
+  interview_location: string;
+}
+
+export interface MyPageUserInfo {
+  id: string;
+  role: UserRole;
+  name: string;
+  email: string;
+  department: string;
+  college: string;
+  sign_num: string;
+  phone_num: string;
+  notification_email: string;
+  interview_location: string;
+}
+
+export interface ProfessorAllowDate {
+  id: string;
+  professor_id: string;
+  professor_name: string;
+  allow_day: string;
+  allow_date: string;
+  allow_time: string[];
+  applied_interview_time: string[] | null;
+}
