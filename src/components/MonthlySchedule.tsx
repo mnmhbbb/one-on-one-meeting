@@ -122,9 +122,15 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
           // 학생 유저가 교수 화면 조회할 경우, 해당 날짜의 면담 가능 여부 확인하여 버튼 활성화
           const isDateAvailable =
             props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR
-              ? (props.allowDateList?.some(
-                  allowDate => allowDate.allow_date === dateStr && allowDate.allow_time.length > 0
-                ) ?? false)
+              ? (props.allowDateList?.some(allowDate => {
+                  const isMatchingDate = allowDate.allow_date === dateStr;
+                  const hasAvailableTime = allowDate.allow_time.length > 0;
+                  // 허용된 시간과 이미 신청된 시간의 개수가 같으면 모두 신청된 것으로 판단
+                  const isFullyBooked =
+                    allowDate.allow_time.length === allowDate.already_apply_time?.length;
+
+                  return isMatchingDate && hasAvailableTime && !isFullyBooked;
+                }) ?? false)
               : true;
 
           return (
