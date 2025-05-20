@@ -53,7 +53,7 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
           return;
         }
         // 면담 일정이 있으면 신청현황으로 이동
-        router.push("/student/interview-requests?tab=day");
+        router.push(`/student/interview-requests?tab=day&date=${format(date, "yyyy-MM-dd")}`);
         setCurrentDate(date);
       },
       [RoleViewType.STUDENT_ON_PROFESSOR]: () => {
@@ -66,13 +66,17 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
           openInterviewModal(null, INTERVIEW_MODAL_TYPE.CREATE);
           setInterviewInfo({
             ...DEFAULT_INTERVIEW_INFO,
-            interview_date: format(date, "yyyy-MM-dd"),
+            interview_date: format(date, "yyyy-MM-dd"), // 클릭된 날짜 전달
             interview_state: InterviewStatus.REQUESTED,
           });
         }
       },
       [RoleViewType.PROFESSOR_ON_PROFESSOR]: () => {
         openInterviewModal(events[0] || null, INTERVIEW_MODAL_TYPE.LIST);
+        setInterviewInfo({
+          ...DEFAULT_INTERVIEW_INFO,
+          interview_date: format(date, "yyyy-MM-dd"), // 클릭된 날짜 전달
+        });
       },
     };
 
