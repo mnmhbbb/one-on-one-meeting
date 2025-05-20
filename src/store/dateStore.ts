@@ -2,7 +2,12 @@ import { createStore } from "@/store/store";
 import { InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 
-export type UpdateTarget = "studentInterview" | "professorInterview" | "professorAllowDate" | null;
+export type UpdateTarget =
+  | "studentInterview"
+  | "professorInterview"
+  | "professorAllowDate"
+  | "professorAllowDateForStudent"
+  | null;
 
 interface DateState {
   currentDate: Date;

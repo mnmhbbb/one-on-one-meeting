@@ -56,3 +56,12 @@ export interface ProfessorAllowDate {
   allow_time: string[];
   already_apply_time: string[] | null;
 }
+/**
+ * 교수 면담 가능 날짜 요청 타입
+ */
+export interface ProfessorAllowDateRequest {
+  professor_id: string;
+  allow_date: string;
+  allow_day: string;
+  allow_time: string[];
+}
