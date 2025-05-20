@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, memo } from "react";
 
 import { RoleViewType, UserRole } from "@/common/const";
 import DateSelector from "@/components/DateSelector";
 import InterviewDataLoader from "@/components/InterviewDataLoader";
 import MonthlySchedule from "@/components/MonthlySchedule";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import WeeklySchedule from "@/components/WeeklySchedule";
@@ -53,7 +55,13 @@ const ScheduleView = (props: { professorId?: string }) => {
                   ))}
                 </TabsList>
                 <DateSelector viewType={viewType} />
-                <div></div>
+                {userRole === UserRole.PROFESSOR && (
+                  <div className="flex items-center justify-end">
+                    <Button variant="outline" className="w-[60%]">
+                      <Link href="/professor/schedule">일정 활성화</Link>
+                    </Button>
+                  </div>
+                )}
               </div>
               <MonthlySchedule
                 events={interviewList}
@@ -75,7 +83,13 @@ const ScheduleView = (props: { professorId?: string }) => {
                   ))}
                 </TabsList>
                 <DateSelector viewType={viewType} />
-                <div></div>
+                {userRole === UserRole.PROFESSOR && (
+                  <div className="flex items-center justify-end">
+                    <Button variant="outline" className="w-[60%]">
+                      <Link href="/professor/schedule">일정 활성화</Link>
+                    </Button>
+                  </div>
+                )}
               </div>
               <WeeklySchedule
                 events={interviewList}

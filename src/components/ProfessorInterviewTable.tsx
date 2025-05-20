@@ -82,7 +82,8 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[30%] px-6">
                 <div>
-                  {event.professor_name} 교수님
+                  [신청 학생] {event.student_name} ({event.student_department}{" "}
+                  {event.student_sign_num})
                   <br />
                   [면담 일정] {event.interview_time.join(", ")}
                   <br />
