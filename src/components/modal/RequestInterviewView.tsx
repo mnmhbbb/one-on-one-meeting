@@ -82,6 +82,19 @@ const RequestInterviewView = () => {
 
   // 면담 저장
   const handleSave = useCallback(() => {
+    if (!interviewInfo?.interview_date || !interviewInfo?.interview_time) {
+      setToast("면담 날짜와 시간을 선택해 주세요.", "error");
+      return;
+    }
+    if (!interviewInfo?.interview_category) {
+      setToast("면담 목적을 선택해 주세요.", "error");
+      return;
+    }
+    if (!interviewInfo?.interview_content) {
+      setToast("면담 내용을 입력해 주세요.", "error");
+      return;
+    }
+
     updateInterviewMutation.mutate({
       id: interviewInfo?.id ?? "",
       student_id: interviewInfo?.student_id ?? "",
@@ -92,7 +105,7 @@ const RequestInterviewView = () => {
       interview_content: interviewInfo?.interview_content ?? "",
       interview_state: InterviewStatus.REQUESTED, // 면담 상태를 업데이트하면 면담 신청 상태로 변경
     });
-  }, [interviewInfo, updateInterviewMutation]);
+  }, [interviewInfo, updateInterviewMutation, setToast]);
 
   return (
     <>
