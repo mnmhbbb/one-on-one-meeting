@@ -107,7 +107,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[20%] px-6">
                 {event.interview_state === InterviewStatus.REQUESTED ? (
-                  <div className="flex justify-between px-2">
+                  <div className="flex justify-between px-5">
                     <Button onClick={e => handleApprove(event, e)}>수락</Button>
                     <Button onClick={e => handleReject(event, e)}>거절</Button>
                   </div>
