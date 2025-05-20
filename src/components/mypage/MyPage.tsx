@@ -77,13 +77,12 @@ const MyPage = () => {
   };
 
   useEffect(() => {
-    if (userInfo) {
-      setPhoneNum(userInfo.phone_num || "");
-      setNotificationEmail(userInfo.notification_email || "");
-      setDepartment(userInfo.department || "");
-      setCollege(userInfo.college || "");
-      setLocation(userInfo.interview_location || "");
-    }
+    if (!userInfo || !userInfo.role) return;
+    setPhoneNum(userInfo.phone_num || "");
+    setNotificationEmail(userInfo.notification_email || "");
+    setDepartment(userInfo.department || "");
+    setCollege(userInfo.college || "");
+    setLocation(userInfo.interview_location || "");
   }, [userInfo]);
 
   if (!userInfo || !userInfo.role) {
