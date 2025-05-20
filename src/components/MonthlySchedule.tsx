@@ -7,7 +7,6 @@ import {
   subDays,
   addDays,
 } from "date-fns";
-import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -19,7 +18,7 @@ import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo, DEFAULT_INTERVIEW_INFO } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 
-const WEEKDAYS = Array.from({ length: 7 }, (_, i) => dayjs().day(i).format("ddd"));
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 interface MonthlyScheduleProps {
   events: InterviewInfo[];
