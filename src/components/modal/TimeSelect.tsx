@@ -12,7 +12,6 @@ interface TimeSelectProps {
 
 const TimeSelect = ({ timeList }: TimeSelectProps) => {
   const selectedTime = useInterviewModalStore(state => state.selectedTime);
-  console.log("🚀 ~ TimeSelect ~ selectedTime:", selectedTime);
 
   const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
   const setSelectedTime = useInterviewModalStore(state => state.setSelectedTime);
@@ -20,8 +19,6 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
 
   // interviewInfo의 날짜와 일치하는 시간 목록 찾기
   const filteredTimeList = timeList.find(time => time.allow_date === interviewInfo?.interview_date);
-  console.log("🚀 ~ TimeSelect ~ timeList:", timeList);
-  console.log("🚀 ~ TimeSelect ~ interviewInfo:", interviewInfo);
 
   // selected 상태가 변경될 때 setSelectedTime 호출
   useEffect(() => {

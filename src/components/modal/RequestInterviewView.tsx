@@ -82,7 +82,6 @@ const RequestInterviewView = () => {
 
   // 면담 저장
   const handleSave = useCallback(() => {
-    console.log("aaa", interviewInfo);
     updateInterviewMutation.mutate({
       id: interviewInfo?.id ?? "",
       student_id: interviewInfo?.student_id ?? "",
