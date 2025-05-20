@@ -87,12 +87,12 @@ const RequestInterviewView = () => {
       student_id: interviewInfo?.student_id ?? "",
       professor_id: interviewInfo?.professor_id ?? "",
       interview_date: interviewInfo?.interview_date ?? "",
-      interview_time: selectedTime,
+      interview_time: interviewInfo?.interview_time ?? [],
       interview_category: interviewInfo?.interview_category ?? "",
       interview_content: interviewInfo?.interview_content ?? "",
       interview_state: InterviewStatus.REQUESTED, // 면담 상태를 업데이트하면 면담 신청 상태로 변경
     });
-  }, [interviewInfo, selectedTime, updateInterviewMutation]);
+  }, [interviewInfo, updateInterviewMutation]);
 
   return (
     <>

@@ -79,12 +79,12 @@ const CreateInterviewView = () => {
       student_id: userId,
       professor_id: selectedProfessor?.id ?? "",
       interview_date: interviewInfo?.interview_date ?? "",
-      interview_time: selectedTime,
+      interview_time: interviewInfo?.interview_time ?? [],
       interview_category: interviewInfo?.interview_category ?? "",
       interview_content: interviewInfo?.interview_content ?? "",
       interview_state: InterviewStatus.REQUESTED,
     });
-  }, [interviewInfo, selectedProfessor, selectedTime, userId, createInterviewMutation]);
+  }, [interviewInfo, selectedProfessor, userId, createInterviewMutation]);
 
   return (
     <>

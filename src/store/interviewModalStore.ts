@@ -53,5 +53,9 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
   openProfessorSearch: () => set({ isProfessorSearchOpen: true }),
   closeProfessorSearch: () => set({ isProfessorSearchOpen: false }),
   setInterviewInfo: info => set({ interviewInfo: info, selectedTime: info.interview_time }),
-  setSelectedTime: (time: string[]) => set({ selectedTime: time }),
+  setSelectedTime: (time: string[]) =>
+    set({
+      selectedTime: time,
+      interviewInfo: get().interviewInfo ? { ...get().interviewInfo!, interview_time: time } : null,
+    }),
 }));
