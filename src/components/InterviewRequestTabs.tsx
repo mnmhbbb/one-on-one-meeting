@@ -41,6 +41,7 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
   ]);
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab");
+  const date = searchParams.get("date");
 
   // 쿼리스트링에 tab이 있으면 해당 탭으로 선택
   useEffect(() => {
@@ -48,6 +49,16 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
       setSelectedTab(tab as "month" | "week" | "day");
     }
   }, [tab]);
+
+  // date 쿼리 파라미터가 있으면 currentDate에 반영
+  useEffect(() => {
+    if (date) {
+      const parsed = new Date(date);
+      if (!isNaN(parsed.getTime())) {
+        useDateStore.getState().setCurrentDate(parsed);
+      }
+    }
+  }, [date]);
 
   // 상태 필터링이 적용된 이벤트 목록
   const filteredEvents = useMemo(
