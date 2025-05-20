@@ -50,3 +50,12 @@ export interface InterviewCreateBody {
 export interface InterviewUpdateBody extends InterviewCreateBody {
   id: string;
 }
+
+export interface InterviewCancelBody {
+  id: string;
+  student_id: string;
+  professor_id: string;
+  interview_date: string;
+  interview_time: string[];
+  interview_cancel_reason: string;
+}

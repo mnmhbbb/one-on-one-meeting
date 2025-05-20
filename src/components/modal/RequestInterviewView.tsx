@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -16,7 +16,8 @@ import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useToastStore } from "@/store/toastStore";
 import { useUserStore } from "@/store/userStore";
-import { InterviewUpdateBody } from "@/types/interview";
+import { InterviewCancelBody, InterviewUpdateBody } from "@/types/interview";
+import { ProfessorAllowDate } from "@/types/user";
 import { interviewApi } from "@/utils/api/interview";
 
 /**
@@ -32,6 +33,7 @@ const RequestInterviewView = () => {
   const professorAllowDateList = useDateStore(state => state.professorAllowDateList);
   const setToast = useToastStore(state => state.setToast);
   const setUpdateTarget = useDateStore(state => state.setUpdateTarget);
+  const setProfessorAllowDateList = useDateStore(state => state.setProfessorAllowDateList);
 
   const [step, setStep] = useState(() => (userRole === UserRole.STUDENT ? 1 : 2));
   const [cancelReason, setCancelReason] = useState(""); // 면담 취소 사유
@@ -50,6 +52,39 @@ const RequestInterviewView = () => {
       }
       return result;
     },
+  });
+
+  // 학생 - 면담취소 요청
+  const cancelInterviewMutation = useMutation({
+    mutationFn: async (data: InterviewCancelBody) => {
+      const result = await interviewApi.cancelInterview(data);
+      if (result) {
+        setToast("면담 취소 요청이 완료되었습니다.", "success");
+        close();
+
+        // 면담 목록 업데이트
+        setUpdateTarget(
+          userRole === UserRole.PROFESSOR ? "professorInterview" : "studentInterview"
+        );
+      }
+      return result;
+    },
+  });
+
+  // 교수 면담 가능 날짜 조회(학생 시점)
+  useQuery<{ data: ProfessorAllowDate[] } | null, Error>({
+    queryKey: ["professorAllowDateListForStudent", interviewInfo],
+    queryFn: async () => {
+      if (!interviewInfo?.interview_date) return null;
+      const result = await interviewApi.getProfessorAllowDate(
+        interviewInfo?.professor_id,
+        interviewInfo?.interview_date,
+        interviewInfo?.interview_date
+      );
+      setProfessorAllowDateList(result?.data || []);
+      return result;
+    },
+    enabled: userRole === UserRole.STUDENT,
   });
 
   const handleStepChange = useCallback((step: number) => {
@@ -106,6 +141,26 @@ const RequestInterviewView = () => {
       interview_state: InterviewStatus.REQUESTED, // 면담 상태를 업데이트하면 면담 신청 상태로 변경
     });
   }, [interviewInfo, updateInterviewMutation, setToast]);
+
+  const handleCancelInterview = () => {
+    if (!interviewInfo?.interview_date) {
+      setToast("면담 정보를 찾을 수 없습니다.", "error");
+      return;
+    }
+    if (!cancelReason) {
+      setToast("면담 취소 사유를 입력해 주세요.", "error");
+      return;
+    }
+
+    cancelInterviewMutation.mutate({
+      id: interviewInfo?.id ?? "",
+      student_id: interviewInfo?.student_id ?? "",
+      professor_id: interviewInfo?.professor_id ?? "",
+      interview_date: interviewInfo?.interview_date ?? "",
+      interview_time: interviewInfo?.interview_time ?? [],
+      interview_cancel_reason: cancelReason,
+    });
+  };
 
   return (
     <>
@@ -180,7 +235,7 @@ const RequestInterviewView = () => {
             className="mb-4 w-full text-sm whitespace-pre-line"
           />
           <div className="flex justify-end gap-4">
-            <Button>저장</Button>
+            <Button onClick={handleCancelInterview}>저장</Button>
             <Button variant="outline" onClick={resetCancelReason}>
               취소
             </Button>

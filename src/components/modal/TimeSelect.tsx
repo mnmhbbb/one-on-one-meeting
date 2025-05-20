@@ -29,9 +29,7 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
     setSelected(prev => (prev.includes(time) ? prev.filter(t => t !== time) : [...prev, time]));
   }, []);
 
-  if (!filteredTimeList) {
-    return <div>선택된 날짜에 가능한 시간이 없습니다.</div>;
-  }
+  if (!filteredTimeList) return null;
 
   return (
     <div className="grid grid-cols-2 gap-2">

@@ -20,7 +20,6 @@ export async function PUT(req: NextRequest) {
       "interview_date",
       "interview_time",
       "interview_cancel_reason",
-      "interview_close_at",
     ];
 
     const hasAllRequired = requiredKeys.every(
