@@ -41,7 +41,7 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
       {TIMES.map(time => {
         const isSelected = selected.includes(time);
         const isAvailable = filteredTimeList.allow_time.includes(time);
-        const isApplied = filteredTimeList.applied_interview_time?.includes(time);
+        const isApplied = filteredTimeList.already_apply_time?.includes(time);
 
         return (
           <Button

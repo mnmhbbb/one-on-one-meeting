@@ -54,5 +54,5 @@ export interface ProfessorAllowDate {
   allow_day: string;
   allow_date: string;
   allow_time: string[];
-  applied_interview_time: string[] | null;
+  already_apply_time: string[] | null;
 }
