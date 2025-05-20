@@ -31,7 +31,9 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
   const openInterviewModal = useInterviewModalStore(state => state.open);
   const setInterviewInfo = useInterviewModalStore(state => state.setInterviewInfo);
 
-  const handleClick = (date: Date, event: InterviewInfo | undefined) => {
+  const handleClick = (date: Date, event: InterviewInfo | undefined, isDateAvailable: boolean) => {
+    if (!isDateAvailable) return; // 면담 신청 가능한 날짜가 아닌 경우 바로 리턴
+
     const handlers: Partial<Record<RoleViewType, () => void>> = {
       [RoleViewType.STUDENT_ON_STUDENT]: () => {
         // 면담 일정이 없으면 교수 검색 모달
@@ -40,7 +42,7 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
           return;
         }
         // 면담 일정이 있으면 신청현황으로 이동
-        router.push("/student/interview-requests?tab=day");
+        router.push(`/student/interview-requests?tab=day&date=${format(date, "yyyy-MM-dd")}`);
         setCurrentDate(date);
       },
       [RoleViewType.STUDENT_ON_PROFESSOR]: () => {
@@ -54,12 +56,16 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
         openInterviewModal(null, INTERVIEW_MODAL_TYPE.CREATE);
         setInterviewInfo({
           ...DEFAULT_INTERVIEW_INFO,
-          interview_date: format(date, "yyyy-MM-dd"),
+          interview_date: format(date, "yyyy-MM-dd"), // 클릭된 날짜 전달
           interview_state: InterviewStatus.REQUESTED,
         });
       },
       [RoleViewType.PROFESSOR_ON_PROFESSOR]: () => {
         openInterviewModal(event || null, INTERVIEW_MODAL_TYPE.LIST);
+        setInterviewInfo({
+          ...DEFAULT_INTERVIEW_INFO,
+          interview_date: format(date, "yyyy-MM-dd"),
+        });
       },
     };
 
@@ -122,10 +128,15 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                 // 학생 유저가 교수 화면 조회할 경우, 해당 날짜의 면담 가능 여부 확인하여 버튼 활성화
                 const isDateAvailable =
                   props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR
-                    ? (props.allowDateList?.some(
-                        allowDate =>
-                          allowDate.allow_date === dateStr && allowDate.allow_time.length > 0
-                      ) ?? false)
+                    ? (props.allowDateList?.some(allowDate => {
+                        const isMatchingDate = allowDate.allow_date === dateStr;
+                        const hasAvailableTime = allowDate.allow_time.length > 0;
+                        // 허용된 시간과 이미 신청된 시간의 개수가 같으면 모두 신청된 것으로 판단
+                        const isFullyBooked =
+                          allowDate.allow_time.length === allowDate.already_apply_time?.length;
+
+                        return isMatchingDate && hasAvailableTime && !isFullyBooked;
+                      }) ?? false)
                     : true;
 
                 return (
@@ -139,7 +150,7 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                         "cursor-not-allowed bg-gray-200 opacity-50"
                     )}
                     role="button"
-                    onClick={() => handleClick(date, event)}
+                    onClick={() => handleClick(date, event, isDateAvailable)}
                   >
                     {event && <StatusBadge status={event.interview_state as InterviewStatus} />}
                   </div>

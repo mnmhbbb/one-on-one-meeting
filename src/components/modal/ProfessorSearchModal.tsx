@@ -48,9 +48,9 @@ const ProfessorSearchModal = () => {
 
   // 학과 목록 조회
   const { data: collegesData, isLoading: isCollegesLoading } = useQuery({
-    queryKey: ["departments"],
+    queryKey: ["colleges"],
     queryFn: async () => {
-      const res = await professorApi.getDepartments();
+      const res = await professorApi.getColleges();
       if (!res) return [];
       return [{ value: "all", label: "전체" }].concat(
         res.colleges.map((c: string) => ({

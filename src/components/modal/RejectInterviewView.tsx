@@ -22,15 +22,15 @@ const RejectInterviewView = () => {
   );
 
   const headerText = useMemo(() => {
-    return `${interviewInfo?.professor} 교수님 ${STATUS_LABELS[interviewInfo?.status as InterviewStatus]}`;
-  }, [interviewInfo?.professor, interviewInfo?.status]);
+    return `${interviewInfo?.professor_name} 교수님 ${STATUS_LABELS[interviewInfo?.interview_state as InterviewStatus]}`;
+  }, [interviewInfo?.professor_name, interviewInfo?.interview_state]);
 
   const formattedInterviewDatetimeList = useMemo(() => {
-    if (!interviewInfo?.date) return [];
+    if (!interviewInfo?.interview_date) return [];
 
-    const baseDate = dayjs(interviewInfo?.date).format("YYYY년 MM월 DD일 dddd");
-    return interviewInfo?.time.map(time => `${baseDate} ${time}`);
-  }, [interviewInfo?.date, interviewInfo?.time]);
+    const baseDate = dayjs(interviewInfo?.interview_date).format("YYYY년 MM월 DD일 dddd");
+    return interviewInfo?.interview_time.map(time => `${baseDate} ${time}`);
+  }, [interviewInfo?.interview_date, interviewInfo?.interview_time]);
 
   return (
     <>
@@ -40,7 +40,7 @@ const RejectInterviewView = () => {
 
       <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
         <InterviewInfoForm interviewDatetimeList={formattedInterviewDatetimeList} />
-        <ProfessorNotice notice={professorNotice} checklist={professorCheckList} />
+        <ProfessorNotice notice={professorNotice} guide={professorCheckList} />
         <div className="mt-5 flex justify-end">
           <Button onClick={close}>닫기</Button>
         </div>

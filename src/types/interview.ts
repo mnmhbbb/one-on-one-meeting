@@ -16,6 +16,9 @@ export interface InterviewInfo {
   professor_notice: string | null;
   interview_guide: string; // 면담 상태에 따른 가이드 메시지
   interview_record?: string; // 면담 기록
+  student_name: string; // 면담 신청 학생 이름
+  student_sign_num: string; // 면담 신청 학생 학번
+  student_department: string; // 면담 신청 학생 학과
 }
 
 export const DEFAULT_INTERVIEW_INFO: InterviewInfo = {
@@ -35,6 +38,9 @@ export const DEFAULT_INTERVIEW_INFO: InterviewInfo = {
   interview_close_at: null,
   professor_notice: null,
   interview_guide: "",
+  student_name: "",
+  student_sign_num: "",
+  student_department: "",
 };
 
 export interface InterviewCreateBody {
@@ -49,4 +55,13 @@ export interface InterviewCreateBody {
 
 export interface InterviewUpdateBody extends InterviewCreateBody {
   id: string;
+}
+
+export interface InterviewCancelBody {
+  id: string;
+  student_id: string;
+  professor_id: string;
+  interview_date: string;
+  interview_time: string[];
+  interview_cancel_reason: string;
 }

@@ -8,7 +8,6 @@ import {
   isSameMonth,
   isWithinInterval,
 } from "date-fns";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, useMemo, memo, useEffect } from "react";
 
@@ -17,7 +16,6 @@ import DateSelector from "@/components/DateSelector";
 import ProfessorInterviewTable from "@/components/ProfessorInterviewTable";
 import StatusFilterGroup from "@/components/StatusFilterGroup";
 import StudentInterviewTable from "@/components/StudentInterviewTable";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDateStore } from "@/store/dateStore";
@@ -41,6 +39,7 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
   ]);
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab");
+  const date = searchParams.get("date");
 
   // 쿼리스트링에 tab이 있으면 해당 탭으로 선택
   useEffect(() => {
@@ -48,6 +47,16 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
       setSelectedTab(tab as "month" | "week" | "day");
     }
   }, [tab]);
+
+  // date 쿼리 파라미터가 있으면 currentDate에 반영
+  useEffect(() => {
+    if (date) {
+      const parsed = new Date(date);
+      if (!isNaN(parsed.getTime())) {
+        useDateStore.getState().setCurrentDate(parsed);
+      }
+    }
+  }, [date]);
 
   // 상태 필터링이 적용된 이벤트 목록
   const filteredEvents = useMemo(
@@ -107,13 +116,6 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
                 ))}
               </TabsList>
               <DateSelector viewType="month" />
-              {!isStudent && (
-                <div className="flex items-center justify-end">
-                  <Button variant="outline" className="w-[60%]">
-                    <Link href="/professor/schedule">일정 보기</Link>
-                  </Button>
-                </div>
-              )}
             </div>
             <StatusFilterGroup onFilterChange={setSelectedStatuses} />
             {isStudent ? (

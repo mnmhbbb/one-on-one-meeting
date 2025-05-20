@@ -1,15 +1,18 @@
 "use client";
 
-import { useUserStore } from "@/store/userStore";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { UserRole } from "@/common/const";
 import { useMutation } from "@tanstack/react-query";
-import { userApi } from "@/utils/api/user";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
+
+import { UserRole } from "@/common/const";
+import { useUserStore } from "@/store/userStore";
+import { MyPageUserInfo } from "@/types/user";
+import { userApi } from "@/utils/api/user";
+
 import LoadingUI from "../LoadingUI";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const MyPage = () => {
   const router = useRouter();
@@ -59,31 +62,29 @@ const MyPage = () => {
 
   const handleSave = () => {
     if (!userInfo) return;
-    const payload: any = {
+    const payload: MyPageUserInfo = {
       id: userInfo.id,
-      role,
+      role: role!,
+      name: userInfo.name,
+      email: userInfo.email,
+      sign_num: userInfo.sign_num,
       phone_num: phoneNum,
       notification_email: notificationEmail,
+      department: role === UserRole.STUDENT ? department : "",
+      college: role === UserRole.PROFESSOR ? college : "",
+      interview_location: role === UserRole.PROFESSOR ? location : "",
     };
-
-    if (role === UserRole.STUDENT) {
-      payload.department = department;
-    } else if (role === UserRole.PROFESSOR) {
-      payload.college = college;
-      payload.interview_location = location;
-    }
 
     mutate(payload);
   };
 
   useEffect(() => {
-    if (userInfo) {
-      setPhoneNum(userInfo.phone_num || "");
-      setNotificationEmail(userInfo.notification_email || "");
-      setDepartment(userInfo.department || "");
-      setCollege(userInfo.college || "");
-      setLocation(userInfo.interview_location || "");
-    }
+    if (!userInfo || !userInfo.role) return;
+    setPhoneNum(userInfo.phone_num || "");
+    setNotificationEmail(userInfo.notification_email || "");
+    setDepartment(userInfo.department || "");
+    setCollege(userInfo.college || "");
+    setLocation(userInfo.interview_location || "");
   }, [userInfo]);
 
   if (!userInfo || !userInfo.role) {

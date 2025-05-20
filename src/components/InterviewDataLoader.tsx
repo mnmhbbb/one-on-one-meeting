@@ -10,6 +10,7 @@ import { useUserStore } from "@/store/userStore";
 import { InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 import { interviewApi } from "@/utils/api/interview";
+import { professorApi } from "@/utils/api/professor";
 
 interface InterviewDataLoaderProps {
   professorId?: string;
@@ -54,7 +55,7 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
 
   // 교수 면담 가능 날짜 조회(학생 화면일 때)
   useQuery<{ data: ProfessorAllowDate[] } | null, Error>({
-    queryKey: ["professorAllowDateList", professorId, startDate, endDate],
+    queryKey: ["professorAllowDateListForStudent", professorId, startDate, endDate],
     queryFn: async () => {
       const result = await interviewApi.getProfessorAllowDate(
         professorId || "",
@@ -65,6 +66,17 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
       return result;
     },
     enabled: userRole !== UserRole.PROFESSOR && !!professorId,
+  });
+
+  // 교수가 면담 활성화한 날짜 조회(교수 본인)
+  useQuery<{ data: ProfessorAllowDate[] } | null, Error>({
+    queryKey: ["professorAllowDateList", startDate, endDate],
+    queryFn: async () => {
+      const result = await professorApi.getAllowDate(startDate, endDate);
+      setProfessorAllowDateList(result?.data || []);
+      return result;
+    },
+    enabled: userRole === UserRole.PROFESSOR,
   });
 
   useEffect(() => {
@@ -105,6 +117,9 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
         break;
       case "professorInterview":
         queryClient.invalidateQueries({ queryKey: ["professorInterviewList"] });
+        break;
+      case "professorAllowDateForStudent":
+        queryClient.invalidateQueries({ queryKey: ["professorAllowDateForStudentList"] });
         break;
       case "professorAllowDate":
         queryClient.invalidateQueries({ queryKey: ["professorAllowDateList"] });

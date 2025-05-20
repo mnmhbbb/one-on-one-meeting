@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap, Users, ShieldCheck } from "lucide-react";
+import { GraduationCap, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 
@@ -16,10 +16,6 @@ export default function MainPageLogin() {
 
   const handleProfessorClick = () => {
     router.push("/professor/login");
-  };
-
-  const handleAdminClick = () => {
-    router.push("/admin/login");
   };
 
   return (

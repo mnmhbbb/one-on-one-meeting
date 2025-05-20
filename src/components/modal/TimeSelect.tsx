@@ -12,7 +12,6 @@ interface TimeSelectProps {
 
 const TimeSelect = ({ timeList }: TimeSelectProps) => {
   const selectedTime = useInterviewModalStore(state => state.selectedTime);
-  console.log("🚀 ~ TimeSelect ~ selectedTime:", selectedTime);
 
   const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
   const setSelectedTime = useInterviewModalStore(state => state.setSelectedTime);
@@ -20,8 +19,6 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
 
   // interviewInfo의 날짜와 일치하는 시간 목록 찾기
   const filteredTimeList = timeList.find(time => time.allow_date === interviewInfo?.interview_date);
-  console.log("🚀 ~ TimeSelect ~ timeList:", timeList);
-  console.log("🚀 ~ TimeSelect ~ interviewInfo:", interviewInfo);
 
   // selected 상태가 변경될 때 setSelectedTime 호출
   useEffect(() => {
@@ -32,16 +29,14 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
     setSelected(prev => (prev.includes(time) ? prev.filter(t => t !== time) : [...prev, time]));
   }, []);
 
-  if (!filteredTimeList) {
-    return <div>선택된 날짜에 가능한 시간이 없습니다.</div>;
-  }
+  if (!filteredTimeList) return null;
 
   return (
     <div className="grid grid-cols-2 gap-2">
       {TIMES.map(time => {
         const isSelected = selected.includes(time);
         const isAvailable = filteredTimeList.allow_time.includes(time);
-        const isApplied = filteredTimeList.applied_interview_time?.includes(time);
+        const isApplied = filteredTimeList.already_apply_time?.includes(time);
 
         return (
           <Button

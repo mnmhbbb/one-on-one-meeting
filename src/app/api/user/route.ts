@@ -62,7 +62,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "잘못된 역할(role)" }, { status: 400 });
     }
 
-    let updateFields: Record<string, string> = {};
+    const updateFields: Record<string, string> = {};
 
     if (role === "student") {
       if ("department" in body) updateFields.department = body.department;
@@ -86,7 +86,10 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "유저 정보 업데이트 실패" }, { status: 500 });
     }
 
-    return NextResponse.json({ message: "유저 정보 업데이트 완료", data }, { status: 201 });
+    return NextResponse.json(
+      { message: "유저 정보 업데이트 완료", ...data[0], role },
+      { status: 201 }
+    );
   } catch {
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
   }

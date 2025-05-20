@@ -21,7 +21,7 @@ const RecordedInterviewView = () => {
   );
 
   const [step, setStep] = useState(1);
-  const [memo, setMemo] = useState(interviewInfo?.memo ?? "");
+  const [memo, setMemo] = useState(interviewInfo?.interview_record ?? "");
 
   const handleStepChange = useCallback((step: number) => {
     setStep(step);
@@ -29,16 +29,16 @@ const RecordedInterviewView = () => {
 
   const headerText = useMemo(() => {
     return step === 1
-      ? `${interviewInfo?.professor} 교수님 면담 완료`
-      : `${interviewInfo?.professor} 교수님 면담 기록내용`;
-  }, [interviewInfo?.professor, step]);
+      ? `${interviewInfo?.professor_name} 교수님 면담 완료`
+      : `${interviewInfo?.professor_name} 교수님 면담 기록내용`;
+  }, [interviewInfo?.professor_name, step]);
 
   const formattedInterviewDatetimeList = useMemo(() => {
-    if (!interviewInfo?.date) return [];
+    if (!interviewInfo?.interview_date) return [];
 
-    const baseDate = dayjs(interviewInfo?.date).format("YYYY년 MM월 DD일 dddd");
-    return interviewInfo?.time.map(time => `${baseDate} ${time}`);
-  }, [interviewInfo?.date, interviewInfo?.time]);
+    const baseDate = dayjs(interviewInfo?.interview_date).format("YYYY년 MM월 DD일 dddd");
+    return interviewInfo?.interview_time.map(time => `${baseDate} ${time}`);
+  }, [interviewInfo?.interview_date, interviewInfo?.interview_time]);
 
   return (
     <>
@@ -65,13 +65,13 @@ const RecordedInterviewView = () => {
                 {time}
               </div>
             ))}
-            <p className="text-left text-sm">{`${interviewInfo?.professor} 교수님과의 면담을 기록해 보세요!`}</p>
+            <p className="text-left text-sm">{`${interviewInfo?.professor_name} 교수님과의 면담을 기록해 보세요!`}</p>
           </div>
           <Separator className="!my-4" />
           <div
-            className={`text-primary mb-2 w-fit rounded-lg px-3 py-1 text-sm ${STATUS_COLORS[interviewInfo?.status as InterviewStatus]}`}
+            className={`text-primary mb-2 w-fit rounded-lg px-3 py-1 text-sm ${STATUS_COLORS[interviewInfo?.interview_state as InterviewStatus]}`}
           >
-            {STATUS_LABELS[interviewInfo?.status as InterviewStatus]}
+            {STATUS_LABELS[interviewInfo?.interview_state as InterviewStatus]}
           </div>
           <Textarea
             placeholder="면담 기록 내용을 입력해 주세요."

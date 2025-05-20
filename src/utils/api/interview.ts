@@ -1,5 +1,10 @@
 import axiosInstance from "@/lib/axios";
-import { InterviewCreateBody, InterviewInfo, InterviewUpdateBody } from "@/types/interview";
+import {
+  InterviewCancelBody,
+  InterviewCreateBody,
+  InterviewInfo,
+  InterviewUpdateBody,
+} from "@/types/interview";
 import { Professor, ProfessorAllowDate } from "@/types/user";
 
 import { tryApiWithToast } from "./common";
@@ -78,6 +83,17 @@ export const interviewApi = {
       axiosInstance.put<{ data: InterviewInfo[]; message: string }>(
         "/interview/crud/student",
         interview
+      )
+    );
+  },
+  // 학생이 면담 취소 요청
+  cancelInterview: async (
+    body: InterviewCancelBody
+  ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.put<{ data: InterviewInfo[]; message: string }>(
+        "/interview/crud/student/cancel",
+        body
       )
     );
   },

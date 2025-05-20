@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const { data, error } = await supabase
-      .from("interview_with_detail")
+      .from("interview_get_detail")
       .select("*")
       .eq("professor_id", user.id)
       .gte("interview_date", start)

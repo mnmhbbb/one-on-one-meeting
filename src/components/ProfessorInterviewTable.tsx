@@ -82,7 +82,8 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[30%] px-6">
                 <div>
-                  {event.professor_name} 교수님
+                  [신청 학생] {event.student_name} ({event.student_department}{" "}
+                  {event.student_sign_num})
                   <br />
                   [면담 일정] {event.interview_time.join(", ")}
                   <br />
@@ -107,7 +108,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[20%] px-6">
                 {event.interview_state === InterviewStatus.REQUESTED ? (
-                  <div className="flex justify-between px-2">
+                  <div className="flex justify-between px-5">
                     <Button onClick={e => handleApprove(event, e)}>수락</Button>
                     <Button onClick={e => handleReject(event, e)}>거절</Button>
                   </div>
