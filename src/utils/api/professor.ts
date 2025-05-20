@@ -4,9 +4,9 @@ import { Professor } from "@/types/user";
 import { tryApiWithToast } from "./common";
 
 export const professorApi = {
-  getDepartments: async (): Promise<{ colleges: string[] } | null> => {
+  getColleges: async (): Promise<{ colleges: string[] } | null> => {
     return await tryApiWithToast(() =>
-      axiosInstance.get<{ colleges: string[] }>("/professor/search/department")
+      axiosInstance.get<{ colleges: string[] }>("/professor/search/college")
     );
   },
   getProfessors: async (): Promise<{ professors: Professor[] } | null> => {
