@@ -20,7 +20,6 @@ export async function PUT(req: NextRequest) {
       "interview_date",
       "interview_time",
       "interview_cancel_reason",
-      "interview_close_at",
     ];
 
     const hasAllRequired = requiredKeys.every(
@@ -36,7 +35,7 @@ export async function PUT(req: NextRequest) {
       .from("create_interview")
       .update({
         interview_cancel_reason: body.interview_cancel_reason,
-        interview_close_at: body.interview_close_at,
+        interview_close_at: new Date().toISOString(),
         interview_state: "면담 취소",
       })
       .match({
@@ -53,7 +52,7 @@ export async function PUT(req: NextRequest) {
     // 2. 해당 날짜의 professor_interview_allow_date 가져오기
     const { data: allowRows, error: allowError } = await supabase
       .from("professor_interview_allow_date")
-      .select("id, already_apply_time, allow_time")
+      .select("id, already_apply_time, allow_time, allow_date")
       .eq("professor_id", body.professor_id)
       .eq("allow_date", body.interview_date);
 
@@ -93,7 +92,9 @@ export async function PUT(req: NextRequest) {
           interview: updatedInterview,
           allowSlot: {
             id: matchedSlot.id,
-            updated_apply_time: filteredTimes,
+            allow_date: matchedSlot.allow_date,
+            allow_time: matchedSlot.allow_time,
+            already_apply_time: filteredTimes,
           },
         },
       },
