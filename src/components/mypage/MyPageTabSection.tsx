@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
 import ChangePassword from "@/components/mypage/ChangePassword";
 import MyPage from "@/components/mypage/MyPage";
-import { useState } from "react";
 
 export const MyPageTabSection = () => {
   const [activeTab, setActiveTab] = useState("profile");

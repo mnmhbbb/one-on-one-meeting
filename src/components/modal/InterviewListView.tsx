@@ -35,6 +35,9 @@ const InterviewListView = () => {
   const [studentInterviewList, setStudentInterviewList] = useState<InterviewInfo[]>([]);
   const [professorInterviewList, setProfessorInterviewList] = useState<InterviewInfo[]>([]);
 
+  // FIXME: 빌드 에러 방지를 위해 임시 사용(이후 로직에 적용 예정)
+  console.log("🚀 ~ InterviewListView ~ professorInterviewList:", professorInterviewList);
+
   useEffect(() => {
     if (userRole === UserRole.STUDENT) {
       const filteredInterviewList = interviewList.filter(

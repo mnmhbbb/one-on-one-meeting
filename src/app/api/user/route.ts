@@ -62,7 +62,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "잘못된 역할(role)" }, { status: 400 });
     }
 
-    let updateFields: Record<string, string> = {};
+    const updateFields: Record<string, string> = {};
 
     if (role === "student") {
       if ("department" in body) updateFields.department = body.department;

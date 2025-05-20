@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 
+import { InterviewInfo } from "@/types/interview";
 import { getSessionUser } from "@/utils/auth/getSessionUser";
 
 {
@@ -34,7 +35,7 @@ export async function PUT(req: NextRequest) {
       id: body.id,
     };
 
-    const updateFields: any = {
+    const updateFields: Partial<InterviewInfo> = {
       interview_accept: body.interview_accept,
       interview_state: body.interview_accept ? "면담 확정" : "면담 거절",
     };
