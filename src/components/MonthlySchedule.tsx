@@ -41,6 +41,10 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
   const monthEnd = endOfMonth(currentDate);
 
   const handleClick = (date: Date, events: InterviewInfo[]) => {
+    // 주말 체크 (0: 일요일, 6: 토요일)
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    if (isWeekend) return;
+
     const handlers: Partial<Record<RoleViewType, () => void>> = {
       [RoleViewType.STUDENT_ON_STUDENT]: () => {
         // 면담 일정이 없으면 교수 검색 모달
@@ -103,6 +107,9 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
   // 이전 달, 현재 달, 다음 달의 날짜들을 하나의 배열로 합침
   const allDays = [...prevMonthDays, ...currentMonthDays, ...nextMonthDays];
 
+  // 주말 체크 함수
+  const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
+
   return (
     <>
       <div className="grid grid-cols-7 gap-2 border-b pb-2 text-center text-sm font-semibold text-gray-600">
@@ -140,12 +147,12 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
               className={cn(
                 "relative min-h-[100px] rounded border p-1",
                 !isSameMonth(date, currentDate) && "text-gray-400", // 현재 달의 날짜가 아닌 경우 회색으로 표시
-                props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR &&
-                  !isDateAvailable &&
+                ((props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR && !isDateAvailable) ||
+                  isWeekend(date)) &&
                   "cursor-not-allowed bg-gray-200 opacity-50"
               )}
               role="button"
-              onClick={() => isDateAvailable && handleClick(date, dayEvents)}
+              onClick={() => !isWeekend(date) && isDateAvailable && handleClick(date, dayEvents)}
             >
               {/* 날짜 숫자 표시 */}
               <div className="mb-1 text-xs font-semibold">{format(date, "d")}</div>
