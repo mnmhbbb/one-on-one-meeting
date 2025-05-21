@@ -1,8 +1,11 @@
 "use client";
 
+import { emailApi } from "@/utils/api/email";
 import { LockKeyhole, Mail, User, Phone, BookOpen, GraduationCap, MapPin } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { userApi } from "@/utils/api/user";
 
 type Props = {
   role: "student" | "professor";
@@ -23,39 +26,63 @@ export default function Register({ role }: Props) {
   const [isVerified, setIsVerified] = useState(false);
   const [interviewLocation, setInterviewLocation] = useState("");
 
-  const handleSendCode = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const res = await fetch("/api/email/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userId }),
-    });
+  // 학과, 학부 목록 조회
+  const { data: departmenCollegeData } = useQuery({
+    queryKey: ["departmentColleges"],
+    queryFn: async () => {
+      const res = await userApi.getDepartmentColleges();
+      if (!res) return { colleges: [], departments: [] };
 
-    const result = await res.json();
-    alert(result.message);
-  };
+      const uniqueColleges = Array.from(new Set(res.data.map(item => item.college)));
+      const uniqueDepartments = Array.from(new Set(res.data.map(item => item.department)));
 
-  const handleVerifyCode = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const res = await fetch("/api/email/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userId, code: verificationCode }),
-    });
+      return {
+        colleges: uniqueColleges.map(college => ({ value: college, label: college })),
+        departments: uniqueDepartments.map(dep => ({ value: dep, label: dep })),
+      };
+    },
+  });
 
-    const result = await res.json();
-    console.log(result);
-    if (res.ok) {
+  // 인증코드 전송
+  const { mutate: sendCode } = useMutation({
+    mutationFn: (email: string) => emailApi.sendVerificationCode(email),
+    onSuccess: data => {
+      if (data) {
+        alert(data);
+      }
+    },
+    onError: err => {
+      console.error(err);
+    },
+  });
+
+  // 인증코드 검증
+  const { mutate: verifyCode } = useMutation({
+    mutationFn: ({ email, code }: { email: string; code: string }) =>
+      emailApi.verifyCode(email, code),
+    onSuccess: data => {
+      alert(data);
       setIsVerified(true);
-      alert(result.message);
-    } else {
-      alert(result.message);
-    }
-  };
+    },
+    onError: err => {
+      console.error(err);
+      alert("인증에 실패했습니다.");
+    },
+  });
 
   useEffect(() => {
     console.log("isVerified 상태:", isVerified);
   }, [isVerified]);
+
+  const handleSendCode = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    sendCode(userId);
+  };
+
+  const handleVerifyCode = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    verifyCode({ email: userId, code: verificationCode });
+  };
 
   useEffect(() => {
     // 영문자 1개 이상, 숫자 1개 이상 포함 (대소문자 구분 없음), 특수문자 허용, 8자 이상
@@ -195,15 +222,22 @@ export default function Register({ role }: Props) {
           <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
             <BookOpen size={20} />
           </div>
-          <input
-            type="text"
+          <select
             name="department"
-            placeholder="학과"
             value={department}
             onChange={e => setDepartment(e.target.value)}
             required
-            className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
-          />
+            className="w-full appearance-none rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
+          >
+            {departmenCollegeData?.departments.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute top-1/2 right-5 translate-y-[-50%] font-bold text-[#6b5545]">
+            ▼
+          </div>
         </div>
       )}
 
@@ -212,15 +246,22 @@ export default function Register({ role }: Props) {
           <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
             <BookOpen size={20} />
           </div>
-          <input
-            type="text"
+          <select
             name="college"
-            placeholder="학부"
             value={college}
             onChange={e => setCollege(e.target.value)}
             required
-            className="w-full rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
-          />
+            className="w-full appearance-none rounded-full border border-gray-400 bg-white py-4 pr-5 pl-12 text-base transition-all focus:border-[#6b5545] focus:ring-1 focus:ring-[#6b5545] focus:outline-none"
+          >
+            {departmenCollegeData?.colleges.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute top-1/2 right-5 translate-y-[-50%] font-bold text-[#6b5545]">
+            ▼
+          </div>
         </div>
       )}
 

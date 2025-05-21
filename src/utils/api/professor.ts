@@ -4,11 +4,6 @@ import { Professor, ProfessorAllowDate, ProfessorAllowDateRequest } from "@/type
 import { tryApiWithToast } from "./common";
 
 export const professorApi = {
-  getColleges: async (): Promise<{ colleges: string[] } | null> => {
-    return await tryApiWithToast(() =>
-      axiosInstance.get<{ colleges: string[] }>("/professor/search/college")
-    );
-  },
   getProfessors: async (): Promise<{ professors: Professor[] } | null> => {
     return await tryApiWithToast(() =>
       axiosInstance.get<{ professors: Professor[] }>("/professor/search/all")

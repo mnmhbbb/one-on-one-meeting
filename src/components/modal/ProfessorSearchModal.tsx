@@ -26,6 +26,7 @@ import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { Professor } from "@/types/user";
 import { professorApi } from "@/utils/api/professor";
+import { userApi } from "@/utils/api/user";
 
 const ProfessorSearchModal = () => {
   const queryClient = useQueryClient();
@@ -46,16 +47,17 @@ const ProfessorSearchModal = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [searchWord, setSearchWord] = useState<string>("");
 
-  // 학과 목록 조회
+  // 학부 목록 조회
   const { data: collegesData, isLoading: isCollegesLoading } = useQuery({
     queryKey: ["colleges"],
     queryFn: async () => {
-      const res = await professorApi.getColleges();
+      const res = await userApi.getDepartmentColleges();
       if (!res) return [];
+      const uniqueColleges = Array.from(new Set(res.data.map(item => item.college)));
       return [{ value: "all", label: "전체" }].concat(
-        res.colleges.map((c: string) => ({
-          value: c,
-          label: c,
+        uniqueColleges.map(college => ({
+          value: college,
+          label: college,
         }))
       );
     },

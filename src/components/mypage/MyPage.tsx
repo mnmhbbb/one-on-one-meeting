@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -13,6 +13,13 @@ import { userApi } from "@/utils/api/user";
 import LoadingUI from "../LoadingUI";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const MyPage = () => {
   const router = useRouter();
@@ -38,6 +45,23 @@ const MyPage = () => {
       router.push("/professor/my");
     }
   };
+
+  // 학과, 학부 목록 조회
+  const { data: departmenCollegeData } = useQuery({
+    queryKey: ["departmentColleges"],
+    queryFn: async () => {
+      const res = await userApi.getDepartmentColleges();
+      if (!res) return { colleges: [], departments: [] };
+
+      const uniqueColleges = Array.from(new Set(res.data.map(item => item.college)));
+      const uniqueDepartments = Array.from(new Set(res.data.map(item => item.department)));
+
+      return {
+        colleges: uniqueColleges.map(college => ({ value: college, label: college })),
+        departments: uniqueDepartments.map(dep => ({ value: dep, label: dep })),
+      };
+    },
+  });
 
   const { mutate } = useMutation({
     mutationFn: userApi.updateUserInfo,
@@ -140,11 +164,18 @@ const MyPage = () => {
               <label htmlFor="department" className="block font-[600] text-[#6b5545]">
                 학과
               </label>
-              <Input
-                type="text"
-                value={department || ""}
-                onChange={e => setDepartment(e.target.value)}
-              />
+              <Select value={department} onValueChange={setDepartment}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="학과를 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departmenCollegeData?.departments.map(dept => (
+                    <SelectItem key={dept.value} value={dept.value}>
+                      {dept.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 
@@ -153,7 +184,20 @@ const MyPage = () => {
               <label htmlFor="college" className="block font-[600] text-[#6b5545]">
                 학부
               </label>
-              <Input type="text" value={college || ""} onChange={e => setCollege(e.target.value)} />
+              <Select value={college} onValueChange={setCollege}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="학부를 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departmenCollegeData?.colleges.map(
+                    (college: { value: string; label: string }) => (
+                      <SelectItem key={college.value} value={college.value}>
+                        {college.label}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
             </div>
           )}
 

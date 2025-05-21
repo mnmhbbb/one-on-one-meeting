@@ -19,4 +19,12 @@ export const userApi = {
   updateUserInfo: async (userData: MyPageUserInfo): Promise<MyPageUserInfo | null> => {
     return await tryApiWithToast(() => axiosInstance.put<MyPageUserInfo>("/user", userData));
   },
+
+  getDepartmentColleges: async (): Promise<{
+    data: { college: string; department: string }[];
+  } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.get<{ data: { college: string; department: string }[] }>("/department-college")
+    );
+  },
 };
