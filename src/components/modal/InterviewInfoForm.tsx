@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { InterviewStatus, STATUS_LABELS, UserRole } from "@/common/const";
@@ -90,16 +90,40 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
 
   const isStudent = useMemo(() => (userRole === UserRole.STUDENT ? true : false), [userRole]);
 
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null); // 디바운스 타이머
+
   // 인풋 변화 시, 스토어에 저장된 interviewInfo 업데이트
-  // TODO: 성능 개선 필요
+  const updateInterviewInfo = useCallback(
+    (newContent: string, newCategory: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        setInterviewInfo({
+          ...prevInterviewInfo.current!,
+          interview_state: interviewInfo?.interview_state ?? "",
+          interview_category: newCategory,
+          interview_content: newContent,
+        });
+      }, 500);
+    },
+    [setInterviewInfo, interviewInfo?.interview_state]
+  );
+
+  // 컴포넌트 언마운트 시 타이머 정리
   useEffect(() => {
-    setInterviewInfo({
-      ...prevInterviewInfo.current!,
-      interview_state: interviewInfo?.interview_state ?? "",
-      interview_category: category ?? "",
-      interview_content: content ?? "",
-    });
-  }, [category, content, interviewInfo?.interview_state, setInterviewInfo]);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // content나 category가 변경될 때만 업데이트
+  useEffect(() => {
+    updateInterviewInfo(content ?? "", category ?? "");
+  }, [content, category, updateInterviewInfo]);
 
   // isInterviewStatusDisabled이 false일 때는, 교수님이 선택할 수 있는 면담상태 item을 3가지만 제한함
   // (면담확정, 면담거절, 면담취소)
