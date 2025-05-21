@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 
 import { getSessionUser } from "@/utils/auth/getSessionUser";
 import { InterviewInfo } from "@/types/interview";
+import { RejectInterviewToStudentEmail } from "@/utils/email/RejectInterviewToStudentEmail";
+import { AllowInterviewToStudentEmail } from "@/utils/email/AllowInterviewToStudentEmail";
 
 {
   /*================== 면담 신청 API====================*/
@@ -84,6 +86,70 @@ export async function PUT(req: NextRequest) {
       updateFields.interview_reject_reason = body.interview_reject_reason;
     }
 
+    // 1. 교수/학생 정보 조회
+    const [professorRes, studentRes] = await Promise.all([
+      supabase
+        .from("professors")
+        .select("name, notification_email")
+        .eq("id", body.professor_id)
+        .single(),
+      supabase
+        .from("students")
+        .select("name, notification_email")
+        .eq("id", body.student_id)
+        .single(),
+    ]);
+
+    const professorInfo = professorRes.data;
+    const studentInfo = studentRes.data;
+
+    if (professorRes.error || !professorInfo) {
+      console.error(professorRes.error);
+      return NextResponse.json({ message: "교수 정보 조회 실패" }, { status: 500 });
+    }
+
+    if (studentRes.error || !studentInfo) {
+      console.error(studentRes.error);
+      return NextResponse.json({ message: "학생 정보 조회 실패" }, { status: 500 });
+    }
+
+    // 2. 이메일 발송
+    if (body.interview_accept === false) {
+      try {
+        await RejectInterviewToStudentEmail({
+          studentName: studentInfo.name,
+          professorName: professorInfo.name,
+          interviewDate: body.interview_date,
+          interviewTime: body.interview_time,
+          interviewRejectReason: body.interview_reject_reason,
+          studentNotificationEmail: studentInfo.notification_email,
+        });
+      } catch (mailErr) {
+        console.error("메일 전송 실패:", mailErr);
+        return NextResponse.json(
+          { message: "메일 전송 실패로 면담이 업데이트되지 않았습니다." },
+          { status: 500 }
+        );
+      }
+    } else {
+      try {
+        await AllowInterviewToStudentEmail({
+          studentName: studentInfo.name,
+          professorName: professorInfo.name,
+          interviewDate: body.interview_date,
+          interviewTime: body.interview_time,
+          studentNotificationEmail: studentInfo.notification_email,
+        });
+      } catch (mailErr) {
+        console.error("메일 전송 실패:", mailErr);
+        return NextResponse.json(
+          { message: "메일 전송 실패로 면담이 업데이트되지 않았습니다." },
+          { status: 500 }
+        );
+      }
+    }
+
+    // 3. 면담 수락/거절 업데이트
     const { data: updatedInterview, error: updateInterviewError } = await supabase
       .from("create_interview")
       .update(updateFields)
@@ -147,7 +213,9 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: body.interview_accept ? "면담 신청 완료" : "면담 거절 및 시간 회수 완료",
+        message: body.interview_accept
+          ? "면담 신청 완료 & 승인 이메일 학생에게 전송"
+          : "면담 거절 및 시간 회수 완료 & 거절 이메일 학생에게 전송",
         data: resBody,
       },
       { status: body.interview_accept ? 201 : 200 }

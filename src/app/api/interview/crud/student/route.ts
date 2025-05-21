@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 import { getSessionUser } from "@/utils/auth/getSessionUser";
 import { CreateInterviewToProfessorEmail } from "@/utils/email/CreateInterviewToProfessorEmail";
+import { UpdateInterviewToProfessorEmail } from "@/utils/email/UpdateInterviewToProfessorEmail";
 
 {
   /*================== 면담 신청 API====================*/
@@ -104,29 +105,33 @@ export async function POST(req: NextRequest) {
       supabase
         .from("professors")
         .select("name, notification_email")
-        .eq("id", professor_id)
+        .eq("id", body.professor_id)
         .single(),
-      supabase.from("students").select("name").eq("id", student_id).single(),
+      supabase
+        .from("students")
+        .select("name, notification_email")
+        .eq("id", body.student_id)
+        .single(),
     ]);
 
     const professorInfo = professorRes.data;
     const studentInfo = studentRes.data;
 
-    if (professorRes.error || !professorInfo?.notification_email) {
+    if (professorRes.error || !professorInfo) {
       console.error(professorRes.error);
-      return NextResponse.json({ message: "교수 이메일 정보 조회 실패" }, { status: 500 });
+      return NextResponse.json({ message: "교수 정보 조회 실패" }, { status: 500 });
     }
 
-    if (studentRes.error || !studentInfo?.name) {
+    if (studentRes.error || !studentInfo) {
       console.error(studentRes.error);
-      return NextResponse.json({ message: "학생 이름 조회 실패" }, { status: 500 });
+      return NextResponse.json({ message: "학생 정보 조회 실패" }, { status: 500 });
     }
 
     // 5. 이메일 발송
     try {
       await CreateInterviewToProfessorEmail({
-        professorName: professorInfo.name,
         studentName: studentInfo.name,
+        professorName: professorInfo.name,
         interviewDate: interview_date,
         interviewTime: interview_time,
         professorNotificationEmail: professorInfo.notification_email,
@@ -178,7 +183,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "면담 신청 완료",
+        message: "면담 신청 완료 & 신청 이메일 교수에게 전송",
         data: {
           interview: insertedInterview,
           allowInfo: {
@@ -332,7 +337,70 @@ export async function PUT(req: NextRequest) {
       };
     }
 
-    // 4. 면담 정보 업데이트
+    // 변경된 사항 저장
+    const diffs: Record<string, { before: string[] | string; after: string[] | string }> = {};
+
+    if (isTimeChanged) {
+      diffs["면담 시간"] = { before: originalTimes, after: requestedTimes };
+    }
+
+    if (isCategoryChanged) {
+      diffs["면담 카테고리"] = {
+        before: interviewData.interview_category,
+        after: interview_category,
+      };
+    }
+
+    if (isContentChanged) {
+      diffs["면담 내용"] = { before: interviewData.interview_content, after: interview_content };
+    }
+
+    // 4. 교수/학생 정보 조회
+    const [professorRes, studentRes] = await Promise.all([
+      supabase
+        .from("professors")
+        .select("name, notification_email")
+        .eq("id", body.professor_id)
+        .single(),
+      supabase
+        .from("students")
+        .select("name, notification_email")
+        .eq("id", body.student_id)
+        .single(),
+    ]);
+
+    const professorInfo = professorRes.data;
+    const studentInfo = studentRes.data;
+
+    if (professorRes.error || !professorInfo) {
+      console.error(professorRes.error);
+      return NextResponse.json({ message: "교수 정보 조회 실패" }, { status: 500 });
+    }
+
+    if (studentRes.error || !studentInfo) {
+      console.error(studentRes.error);
+      return NextResponse.json({ message: "학생 정보 조회 실패" }, { status: 500 });
+    }
+
+    // 5. 이메일 발송
+    try {
+      await UpdateInterviewToProfessorEmail({
+        studentName: studentInfo.name,
+        professorName: professorInfo.name,
+        interviewDate: interview_date,
+        interviewTime: interview_time,
+        diffs,
+        professorNotificationEmail: professorInfo.notification_email,
+      });
+    } catch (mailErr) {
+      console.error("메일 전송 실패:", mailErr);
+      return NextResponse.json(
+        { message: "메일 전송 실패로 면담이 업데이트되지 않았습니다." },
+        { status: 500 }
+      );
+    }
+
+    // 6. 면담 정보 업데이트
     const { data: updatedInterview, error: updateError } = await supabase
       .from("create_interview")
       .update({
@@ -353,7 +421,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "면담 재신청 완료",
+        message: "면담 재신청 완료 & 수정 이메일 교수에게 전송",
         data: {
           interview: updatedInterview,
           allowInfo,

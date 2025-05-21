@@ -1,12 +1,20 @@
 import nodemailer from "nodemailer";
 
-export async function AllowInterviewToStudentEmail(
-  studentName: string,
-  professorName: string,
-  interviewDate: string,
-  interviewTime: string,
-  studentNotificationEmail: string
-) {
+interface AllowInterviewToStudentEmailParams {
+  studentName: string;
+  professorName: string;
+  interviewDate: string;
+  interviewTime: string;
+  studentNotificationEmail: string;
+}
+
+export async function AllowInterviewToStudentEmail({
+  studentName,
+  professorName,
+  interviewDate,
+  interviewTime,
+  studentNotificationEmail,
+}: AllowInterviewToStudentEmailParams) {
   const isSecure = Number(process.env.EMAIL_PORT) === 465;
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -24,10 +32,10 @@ export async function AllowInterviewToStudentEmail(
     to: studentNotificationEmail,
     subject: `${professorName} 교수님이 면담 신청을 승인하셨습니다.`,
     text: `
-      ${studentName} 학생, 안녕하세요.
+      ${studentName}님, 안녕하세요.
       ${professorName} 교수님이 귀하의 면담 신청을 승인하셨습니다.
-      면담 일정: ${interviewDate} - ${interviewTime}
-      아래 링크를 통해 자세한 내용을 확인해 주세요: ${url}
+      면담 일정: ${interviewDate}, ${interviewTime}
+      아래 링크를 통해 자세한 내용을 확인해 주세요.: ${url}
       ※ 본 메일은 Knock Knock 시스템에서 자동으로 발송되었습니다.
     `,
     html: `
@@ -35,13 +43,16 @@ export async function AllowInterviewToStudentEmail(
         <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <h2 style="color: #333; margin-bottom: 20px;">[Knock Knock] 면담 신청 승인 안내</h2>
           <p style="font-size: 16px; color: #333; line-height: 1.6;">
-            <strong>${studentName}</strong> 학생, <br />
-            <strong>${professorName}</strong> 교수님이 귀하의 면담 신청을 <strong>승인</strong>하셨습니다.
+            <strong>${studentName}</strong>님, <br />
+            <strong>${professorName}</strong> 교수님이 귀하의 면담 신청을 <strong>승인</strong>하셨습니다.<br /><br />
           </p>
           <p style="font-size: 15px; color: #333;">
-            <strong>면담 일정:</strong> ${interviewDate} - ${interviewTime}
+            <strong>면담 일정:</strong> ${interviewDate}, ${interviewTime}<br /><br />
           </p>
-          <div style="margin: 30px 0;">
+          <p style="font-size: 15px; color: #333;">
+            아래 링크를 통해 자세한 내용을 확인해 주세요.
+          </p>
+          <div style="margin: 20px 0;">
             <a href="${url}" target="_blank"
               style="display: inline-block; background-color: #6b5545; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
               면담 내용 확인하기

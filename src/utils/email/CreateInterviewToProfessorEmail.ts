@@ -1,16 +1,16 @@
 import nodemailer from "nodemailer";
 
 interface CreateInterviewToProfessorEmailParams {
-  professorName: string;
   studentName: string;
+  professorName: string;
   interviewDate: string;
   interviewTime: string;
   professorNotificationEmail: string;
 }
 
 export async function CreateInterviewToProfessorEmail({
-  professorName,
   studentName,
+  professorName,
   interviewDate,
   interviewTime,
   professorNotificationEmail,
@@ -34,7 +34,7 @@ export async function CreateInterviewToProfessorEmail({
     text: `
       ${professorName} 교수님, 안녕하세요.
       ${studentName} 학생의 면담 신청이 접수되었습니다.
-      면담 일정: ${interviewDate} - ${interviewTime}
+      면담 일정: ${interviewDate}, ${interviewTime}
       아래 링크를 통해 신청 내용을 확인해 주세요: ${url}
       ※ 본 메일은 Knock Knock 시스템에서 자동 발송되었습니다.
     `,
@@ -44,10 +44,13 @@ export async function CreateInterviewToProfessorEmail({
           <h2 style="color: #333; margin-bottom: 20px;">[Knock Knock] 새로운 면담 신청 알림</h2>
           <p style="font-size: 16px; color: #333; line-height: 1.6;">
             <strong>${professorName}</strong> 교수님, <br />
-            <strong>${studentName}</strong> 학생이 면담을 신청하였습니다.
+            <strong>${studentName}</strong> 학생이 면담을 신청하였습니다.<br /><br />
           </p>
           <p style="font-size: 15px; color: #333;">
-            <strong>면담 일정:</strong> ${interviewDate} - ${interviewTime}
+            <strong>면담 일정:</strong> ${interviewDate}, ${interviewTime}<br /><br />
+          </p>
+          <p style="font-size: 15px; color: #333;">
+            아래 링크를 통해 신청 내용을 확인하시고, 수락/거절을 눌러주세요.
           </p>
           <div style="margin: 30px 0;">
             <a href="${url}" target="_blank"

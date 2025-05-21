@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 
 import { getSessionUser } from "@/utils/auth/getSessionUser";
+import { CancelInterviewToProfessorEmail } from "@/utils/email/CancelInterviewToProfessorEmail";
 
 {
   /*================== 면담 취소 API====================*/
@@ -30,13 +31,59 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
     }
 
-    // 1. 면담 상태 업데이트
+    // 1. 교수/학생 정보 조회
+    const [professorRes, studentRes] = await Promise.all([
+      supabase
+        .from("professors")
+        .select("name, notification_email")
+        .eq("id", body.professor_id)
+        .single(),
+      supabase
+        .from("students")
+        .select("name, notification_email")
+        .eq("id", body.student_id)
+        .single(),
+    ]);
+
+    const professorInfo = professorRes.data;
+    const studentInfo = studentRes.data;
+
+    if (professorRes.error || !professorInfo) {
+      console.error(professorRes.error);
+      return NextResponse.json({ message: "교수 정보 조회 실패" }, { status: 500 });
+    }
+
+    if (studentRes.error || !studentInfo) {
+      console.error(studentRes.error);
+      return NextResponse.json({ message: "학생 정보 조회 실패" }, { status: 500 });
+    }
+
+    // 2. 이메일 발송
+    try {
+      await CancelInterviewToProfessorEmail({
+        studentName: studentInfo.name,
+        professorName: professorInfo.name,
+        interviewDate: body.interview_date,
+        interviewTime: body.interview_time,
+        interviewCancelReason: body.interview_cancel_reason,
+        professorNotificationEmail: professorInfo.notification_email,
+      });
+    } catch (mailErr) {
+      console.error("메일 전송 실패:", mailErr);
+      return NextResponse.json(
+        { message: "메일 전송 실패로 면담이 업데이트되지 않았습니다." },
+        { status: 500 }
+      );
+    }
+
+    // 3. 면담 상태 업데이트
     const { data: updatedInterview, error: updateError } = await supabase
       .from("create_interview")
       .update({
         interview_cancel_reason: body.interview_cancel_reason,
         interview_close_at: new Date().toISOString(),
         interview_state: "면담 취소",
+        interview_accept: false,
       })
       .match({
         id: body.id,
@@ -49,7 +96,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "면담 취소 실패" }, { status: 500 });
     }
 
-    // 2. 해당 날짜의 professor_interview_allow_date 가져오기
+    // 4. 해당 날짜의 professor_interview_allow_date 가져오기
     const { data: allowRows, error: allowError } = await supabase
       .from("professor_interview_allow_date")
       .select("id, already_apply_time, allow_time, allow_date")
@@ -63,14 +110,14 @@ export async function PUT(req: NextRequest) {
 
     const requestedTime = body.interview_time[0];
 
-    // 3. 해당 시간대를 포함한 슬롯 찾기
+    // 5. 해당 시간대를 포함한 슬롯 찾기
     const matchedSlot = allowRows.find(slot => (slot.allow_time || []).includes(requestedTime));
 
     if (!matchedSlot) {
       return NextResponse.json({ message: "해당 시간대 정보 없음" }, { status: 404 });
     }
 
-    // 4. 시간 제거 후 업데이트
+    // 6. 시간 제거 후 업데이트
     const filteredTimes = (matchedSlot.already_apply_time || []).filter(
       (time: string) => time !== requestedTime
     );
