@@ -92,8 +92,8 @@ const MyPage = () => {
   }
 
   return (
-    <div className="mx-auto max-w-xl py-5">
-      <h1 className="mb-8 text-center text-3xl font-bold text-[#6b5545]">내 정보</h1>
+    <div className="mx-auto max-w-xl">
+      <h1 className="mb-5 text-center text-2xl font-bold">내 정보</h1>
 
       <div className="overflow-hidden rounded-lg bg-white p-8 shadow-md">
         <div className="space-y-5">

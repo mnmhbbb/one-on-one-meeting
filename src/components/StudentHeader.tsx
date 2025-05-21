@@ -38,7 +38,7 @@ const StudentHeader = () => {
             </Link>
           ))}
         </div>
-        <h2 className="mb-4 text-center text-xl font-semibold whitespace-nowrap">
+        <h2 className="mb-4 text-center text-2xl font-semibold whitespace-nowrap">
           {userName}님의 면담 일정
         </h2>
         <div className="flex justify-end">

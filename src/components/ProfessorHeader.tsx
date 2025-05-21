@@ -33,7 +33,7 @@ const ProfessorHeader = () => {
             </Link>
           ))}
         </div>
-        <h2 className="mb-4 text-center text-xl font-semibold">
+        <h2 className="mb-4 text-center text-2xl font-semibold">
           {userName} 교수님의 면담 일정 {pathname === "/professor/schedule" && "관리"}
         </h2>
       </div>
