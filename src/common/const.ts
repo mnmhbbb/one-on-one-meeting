@@ -19,7 +19,6 @@ export const TIMES: string[] = [
   "16:30 - 17:00",
   "17:00 - 17:30",
   "17:30 - 18:00",
-  "18:00 - 18:30",
 ];
 
 export enum InterviewStatus {
