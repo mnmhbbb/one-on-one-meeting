@@ -1,9 +1,11 @@
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Check, CirclePlus, X } from "lucide-react";
 import { memo, useCallback } from "react";
 
 import { INTERVIEW_MODAL_TYPE, InterviewModalType, InterviewStatus } from "@/common/const";
+import LoadingUI from "@/components/LoadingUI";
 import StatusBadgeSmall from "@/components/StatusBadgeSmall";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,8 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { InterviewInfo } from "@/types/interview";
+import { useToastStore } from "@/store/toastStore";
+import { InterviewAcceptBody, InterviewInfo } from "@/types/interview";
+import { interviewApi } from "@/utils/api/interview";
+
 interface InterviewTableProps {
   events: InterviewInfo[];
 }
@@ -25,6 +31,8 @@ interface InterviewTableProps {
  */
 const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
   const open = useInterviewModalStore(state => state.open);
+  const setToast = useToastStore(state => state.setToast);
+  const setUpdateTarget = useDateStore(state => state.setUpdateTarget);
 
   const handleClick = useCallback(
     (event: InterviewInfo) => {
@@ -33,10 +41,36 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
     [open]
   );
 
-  const handleApprove = useCallback((event: InterviewInfo, e: React.MouseEvent) => {
-    e.stopPropagation();
-    alert("수락 테스트");
-  }, []);
+  const updateInterviewStateMutation = useMutation({
+    mutationFn: async (data: InterviewAcceptBody) => {
+      const result = await interviewApi.putInterviewState(data);
+      if (result) {
+        setToast("면담 상태가 업데이트되었습니다.", "success");
+        setUpdateTarget("professorInterviewList");
+      }
+      return result;
+    },
+  });
+
+  // 면담 수락
+  const handleApprove = useCallback(
+    (event: InterviewInfo, e: React.MouseEvent) => {
+      e.stopPropagation();
+
+      if (window.confirm("면담을 수락하시겠습니까?")) {
+        updateInterviewStateMutation.mutate({
+          id: event.id,
+          student_id: event.student_id,
+          professor_id: event.professor_id,
+          interview_date: event.interview_date,
+          interview_time: event.interview_time,
+          interview_accept: true,
+        });
+        close();
+      }
+    },
+    [updateInterviewStateMutation]
+  );
 
   const handleReject = useCallback(
     (event: InterviewInfo, e: React.MouseEvent) => {
@@ -47,83 +81,96 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
   );
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[10%] text-center text-base font-semibold">날짜</TableHead>
-          <TableHead className="w-[50%] text-center text-base font-semibold">
-            면담 신청내용
-          </TableHead>
-          <TableHead className="w-[10%] text-center text-base font-semibold">
-            면담 기록내용
-          </TableHead>
-          <TableHead className="w-[20%] text-center text-base font-semibold">면담 요청</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {events
-          .sort(
-            (a, b) => new Date(a.interview_date).getTime() - new Date(b.interview_date).getTime()
-          )
-          .map((event, index) => (
-            <TableRow key={index} role="button" onClick={() => handleClick(event)}>
-              <TableCell className="w-[20%] px-6 font-medium">
-                <StatusBadgeSmall status={event.interview_state as InterviewStatus} />
-                <br />
-                <div className="mt-1 w-full text-center text-sm">
-                  {`${format(new Date(event.interview_date), "yyyy.MM.dd")} (${format(
-                    new Date(event.interview_date),
-                    "EEE",
-                    { locale: ko }
-                  )})`}
-                </div>
-              </TableCell>
-              <TableCell className="w-[30%] px-6">
-                <div>
-                  [신청 학생] {event.student_name} ({event.student_department})
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[10%] text-center text-base font-semibold">날짜</TableHead>
+            <TableHead className="w-[50%] text-center text-base font-semibold">
+              면담 신청내용
+            </TableHead>
+            <TableHead className="w-[10%] text-center text-base font-semibold">
+              면담 기록내용
+            </TableHead>
+            <TableHead className="w-[20%] text-center text-base font-semibold">면담 요청</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {events
+            .sort(
+              (a, b) => new Date(a.interview_date).getTime() - new Date(b.interview_date).getTime()
+            )
+            .map((event, index) => (
+              <TableRow key={index} role="button" onClick={() => handleClick(event)}>
+                <TableCell className="w-[20%] px-6 font-medium">
+                  <StatusBadgeSmall status={event.interview_state as InterviewStatus} />
                   <br />
-                  [면담 일정] {event.interview_time.join(", ")}
-                  <br />
-                  <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
-                    [면담 사유] {event.interview_content}
+                  <div className="mt-1 w-full text-center text-sm">
+                    {`${format(new Date(event.interview_date), "yyyy.MM.dd")} (${format(
+                      new Date(event.interview_date),
+                      "EEE",
+                      { locale: ko }
+                    )})`}
                   </div>
-                </div>
-              </TableCell>
-              <TableCell className="w-[30%] px-6">
-                {event.interview_state === InterviewStatus.CONFIRMED &&
-                  new Date(event.interview_date) < new Date() && (
-                    <div className="text-primary flex h-full w-full items-center justify-center gap-1 rounded-md bg-[#FDFF9B] px-3 py-7 text-center font-semibold">
-                      <CirclePlus className="h-4 w-4" />
-                      면담 내용을 기록해보세요!
+                </TableCell>
+                <TableCell className="w-[30%] px-6">
+                  <div>
+                    [신청 학생] {event.student_name} ({event.student_department})
+                    <br />
+                    [면담 일정] {event.interview_time.join(", ")}
+                    <br />
+                    <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
+                      [면담 사유] {event.interview_content}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="w-[30%] px-6">
+                  {event.interview_state === InterviewStatus.CONFIRMED &&
+                    new Date(event.interview_date) < new Date() && (
+                      <div className="text-primary flex h-full w-full items-center justify-center gap-1 rounded-md bg-[#FDFF9B] px-3 py-7 text-center font-semibold">
+                        <CirclePlus className="h-4 w-4" />
+                        면담 내용을 기록해보세요!
+                      </div>
+                    )}
+                  {event.interview_state === InterviewStatus.RECORDED && (
+                    <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
+                      {event.interview_record}
                     </div>
                   )}
-                {event.interview_state === InterviewStatus.RECORDED && (
-                  <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                    {event.interview_record}
-                  </div>
-                )}
-              </TableCell>
-              <TableCell className="w-[20%] px-6">
-                {event.interview_state === InterviewStatus.REQUESTED ? (
-                  <div className="flex items-center justify-center space-x-3">
-                    <Button onClick={e => handleApprove(event, e)}>수락</Button>
-                    <Button onClick={e => handleReject(event, e)}>거절</Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center">
-                    {event.interview_state === InterviewStatus.RECORDED ||
-                    event.interview_state === InterviewStatus.CONFIRMED ? (
-                      <Check className="h-7 w-7 text-green-500" />
-                    ) : (
-                      <X className="h-7 w-7 text-red-500" />
-                    )}
-                  </div>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-      </TableBody>
-    </Table>
+                </TableCell>
+                <TableCell className="w-[20%] px-6">
+                  {event.interview_state === InterviewStatus.REQUESTED ? (
+                    <div className="flex items-center justify-center space-x-3">
+                      <Button
+                        onClick={e => handleApprove(event, e)}
+                        disabled={updateInterviewStateMutation.isPending}
+                      >
+                        수락
+                      </Button>
+                      <Button
+                        onClick={e => handleReject(event, e)}
+                        disabled={updateInterviewStateMutation.isPending}
+                      >
+                        거절
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      {event.interview_state === InterviewStatus.RECORDED ||
+                      event.interview_state === InterviewStatus.CONFIRMED ? (
+                        <Check className="h-7 w-7 text-green-500" />
+                      ) : (
+                        <X className="h-7 w-7 text-red-500" />
+                      )}
+                    </div>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+      {updateInterviewStateMutation.isPending && <LoadingUI />}
+    </>
   );
 };
 

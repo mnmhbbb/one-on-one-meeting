@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
 
 import { InterviewStatus, UserRole } from "@/common/const";
+import LoadingUI from "@/components/LoadingUI";
 import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import ProfessorNotice from "@/components/modal/ProfessorNotice";
 import TimeSelect from "@/components/modal/TimeSelect";
@@ -16,7 +17,7 @@ import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useToastStore } from "@/store/toastStore";
 import { useUserStore } from "@/store/userStore";
-import { InterviewCancelBody, InterviewUpdateBody } from "@/types/interview";
+import { InterviewAcceptBody, InterviewCancelBody, InterviewUpdateBody } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 import { interviewApi } from "@/utils/api/interview";
 
@@ -38,7 +39,8 @@ const RequestInterviewView = () => {
   const [step, setStep] = useState(() => (userRole === UserRole.STUDENT ? 1 : 2));
   const [cancelReason, setCancelReason] = useState(""); // 면담 취소 사유
 
-  const updateInterviewMutation = useMutation({
+  // 학생 면담변경 뮤테이션
+  const updateInterviewMutationByStudent = useMutation({
     mutationFn: async (data: InterviewUpdateBody) => {
       const result = await interviewApi.updateInterview(data);
       if (result) {
@@ -46,9 +48,7 @@ const RequestInterviewView = () => {
         close();
 
         // 면담 목록, 면담 가능 시간 업데이트
-        setUpdateTarget(
-          userRole === UserRole.PROFESSOR ? "professorInterviewList" : "studentInterviewList"
-        );
+        setUpdateTarget("studentInterviewList");
       }
       return result;
     },
@@ -66,6 +66,21 @@ const RequestInterviewView = () => {
         setUpdateTarget(
           userRole === UserRole.PROFESSOR ? "professorInterviewList" : "studentInterviewList"
         );
+      }
+      return result;
+    },
+  });
+
+  // 교수 면담변경 뮤테이션
+  const updateInterviewMutationByProfessor = useMutation({
+    mutationFn: async (data: InterviewAcceptBody) => {
+      const result = await interviewApi.putInterviewState(data);
+      if (result) {
+        setToast("면담 상태가 변경되었습니다.", "success");
+        close();
+
+        // 면담 목록, 면담 가능 시간 업데이트
+        setUpdateTarget("professorInterviewList");
       }
       return result;
     },
@@ -117,8 +132,8 @@ const RequestInterviewView = () => {
     return selectedTime.map(time => `${baseDate} ${time}`);
   }, [selectedTime, interviewInfo?.interview_date]);
 
-  // 면담 저장
-  const handleSave = useCallback(() => {
+  // 학생 면담 저장 핸들러
+  const handleStudentInterviewSave = useCallback(() => {
     if (!interviewInfo?.interview_date || !interviewInfo?.interview_time) {
       setToast("면담 날짜와 시간을 선택해 주세요.", "error");
       return;
@@ -146,7 +161,7 @@ const RequestInterviewView = () => {
       return;
     }
 
-    updateInterviewMutation.mutate({
+    updateInterviewMutationByStudent.mutate({
       id: interviewInfo?.id ?? "",
       student_id: interviewInfo?.student_id ?? "",
       professor_id: interviewInfo?.professor_id ?? "",
@@ -156,15 +171,43 @@ const RequestInterviewView = () => {
       interview_content: interviewInfo?.interview_content ?? "",
       interview_state: InterviewStatus.REQUESTED, // 면담 상태를 업데이트하면 면담 신청 상태로 변경
     });
-  }, [interviewInfo, updateInterviewMutation, setToast, userRole]);
+  }, [interviewInfo, updateInterviewMutationByStudent, setToast, userRole]);
+
+  // 교수 면담 저장 핸들러
+  const handleProfessorInterviewSave = useCallback(() => {
+    if (!interviewInfo) {
+      setToast("면담 정보를 찾을 수 없습니다.", "error");
+      return;
+    }
+
+    // 교수 상태에선, 면담 확정/거절 가지만 선택할 수 있음
+    const availableInterviewState = [InterviewStatus.CONFIRMED, InterviewStatus.REJECTED];
+    if (!availableInterviewState.includes(interviewInfo.interview_state as InterviewStatus)) {
+      setToast("면담 상태를 선택해 주세요.", "error");
+      return;
+    }
+    if (
+      interviewInfo.interview_state === InterviewStatus.REJECTED &&
+      !interviewInfo.interview_reject_reason
+    ) {
+      setToast("면담 거절 사유를 입력해 주세요.", "error");
+      return;
+    }
+
+    updateInterviewMutationByProfessor.mutate({
+      id: interviewInfo?.id,
+      student_id: interviewInfo?.student_id,
+      professor_id: interviewInfo?.professor_id,
+      interview_date: interviewInfo?.interview_date,
+      interview_time: interviewInfo?.interview_time,
+      interview_accept: false,
+      interview_reject_reason: interviewInfo?.interview_reject_reason,
+    });
+  }, [interviewInfo, updateInterviewMutationByProfessor, setToast]);
 
   const handleCancelInterview = () => {
     if (!interviewInfo?.interview_date) {
       setToast("면담 정보를 찾을 수 없습니다.", "error");
-      return;
-    }
-    if (!cancelReason) {
-      setToast("면담 취소 사유를 입력해 주세요.", "error");
       return;
     }
 
@@ -227,12 +270,12 @@ const RequestInterviewView = () => {
                 <Button variant="outline" onClick={() => handleStepChange(3)}>
                   면담취소
                 </Button>
-                <Button onClick={handleSave}>저장</Button>
+                <Button onClick={handleStudentInterviewSave}>저장</Button>
               </div>
             </div>
           ) : (
             <div className="flex justify-end">
-              <Button>저장</Button>
+              <Button onClick={handleProfessorInterviewSave}>저장</Button>
             </div>
           )}
         </div>
@@ -251,13 +294,19 @@ const RequestInterviewView = () => {
             className="mb-4 w-full text-sm whitespace-pre-line"
           />
           <div className="flex justify-end gap-4">
-            <Button onClick={handleCancelInterview}>저장</Button>
+            <Button disabled={!cancelReason} onClick={handleCancelInterview}>
+              저장
+            </Button>
             <Button variant="outline" onClick={resetCancelReason}>
               취소
             </Button>
           </div>
         </div>
       )}
+
+      {updateInterviewMutationByStudent.isPending && <LoadingUI />}
+      {updateInterviewMutationByProfessor.isPending && <LoadingUI />}
+      {cancelInterviewMutation.isPending && <LoadingUI />}
     </>
   );
 };
