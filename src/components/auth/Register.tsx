@@ -1,10 +1,11 @@
 "use client";
 
-import { emailApi } from "@/utils/api/email";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { LockKeyhole, Mail, User, Phone, BookOpen, GraduationCap, MapPin } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+
+import { emailApi } from "@/utils/api/email";
 import { userApi } from "@/utils/api/user";
 
 type Props = {

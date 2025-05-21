@@ -6,13 +6,6 @@ import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { UserRole } from "@/common/const";
-import { useUserStore } from "@/store/userStore";
-import { MyPageUserInfo } from "@/types/user";
-import { userApi } from "@/utils/api/user";
-
-import LoadingUI from "../LoadingUI";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import {
   Select,
   SelectContent,
@@ -20,6 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUserStore } from "@/store/userStore";
+import { MyPageUserInfo } from "@/types/user";
+import { userApi } from "@/utils/api/user";
+
+import LoadingUI from "../LoadingUI";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const MyPage = () => {
   const router = useRouter();

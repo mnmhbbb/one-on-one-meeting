@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { createClient } from "@/utils/supabase/server";
 
 {
@@ -21,7 +22,4 @@ export async function GET() {
     console.error(err);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
   }
-}
-function createServerClient() {
-  throw new Error("Function not implemented.");
 }

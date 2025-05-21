@@ -1,9 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 
-import { getSessionUser } from "@/utils/auth/getSessionUser";
 import { InterviewInfo } from "@/types/interview";
-import { RejectInterviewToStudentEmail } from "@/utils/email/RejectInterviewToStudentEmail";
+import { getSessionUser } from "@/utils/auth/getSessionUser";
 import { AllowInterviewToStudentEmail } from "@/utils/email/AllowInterviewToStudentEmail";
+import { RejectInterviewToStudentEmail } from "@/utils/email/RejectInterviewToStudentEmail";
 
 {
   /*================== 면담 신청 API====================*/
