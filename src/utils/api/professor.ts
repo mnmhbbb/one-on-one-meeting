@@ -32,22 +32,20 @@ export const professorApi = {
       })
     );
   },
+  // 교수의 면담 가능 날짜 저장
   postAllowDate: async (
-    body: ProfessorAllowDateRequest
+    body: ProfessorAllowDateRequest[]
   ): Promise<{ data: ProfessorAllowDate[] } | null> => {
     return await tryApiWithToast(() =>
-      axiosInstance.post<{ data: ProfessorAllowDate[] }>("/professor/allow-date", {
-        body,
-      })
+      axiosInstance.post<{ data: ProfessorAllowDate[] }>("/professor/allow-date", body)
     );
   },
-  putAllowDate: async (
-    body: ProfessorAllowDateRequest
+  // 교수의 면담 가능 날짜 수정
+  patchAllowDate: async (
+    body: ProfessorAllowDateRequest[]
   ): Promise<{ data: ProfessorAllowDate[] } | null> => {
     return await tryApiWithToast(() =>
-      axiosInstance.post<{ data: ProfessorAllowDate[] }>("/professor/allow-date", {
-        body,
-      })
+      axiosInstance.patch<{ data: ProfessorAllowDate[] }>("/professor/allow-date", body)
     );
   },
 };
