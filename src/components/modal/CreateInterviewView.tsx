@@ -35,6 +35,7 @@ const CreateInterviewView = () => {
     }))
   );
   const professorAllowDateList = useDateStore(state => state.professorAllowDateList);
+  const setUpdateTarget = useDateStore(state => state.setUpdateTarget);
 
   const [step, setStep] = useState(() => (userRole === UserRole.STUDENT ? 1 : 2));
 
@@ -46,6 +47,11 @@ const CreateInterviewView = () => {
       if (result) {
         setToast("면담이 성공적으로 신청되었습니다.", "success");
         close();
+
+        // 면담 목록, 면담 가능 시간 업데이트
+        setUpdateTarget(
+          userRole === UserRole.PROFESSOR ? "professorInterviewList" : "studentInterviewList"
+        );
       }
       return result;
     },
@@ -114,7 +120,7 @@ const CreateInterviewView = () => {
           </div>
           <Separator className="!my-4" />
           <div className="mb-5 h-[300px] overflow-y-auto">
-            <TimeSelect timeList={professorAllowDateList} />
+            <TimeSelect timeList={professorAllowDateList} isCreateInterview />
           </div>
           <div className="flex justify-end gap-4">
             <Button disabled={!selectedTime.length} onClick={handleNextStep}>

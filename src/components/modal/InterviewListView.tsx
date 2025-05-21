@@ -19,7 +19,7 @@ import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useProfessorsStore } from "@/store/professorsStore";
 import { useUserStore } from "@/store/userStore";
-import { InterviewInfo } from "@/types/interview";
+import { DEFAULT_INTERVIEW_INFO, InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 
 import StatusBadgeSmall from "../StatusBadgeSmall";
@@ -39,6 +39,7 @@ const InterviewListView = () => {
   const interviewList = useDateStore(state => state.interviewList);
   const professorAllowDateList = useDateStore(state => state.professorAllowDateList);
   const selectedProfessor = useProfessorsStore(state => state.selectedProfessor);
+  const setInterviewInfo = useInterviewModalStore(state => state.setInterviewInfo);
 
   const [studentInterviewList, setStudentInterviewList] = useState<InterviewInfo[]>([]);
   const [professorInterviewList, setProfessorInterviewList] = useState<InterviewInfo[]>([]);
@@ -83,6 +84,11 @@ const InterviewListView = () => {
   // 새 면담 등록하기
   const openCreateInterviewModal = () => {
     openInterviewModal(null, INTERVIEW_MODAL_TYPE.CREATE);
+    setInterviewInfo({
+      ...DEFAULT_INTERVIEW_INFO,
+      // 면담 날짜 전달하여 모달 내에서 해당 날짜의 교수 면담 가능 날짜 표시
+      interview_date: interviewInfo?.interview_date || "",
+    });
   };
 
   // 면담 클릭: 면담 모달 오픈

@@ -45,9 +45,9 @@ const RequestInterviewView = () => {
         setToast("면담 내용이 변경되었습니다.", "success");
         close();
 
-        // 면담 목록 업데이트
+        // 면담 목록, 면담 가능 시간 업데이트
         setUpdateTarget(
-          userRole === UserRole.PROFESSOR ? "professorInterview" : "studentInterview"
+          userRole === UserRole.PROFESSOR ? "professorInterviewList" : "studentInterviewList"
         );
       }
       return result;
@@ -62,9 +62,9 @@ const RequestInterviewView = () => {
         setToast("면담 취소 요청이 완료되었습니다.", "success");
         close();
 
-        // 면담 목록 업데이트
+        // 면담 목록, 면담 가능 시간 업데이트
         setUpdateTarget(
-          userRole === UserRole.PROFESSOR ? "professorInterview" : "studentInterview"
+          userRole === UserRole.PROFESSOR ? "professorInterviewList" : "studentInterviewList"
         );
       }
       return result;
@@ -72,14 +72,16 @@ const RequestInterviewView = () => {
   });
 
   // 교수 면담 가능 날짜 조회(학생 시점)
+  // 학생 MY에서 클릭할 경우 아직 교수 id가 없기 때문에 모달 내에서 추가로 요청해야 함
+  // (면담 날짜로만 조회하면, 동일 달의 다른 날짜가 비활성화 스타일 처리 되기 때문에 1일~말일 요청함)
   useQuery<{ data: ProfessorAllowDate[] } | null, Error>({
     queryKey: ["professorAllowDateListForStudent", interviewInfo],
     queryFn: async () => {
       if (!interviewInfo?.interview_date) return null;
       const result = await interviewApi.getProfessorAllowDate(
         interviewInfo?.professor_id,
-        interviewInfo?.interview_date,
-        interviewInfo?.interview_date
+        dayjs(interviewInfo?.interview_date).format("YYYY-MM-01"), // 면담날짜가 포함된 달의 1일
+        dayjs(interviewInfo?.interview_date).endOf("month").format("YYYY-MM-DD") // 면담날짜가 포함된 달의 마지막 일
       );
       setProfessorAllowDateList(result?.data || []);
       return result;
