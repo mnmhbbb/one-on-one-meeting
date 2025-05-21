@@ -146,11 +146,6 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
       const res = await interviewApi.getInterviewCategory();
       return res?.data ?? [];
     },
-    // 면담 목적(카테고리) 셀렉트 목록은 면담 신청, 면담 확정 상태일 때만 조회
-    enabled:
-      !interviewInfo?.interview_state ||
-      interviewInfo?.interview_state === InterviewStatus.REQUESTED ||
-      interviewInfo?.interview_state === InterviewStatus.CONFIRMED,
   });
 
   return (
