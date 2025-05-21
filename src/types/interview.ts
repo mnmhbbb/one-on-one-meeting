@@ -13,8 +13,8 @@ export interface InterviewInfo {
   interview_reject_reason: string | null; // 면담 거절 사유
   created_at: string;
   interview_close_at: string | null; // 취소/거절한 날짜
-  professor_notice: string | null;
-  interview_guide: string; // 면담 상태에 따른 가이드 메시지
+  notice_content: string | null;
+  guide_content: string; // 면담 상태에 따른 가이드 메시지
   interview_record?: string; // 면담 기록
   student_name: string; // 면담 신청 학생 이름
   student_sign_num: string; // 면담 신청 학생 학번
@@ -36,8 +36,8 @@ export const DEFAULT_INTERVIEW_INFO: InterviewInfo = {
   interview_reject_reason: null,
   created_at: "",
   interview_close_at: null,
-  professor_notice: null,
-  interview_guide: "",
+  notice_content: null,
+  guide_content: "",
   student_name: "",
   student_sign_num: "",
   student_department: "",
@@ -57,6 +57,18 @@ export interface InterviewUpdateBody extends InterviewCreateBody {
   id: string;
 }
 
+// 교수가 면담 수락/거절 등 상태 업데이트
+export interface InterviewAcceptBody {
+  id: string;
+  student_id: string;
+  professor_id: string;
+  interview_date: string;
+  interview_time: string[];
+  interview_accept: boolean; // 면담 수락 여부
+  interview_reject_reason?: string | null; // 거절 사유
+}
+
+// 학생이 면담 취소
 export interface InterviewCancelBody {
   id: string;
   student_id: string;
@@ -64,4 +76,10 @@ export interface InterviewCancelBody {
   interview_date: string;
   interview_time: string[];
   interview_cancel_reason: string;
+}
+
+// 면담 기록 저장
+export interface InterviewRecordBody {
+  interview_id: string;
+  interview_record: string;
 }

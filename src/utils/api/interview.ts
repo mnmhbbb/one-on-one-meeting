@@ -1,8 +1,10 @@
 import axiosInstance from "@/lib/axios";
 import {
+  InterviewAcceptBody,
   InterviewCancelBody,
   InterviewCreateBody,
   InterviewInfo,
+  InterviewRecordBody,
   InterviewUpdateBody,
 } from "@/types/interview";
 import { Professor, ProfessorAllowDate } from "@/types/user";
@@ -86,6 +88,17 @@ export const interviewApi = {
       )
     );
   },
+  // 교수가 면담 상태 업데이트
+  putInterviewState: async (
+    body: InterviewAcceptBody
+  ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.put<{ data: InterviewInfo[]; message: string }>(
+        "/interview/crud/professor",
+        body
+      )
+    );
+  },
   // 학생이 면담 취소 요청
   cancelInterview: async (
     body: InterviewCancelBody
@@ -95,6 +108,22 @@ export const interviewApi = {
         "/interview/crud/student/cancel",
         body
       )
+    );
+  },
+  // 면담 기록 저장
+  postInterviewRecord: async (
+    body: InterviewRecordBody
+  ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.post<{ data: InterviewInfo[]; message: string }>("/interview/record", body)
+    );
+  },
+  // 면담 기록 수정
+  putInterviewRecord: async (
+    body: InterviewRecordBody
+  ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.put<{ data: InterviewInfo[]; message: string }>("/interview/record", body)
     );
   },
 };
