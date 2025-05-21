@@ -51,7 +51,6 @@ export interface ProfessorAllowDate {
   id: string;
   professor_id: string;
   professor_name: string;
-  allow_day: string;
   allow_date: string;
   allow_time: string[];
   already_apply_time: string[] | null;
@@ -62,6 +61,5 @@ export interface ProfessorAllowDate {
 export interface ProfessorAllowDateRequest {
   professor_id: string;
   allow_date: string;
-  allow_day: string;
   allow_time: string[];
 }
