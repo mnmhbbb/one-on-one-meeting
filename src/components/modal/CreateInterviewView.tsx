@@ -140,8 +140,8 @@ const CreateInterviewView = () => {
           />
           <div className="mt-2 mb-8">
             <ProfessorNotice
-              notice={interviewInfo?.interview_guide ?? ""}
-              guide={interviewInfo?.professor_notice ?? ""}
+              notice={interviewInfo?.notice_content || ""}
+              guide={interviewInfo?.guide_content || ""}
             />
           </div>
 

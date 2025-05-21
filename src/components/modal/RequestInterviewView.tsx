@@ -132,6 +132,20 @@ const RequestInterviewView = () => {
       return;
     }
 
+    // 교수 상태에선, 면담 확정/거절/취소 3가지만 선택할 수 있음
+    const availableInterviewState = [
+      InterviewStatus.CONFIRMED,
+      InterviewStatus.REJECTED,
+      InterviewStatus.CANCELLED,
+    ];
+    if (
+      userRole === UserRole.PROFESSOR &&
+      !availableInterviewState.includes(interviewInfo.interview_state as InterviewStatus)
+    ) {
+      setToast("면담 상태를 선택해 주세요.", "error");
+      return;
+    }
+
     updateInterviewMutation.mutate({
       id: interviewInfo?.id ?? "",
       student_id: interviewInfo?.student_id ?? "",
@@ -142,7 +156,7 @@ const RequestInterviewView = () => {
       interview_content: interviewInfo?.interview_content ?? "",
       interview_state: InterviewStatus.REQUESTED, // 면담 상태를 업데이트하면 면담 신청 상태로 변경
     });
-  }, [interviewInfo, updateInterviewMutation, setToast]);
+  }, [interviewInfo, updateInterviewMutation, setToast, userRole]);
 
   const handleCancelInterview = () => {
     if (!interviewInfo?.interview_date) {
@@ -202,8 +216,8 @@ const RequestInterviewView = () => {
           />
           <div className="mt-2 mb-8">
             <ProfessorNotice
-              notice={interviewInfo?.interview_guide ?? ""}
-              guide={interviewInfo?.professor_notice ?? ""}
+              notice={interviewInfo?.notice_content || ""}
+              guide={interviewInfo?.guide_content || ""}
             />
           </div>
           {userRole === UserRole.STUDENT ? (

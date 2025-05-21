@@ -9,7 +9,6 @@ import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { professorCheckList, professorNotice } from "@/utils/data/mockData";
 
 import ProfessorNotice from "./ProfessorNotice";
 
@@ -40,7 +39,10 @@ const RejectInterviewView = () => {
 
       <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
         <InterviewInfoForm interviewDatetimeList={formattedInterviewDatetimeList} />
-        <ProfessorNotice notice={professorNotice} guide={professorCheckList} />
+        <ProfessorNotice
+          notice={interviewInfo?.notice_content || ""}
+          guide={interviewInfo?.notice_content || ""}
+        />
         <div className="mt-5 flex justify-end">
           <Button onClick={close}>닫기</Button>
         </div>
