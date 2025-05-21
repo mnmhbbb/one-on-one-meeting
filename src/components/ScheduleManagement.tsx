@@ -96,7 +96,7 @@ const ScheduleManagement = () => {
     <Card className="rounded-l-none">
       <CardContent>
         <div className="mb-4 grid grid-cols-3 items-center px-5">
-          <h3>면담 일정을 선택해 주세요</h3>
+          <h3>※ 면담 가능한 일정을 활성화 해주세요.</h3>
           <DateSelector viewType="week" />
           <div className="flex justify-end gap-5">
             <Button variant="outline">이전주 불러오기</Button>
