@@ -22,7 +22,7 @@ import { useUserStore } from "@/store/userStore";
 import { InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 
-import StatusBadge from "../StatusBadge";
+import StatusBadgeSmall from "../StatusBadgeSmall";
 
 /**
  * 면담 목록 조회 모달
@@ -126,7 +126,7 @@ const InterviewListView = () => {
               onClick={handleClickInterview(interview)}
             >
               <div className="flex flex-col items-center gap-2">
-                <StatusBadge status={interview.interview_state as InterviewStatus} />
+                <StatusBadgeSmall status={interview.interview_state as InterviewStatus} />
                 <div>
                   {interview.interview_time.map(time => (
                     <div className="text-sm font-bold text-stone-600" key={time}>
@@ -173,7 +173,7 @@ const InterviewListView = () => {
                     interview && statusClass // 면담 있으면 면담 상태 컬러 적용
                   )}
                 >
-                  {interview && <StatusBadge status={status as InterviewStatus} />}
+                  {interview && <StatusBadgeSmall status={status as InterviewStatus} />}
                   {time}
                 </div>
               );

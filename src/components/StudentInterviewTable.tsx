@@ -3,7 +3,7 @@ import { ko } from "date-fns/locale";
 import { memo, useCallback } from "react";
 
 import { InterviewModalType, InterviewStatus } from "@/common/const";
-import StatusBadge from "@/components/StatusBadge";
+import StatusBadgeSmall from "@/components/StatusBadgeSmall";
 import {
   Table,
   TableBody,
@@ -53,7 +53,7 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
           .map((event, index) => (
             <TableRow key={index} role="button" onClick={() => handleClick(event)}>
               <TableCell className="w-[20%] px-6 font-medium">
-                <StatusBadge status={event.interview_state as InterviewStatus} />
+                <StatusBadgeSmall status={event.interview_state as InterviewStatus} />
                 <br />
                 <div className="mt-1 w-full text-center text-sm">
                   {`${format(new Date(event.interview_date), "yyyy.MM.dd")} (${format(

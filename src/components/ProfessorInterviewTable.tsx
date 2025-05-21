@@ -4,7 +4,7 @@ import { Check, CirclePlus, X } from "lucide-react";
 import { memo, useCallback } from "react";
 
 import { INTERVIEW_MODAL_TYPE, InterviewModalType, InterviewStatus } from "@/common/const";
-import StatusBadge from "@/components/StatusBadge";
+import StatusBadgeSmall from "@/components/StatusBadgeSmall";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -50,16 +50,14 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[20%] px-6 text-center text-base font-semibold">날짜</TableHead>
-          <TableHead className="w-[30%] px-6 text-center text-base font-semibold">
+          <TableHead className="w-[10%] text-center text-base font-semibold">날짜</TableHead>
+          <TableHead className="w-[50%] text-center text-base font-semibold">
             면담 신청내용
           </TableHead>
-          <TableHead className="w-[30%] px-6 text-center text-base font-semibold">
+          <TableHead className="w-[10%] text-center text-base font-semibold">
             면담 기록내용
           </TableHead>
-          <TableHead className="w-[20%] px-6 text-center text-base font-semibold">
-            면담 요청
-          </TableHead>
+          <TableHead className="w-[20%] text-center text-base font-semibold">면담 요청</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -70,7 +68,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
           .map((event, index) => (
             <TableRow key={index} role="button" onClick={() => handleClick(event)}>
               <TableCell className="w-[20%] px-6 font-medium">
-                <StatusBadge status={event.interview_state as InterviewStatus} />
+                <StatusBadgeSmall status={event.interview_state as InterviewStatus} />
                 <br />
                 <div className="mt-1 w-full text-center text-sm">
                   {`${format(new Date(event.interview_date), "yyyy.MM.dd")} (${format(
@@ -82,8 +80,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[30%] px-6">
                 <div>
-                  [신청 학생] {event.student_name} ({event.student_department}{" "}
-                  {event.student_sign_num})
+                  [신청 학생] {event.student_name} ({event.student_department})
                   <br />
                   [면담 일정] {event.interview_time.join(", ")}
                   <br />
@@ -108,7 +105,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[20%] px-6">
                 {event.interview_state === InterviewStatus.REQUESTED ? (
-                  <div className="flex justify-between px-5">
+                  <div className="flex items-center justify-center space-x-3">
                     <Button onClick={e => handleApprove(event, e)}>수락</Button>
                     <Button onClick={e => handleReject(event, e)}>거절</Button>
                   </div>
