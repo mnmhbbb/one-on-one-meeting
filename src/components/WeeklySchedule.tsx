@@ -97,25 +97,34 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
   return (
     <>
       <div className="grid grid-cols-[45px_1fr] border-b pb-2 md:grid-cols-[100px_1fr]">
-        <div className="text-sm font-semibold text-gray-400">시간</div>
+        <div className="flex items-center justify-center text-sm font-semibold text-gray-600">
+          시간
+        </div>
         <div className="grid grid-cols-5 gap-2 text-center text-sm font-semibold text-gray-600">
           {weekDates.map((date, i) => (
             <div key={i}>
               <div>{DAYS[i]}</div>
-              <div className="text-xs text-gray-400">{format(date, "MM.dd")}</div>
+              <div className="text-xs text-gray-600">{format(date, "MM.dd")}</div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-[45px_1fr] md:grid-cols-[100px_1fr]">
+      <div className="grid grid-cols-[45px_1fr] text-center md:grid-cols-[100px_1fr]">
         {/* 시간대 컬럼 */}
         <div className="space-y-2">
-          {TIMES.map((time, i) => (
-            <div key={i} className="h-5 pt-2 text-xs text-gray-400">
-              {time.split(" - ")[0]}
-            </div>
-          ))}
+          {TIMES.map((time, i) => {
+            const [start] = time.split(" - ");
+            return (
+              <div
+                key={i}
+                className="mt-2 flex h-10 flex-col items-center justify-center text-xs leading-tight font-medium"
+              >
+                {start}
+                <span className="text-[10px] text-gray-500">(30분)</span>
+              </div>
+            );
+          })}
         </div>
 
         <div className="grid grid-cols-5 gap-2">
@@ -143,8 +152,8 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                   <div
                     key={`${dayIndex}-${timeIndex}`}
                     className={cn(
-                      "mt-2 flex h-5 items-center justify-center rounded-md",
-                      event ? "" : "bg-gray-50",
+                      "mt-2 flex h-10 items-center justify-center rounded-md",
+                      event ? "" : "bg-gray-100",
                       props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR &&
                         !isDateAvailable &&
                         "cursor-not-allowed bg-gray-200 opacity-50"
