@@ -38,44 +38,8 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST: 교수 예약 활성화 Date 저장
+// POST: 교수 예약 활성화 Date 신청 (덮어쓰기 방식)
 export async function POST(req: NextRequest) {
-  const { user, supabase, response } = await getSessionUser();
-  if (!user) return response;
-
-  try {
-    const body = await req.json();
-
-    if (!Array.isArray(body) || body.length === 0) {
-      return NextResponse.json({ message: "입력 데이터가 유효하지 않습니다." }, { status: 400 });
-    }
-
-    const requiredKeys = ["professor_id", "allow_date", "allow_time"];
-    const hasAllRequired = body.every(item => requiredKeys.every(key => key in item && item[key]));
-
-    if (!hasAllRequired) {
-      return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
-    }
-
-    const { data, error } = await supabase
-      .from("professor_interview_allow_date")
-      .insert(body)
-      .select();
-
-    if (error) {
-      console.error(error);
-      return NextResponse.json({ message: "일정 활성화 실패" }, { status: 500 });
-    }
-
-    return NextResponse.json({ message: "일정 활성화 완료", data }, { status: 201 });
-  } catch (e) {
-    console.error("서버 오류:", e);
-    return NextResponse.json({ message: "서버 오류" }, { status: 500 });
-  }
-}
-
-// PATCH: 교수 예약 활성화 Date 수정 (덮어쓰기 방식)
-export async function PATCH(req: NextRequest) {
   const { user, supabase, response } = await getSessionUser();
   if (!user) return response;
 
