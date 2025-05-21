@@ -3,10 +3,10 @@ import { InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 
 export type UpdateTarget =
-  | "studentInterview"
-  | "professorInterview"
-  | "professorAllowDate"
-  | "professorAllowDateForStudent"
+  | "studentInterviewList" // 학생 자신 면담 목록 갱신
+  | "professorInterviewList" // 교수 자신 면담 목록 갱신
+  | "professorAllowDateList" // 교수 자신의 면담 가능 날짜 목록 갱신
+  | "professorAllowDateListForStudent" // 학생이 보는 교수의 면담 가능 날짜 목록 갱신
   | null;
 
 interface DateState {

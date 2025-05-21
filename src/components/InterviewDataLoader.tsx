@@ -43,7 +43,7 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
     queryKey: ["studentInterviewList", startDate, endDate],
     queryFn: () => interviewApi.getStudentInterviewList(startDate, endDate),
     // 교수 유저가 아닐 때는 항상 조회
-    enabled: userRole !== UserRole.PROFESSOR,
+    enabled: userRole === UserRole.STUDENT,
   });
 
   // 교수 면담 데이터 조회(교수 화면일 때)
@@ -65,7 +65,7 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
       setProfessorAllowDateList(result?.data || []);
       return result;
     },
-    enabled: userRole !== UserRole.PROFESSOR && !!professorId,
+    enabled: userRole === UserRole.STUDENT && !!professorId,
   });
 
   // 교수가 면담 활성화한 날짜 조회(교수 본인)
@@ -109,19 +109,22 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
 
   // updateTarget에 따라 필요한 데이터만 갱신(데이터 추가, 수정 후 목록 갱신하기 위함)
   useEffect(() => {
+    console.log("updateTarget", updateTarget);
     if (!updateTarget) return;
 
     switch (updateTarget) {
-      case "studentInterview":
+      case "studentInterviewList":
         queryClient.invalidateQueries({ queryKey: ["studentInterviewList"] });
+        queryClient.invalidateQueries({ queryKey: ["professorAllowDateListForStudent"] });
         break;
-      case "professorInterview":
+      case "professorInterviewList":
         queryClient.invalidateQueries({ queryKey: ["professorInterviewList"] });
+        queryClient.invalidateQueries({ queryKey: ["professorAllowDateList"] });
         break;
-      case "professorAllowDateForStudent":
-        queryClient.invalidateQueries({ queryKey: ["professorAllowDateForStudentList"] });
+      case "professorAllowDateListForStudent":
+        queryClient.invalidateQueries({ queryKey: ["professorAllowDateListForStudent"] });
         break;
-      case "professorAllowDate":
+      case "professorAllowDateList":
         queryClient.invalidateQueries({ queryKey: ["professorAllowDateList"] });
         break;
     }
