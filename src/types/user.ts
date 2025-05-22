@@ -32,6 +32,7 @@ export interface Professor {
   college: string;
   phone_num: string;
   interview_location: string;
+  notice_content: string;
 }
 
 export interface MyPageUserInfo {

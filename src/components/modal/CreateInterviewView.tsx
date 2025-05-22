@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -40,6 +40,12 @@ const CreateInterviewView = () => {
   const [step, setStep] = useState(() => (userRole === UserRole.STUDENT ? 1 : 2));
 
   const setToast = useToastStore(state => state.setToast);
+
+  // 면담 신청 가이드 불러오기
+  const { data: guideData } = useQuery({
+    queryKey: ["interviewGuide"],
+    queryFn: () => interviewApi.getInterviewGuide(),
+  });
 
   const createInterviewMutation = useMutation({
     mutationFn: async (data: InterviewCreateBody) => {
@@ -140,8 +146,8 @@ const CreateInterviewView = () => {
           />
           <div className="mt-2 mb-8">
             <ProfessorNotice
-              notice={interviewInfo?.notice_content || ""}
-              guide={interviewInfo?.guide_content || ""}
+              notice={selectedProfessor?.notice_content || ""}
+              guide={guideData?.data[0]?.guide_content || ""}
             />
           </div>
 
