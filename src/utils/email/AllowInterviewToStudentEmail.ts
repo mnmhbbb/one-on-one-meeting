@@ -25,7 +25,8 @@ export async function AllowInterviewToStudentEmail({
       pass: process.env.EMAIL_PASS,
     },
   });
-  const url = `http://localhost:3000/student/interview-requests?tab=day&date=${interviewDate}`;
+
+  const url = `https://${process.env.NEXT_PUBLIC_BASE_URL}/student/interview-requests?tab=day&date=${interviewDate}`;
 
   const mailOptions = {
     from: `"Knock Knock" <${process.env.EMAIL_USER}>`,
