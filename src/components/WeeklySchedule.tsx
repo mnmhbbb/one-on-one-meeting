@@ -145,7 +145,9 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                           allowDate.allow_time.length === allowDate.already_apply_time?.length;
 
                         return isMatchingDate && hasAvailableTime && !isFullyBooked;
-                      }) ?? false)
+                      }) ??
+                        false) ||
+                      event?.interview_date === dateStr // 학생 유저 본인이 이미 신청한 면담 일정인 경우도 클릭 가능
                     : true;
 
                 return (

@@ -141,7 +141,9 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
                     allowDate.allow_time.length === allowDate.already_apply_time?.length;
 
                   return isMatchingDate && hasAvailableTime && !isFullyBooked;
-                }) ?? false)
+                }) ??
+                  false) ||
+                dayEvents.length > 0 // 학생 유저 본인이 이미 신청한 면담 일정이 있는 경우도 클릭 가능
               : true;
 
           return (
