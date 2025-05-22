@@ -14,9 +14,12 @@ export async function GET(req: NextRequest) {
   const professor_id = searchParams.get("professor_id");
 
   try {
-    const { data, error } = await supabase.from("professors").select("*").eq("id", professor_id);
+    const { data, error } = await supabase
+      .from("professor_with_notice")
+      .select("*")
+      .eq("id", professor_id);
 
-    if (error) {
+    if (error || !data || data.length === 0) {
       console.error(error);
       return NextResponse.json({ message: "조회 실패" }, { status: 500 });
     }
