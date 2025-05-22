@@ -135,7 +135,7 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                 const dateStr = format(date, "yyyy-MM-dd");
 
                 // 학생 유저가 교수 화면 조회할 경우, 해당 날짜의 면담 가능 여부 확인하여 버튼 활성화
-                const isDateAvailable =
+                const isStudentDateAvailable =
                   props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR
                     ? (props.allowDateList?.some(allowDate => {
                         const isMatchingDate = allowDate.allow_date === dateStr;
@@ -150,18 +150,33 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                       event?.interview_date === dateStr // 학생 유저 본인이 이미 신청한 면담 일정인 경우도 클릭 가능
                     : true;
 
+                // 교수 유저: 해당 날짜의 모든 시간을 비활성화 해놓았다면 클릭도 비활성화
+                const isProfessorDateAvailable =
+                  props.allowDateList?.some(allowDate => {
+                    const isMatchingDate = allowDate.allow_date === dateStr;
+                    const isMatchingTime = allowDate.allow_time.every(time =>
+                      TIMES.some(event => event === time)
+                    );
+                    return isMatchingDate && isMatchingTime;
+                  }) ?? false;
+
+                const isDateAvailable =
+                  props.roleViewType === RoleViewType.PROFESSOR_ON_PROFESSOR
+                    ? isProfessorDateAvailable
+                    : isStudentDateAvailable;
+
                 return (
                   <div
                     key={`${dayIndex}-${timeIndex}`}
                     className={cn(
                       "mt-2 flex h-10 items-center justify-center rounded-md",
-                      event ? "" : "bg-gray-100",
-                      props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR &&
-                        !isDateAvailable &&
-                        "cursor-not-allowed bg-gray-200 opacity-50"
+                      event ? "" : "rounded-md border",
+                      !isDateAvailable && "cursor-not-allowed bg-gray-200 opacity-50"
                     )}
                     role="button"
-                    onClick={() => handleClick(date, event, isDateAvailable)}
+                    {...(isDateAvailable && {
+                      onClick: () => handleClick(date, event, isDateAvailable),
+                    })}
                   >
                     {event && <StatusBadge status={event.interview_state as InterviewStatus} />}
                   </div>

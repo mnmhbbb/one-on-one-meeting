@@ -11,6 +11,7 @@ type InterviewModalState = {
   interviewInfo: InterviewInfo | null;
 
   selectedTime: string[];
+  selectedTimeWhenEdit: string[]; // 면담 변경 중 선택된 시간 저장용
 
   setPathname: (path: string) => void;
 
@@ -21,6 +22,7 @@ type InterviewModalState = {
   setInterviewInfo: (info: InterviewInfo) => void;
 
   setSelectedTime: (time: string[]) => void;
+  setSelectedTimeWhenEdit: (time: string[]) => void;
 };
 
 export const useInterviewModalStore = createStore<InterviewModalState>((set, get) => ({
@@ -32,6 +34,7 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
   interviewInfo: null,
 
   selectedTime: [],
+  selectedTimeWhenEdit: [],
 
   setPathname: (newPath: string) => {
     const prevPath = get().pathname;
@@ -49,7 +52,14 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
 
   open: (info, type) =>
     set({ isOpen: true, type, interviewInfo: info, selectedTime: info?.interview_time ?? [] }),
-  close: () => set({ isOpen: false, type: null, selectedTime: [], interviewInfo: null }),
+  close: () =>
+    set({
+      isOpen: false,
+      type: null,
+      selectedTime: [],
+      selectedTimeWhenEdit: [],
+      interviewInfo: null,
+    }),
   openProfessorSearch: () => set({ isProfessorSearchOpen: true }),
   closeProfessorSearch: () => set({ isProfessorSearchOpen: false }),
   setInterviewInfo: info => set({ interviewInfo: info, selectedTime: info.interview_time }),
@@ -58,4 +68,5 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
       selectedTime: time,
       interviewInfo: get().interviewInfo ? { ...get().interviewInfo!, interview_time: time } : null,
     }),
+  setSelectedTimeWhenEdit: (time: string[]) => set({ selectedTimeWhenEdit: time }),
 }));

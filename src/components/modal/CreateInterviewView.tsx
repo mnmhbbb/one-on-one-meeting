@@ -126,7 +126,7 @@ const CreateInterviewView = () => {
           </div>
           <Separator className="!my-4" />
           <div className="mb-5 h-[300px] overflow-y-auto">
-            <TimeSelect timeList={professorAllowDateList} isCreateInterview />
+            <TimeSelect timeList={professorAllowDateList} />
           </div>
           <div className="flex justify-end gap-4">
             <Button disabled={!selectedTime.length} onClick={handleNextStep}>

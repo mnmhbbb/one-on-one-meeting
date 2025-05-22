@@ -30,11 +30,11 @@ export enum InterviewStatus {
 }
 
 export const STATUS_COLORS: Record<InterviewStatus, string> = {
-  [InterviewStatus.REQUESTED]: "bg-blue-300",
-  [InterviewStatus.CONFIRMED]: "bg-green-300",
-  [InterviewStatus.REJECTED]: "bg-pink-300",
-  [InterviewStatus.CANCELLED]: "bg-red-300",
-  [InterviewStatus.RECORDED]: "bg-yellow-300",
+  [InterviewStatus.REQUESTED]: "!bg-blue-300",
+  [InterviewStatus.CONFIRMED]: "!bg-green-300",
+  [InterviewStatus.REJECTED]: "!bg-pink-300",
+  [InterviewStatus.CANCELLED]: "!bg-red-300",
+  [InterviewStatus.RECORDED]: "!bg-yellow-300",
 };
 
 // FIXME: 이후 삭제

@@ -11,7 +11,13 @@ import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { InterviewStatus, RoleViewType, STATUS_COLORS, INTERVIEW_MODAL_TYPE } from "@/common/const";
+import {
+  InterviewStatus,
+  RoleViewType,
+  STATUS_COLORS,
+  INTERVIEW_MODAL_TYPE,
+  TIMES,
+} from "@/common/const";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
@@ -131,7 +137,7 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
             .slice(0, 3);
 
           // 학생 유저가 교수 화면 조회할 경우, 해당 날짜의 면담 가능 여부 확인하여 버튼 활성화
-          const isDateAvailable =
+          const isStudentDateAvailable =
             props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR
               ? (props.allowDateList?.some(allowDate => {
                   const isMatchingDate = allowDate.allow_date === dateStr;
@@ -146,6 +152,15 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
                 dayEvents.length > 0 // 학생 유저 본인이 이미 신청한 면담 일정이 있는 경우도 클릭 가능
               : true;
 
+          // 교수 유저: 해당 날짜의 모든 시간을 비활성화 해놓았다면 클릭도 비활성화
+          const isProfessorDateAvailable = props.allowDateList?.some(allowDate => {
+            const isMatchingDate = allowDate.allow_date === dateStr;
+            const isMatchingTime = allowDate.allow_time.every(time =>
+              TIMES.some(event => event === time)
+            );
+            return isMatchingDate && isMatchingTime;
+          });
+
           return (
             // TODO: 현재 달이 아닌 경우는 날짜 이동만(교수 검색창, 신청 현황 이동 동작 X)
             <div
@@ -153,12 +168,20 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
               className={cn(
                 "relative min-h-[100px] rounded border p-1",
                 !isSameMonth(date, currentDate) && "text-gray-400", // 현재 달의 날짜가 아닌 경우 회색으로 표시
-                ((props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR && !isDateAvailable) ||
+                ((props.roleViewType === RoleViewType.STUDENT_ON_PROFESSOR &&
+                  !isStudentDateAvailable) ||
+                  (props.roleViewType === RoleViewType.PROFESSOR_ON_PROFESSOR &&
+                    !isProfessorDateAvailable) ||
                   isWeekend(date)) &&
                   "cursor-not-allowed bg-gray-200 opacity-50"
               )}
               role="button"
-              onClick={() => !isWeekend(date) && isDateAvailable && handleClick(date, dayEvents)}
+              onClick={() =>
+                !isWeekend(date) &&
+                isStudentDateAvailable &&
+                isProfessorDateAvailable &&
+                handleClick(date, dayEvents)
+              }
             >
               {/* 날짜 숫자 표시 */}
               <div className="mb-1 text-xs font-semibold">{format(date, "d")}</div>

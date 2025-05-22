@@ -33,7 +33,6 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
   const { interviewInfo, setInterviewInfo } = useInterviewModalStore(
     useShallow(state => ({
       interviewInfo: state.interviewInfo,
-      selectedTime: state.selectedTime,
       setInterviewInfo: state.setInterviewInfo,
     }))
   );
