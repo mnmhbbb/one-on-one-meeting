@@ -12,11 +12,13 @@ import { useDateStore } from "@/store/dateStore";
 import { useUserStore } from "@/store/userStore";
 import { ProfessorAllowDate, ProfessorAllowDateRequest } from "@/types/user";
 import { professorApi } from "@/utils/api/professor";
+import { useToastStore } from "@/store/toastStore";
 
 const ScheduleManagement = () => {
   const userInfo = useUserStore(state => state.userInfo);
   const currentDate = useDateStore(state => state.currentDate);
   const queryClient = useQueryClient();
+  const setToast = useToastStore(state => state.setToast);
 
   // 현재 주의 월요일부터 금요일까지의 날짜 배열 생성
   const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 1 }), [currentDate]);
@@ -79,11 +81,15 @@ const ScheduleManagement = () => {
   // 유저가 선택한 시간 post 호출
   const saveMutation = useMutation({
     mutationFn: async (data: ProfessorAllowDateRequest[]) => {
-      const response = await professorApi.postAllowDate(data);
+      const response = await professorApi.postAllowDate(data, startDate, endDate);
+      if (response) {
+        setToast("일정 활성화가 완료되었습니다.", "success");
+        close();
+      }
       return response?.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["professorAllowDateList"] }); // 성공하면 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ["professorAllowDateList", startDate, endDate] });
     },
   });
 

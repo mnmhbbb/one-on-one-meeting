@@ -47,7 +47,6 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-
     const {
       student_id,
       professor_id,
@@ -58,6 +57,7 @@ export async function POST(req: NextRequest) {
       interview_state,
     } = body;
 
+    // 0. 필수 값 확인
     if (
       !student_id ||
       !professor_id ||
@@ -71,14 +71,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
     }
 
-    const requestedTime = interview_time[0];
-
-    // 1. 교수의 해당 날짜 면담 가능 목록 조회
+    // 1. 교수 면담 가능 시간 조회
     const { data: allowList, error: allowError } = await supabase
       .from("professor_interview_allow_date")
       .select("id, allow_time, already_apply_time, allow_date")
-      .eq("professor_id", body.professor_id)
-      .eq("allow_date", body.interview_date);
+      .eq("professor_id", professor_id)
+      .eq("allow_date", interview_date);
 
     if (allowError) {
       console.error(allowError);
@@ -89,52 +87,56 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "면담 신청이 불가한 날짜입니다." }, { status: 409 });
     }
 
-    // 2. allow_time에 요청한 시간 포함 여부 확인
-    const matchedSlot = allowList.find(slot => (slot.allow_time || []).includes(requestedTime));
-    if (!matchedSlot) {
-      return NextResponse.json({ message: "허용되지 않은 시간대입니다." }, { status: 409 });
+    // allowList는 이 날짜에 대해 하나라고 가정
+    const matchedSlot = allowList[0];
+
+    // 2. 모든 요청 시간대가 허용 목록에 있는지 확인
+    const allowTimeSet = new Set(matchedSlot.allow_time || []);
+    const alreadySet = new Set(matchedSlot.already_apply_time || []);
+
+    // 1) 허용되지 않은 시간대 검사
+    const invalidTimes = interview_time.filter((time: string) => !allowTimeSet.has(time));
+    if (invalidTimes.length > 0) {
+      return NextResponse.json(
+        { message: `허용되지 않은 시간대입니다: ${invalidTimes.join(", ")}` },
+        { status: 409 }
+      );
     }
 
-    // 3. 이미 신청된 시간인지 확인
-    if ((matchedSlot.already_apply_time || []).includes(requestedTime)) {
-      return NextResponse.json({ message: "이미 신청된 시간대입니다." }, { status: 409 });
+    // 2) 이미 신청된 시간대 검사
+    const duplicates = interview_time.filter((time: string) => alreadySet.has(time));
+    if (duplicates.length > 0) {
+      return NextResponse.json(
+        { message: `이미 신청된 시간대입니다: ${duplicates.join(", ")}` },
+        { status: 409 }
+      );
     }
 
-    // 4. 교수/학생 정보 조회
+    // 3. 교수/학생 정보 조회
     const [professorRes, studentRes] = await Promise.all([
       supabase
         .from("professors")
         .select("name, notification_email")
-        .eq("id", body.professor_id)
+        .eq("id", professor_id)
         .single(),
-      supabase
-        .from("students")
-        .select("name, notification_email")
-        .eq("id", body.student_id)
-        .single(),
+      supabase.from("students").select("name, notification_email").eq("id", student_id).single(),
     ]);
 
-    const professorInfo = professorRes.data;
-    const studentInfo = studentRes.data;
-
-    if (professorRes.error || !professorInfo) {
-      console.error(professorRes.error);
+    if (professorRes.error || !professorRes.data) {
       return NextResponse.json({ message: "교수 정보 조회 실패" }, { status: 500 });
     }
-
-    if (studentRes.error || !studentInfo) {
-      console.error(studentRes.error);
+    if (studentRes.error || !studentRes.data) {
       return NextResponse.json({ message: "학생 정보 조회 실패" }, { status: 500 });
     }
 
-    // 5. 이메일 발송
+    // 4. 이메일 전송
     try {
       await CreateInterviewToProfessorEmail({
-        studentName: studentInfo.name,
-        professorName: professorInfo.name,
+        studentName: studentRes.data.name,
+        professorName: professorRes.data.name,
         interviewDate: interview_date,
         interviewTime: interview_time,
-        professorNotificationEmail: professorInfo.notification_email,
+        professorNotificationEmail: professorRes.data.notification_email,
       });
     } catch (mailErr) {
       console.error("메일 전송 실패:", mailErr);
@@ -144,7 +146,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 6. 면담 신청 저장
+    // 5. 면담 신청 저장
     const { data: insertedInterview, error: insertError } = await supabase
       .from("create_interview")
       .insert([
@@ -166,14 +168,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "면담 예약 실패" }, { status: 500 });
     }
 
-    // 7. 예약된 시간 업데이트
-    const updatedApplyTimes = Array.from(
-      new Set([...(matchedSlot.already_apply_time || []), requestedTime])
-    );
-
     const { error: updateError } = await supabase
       .from("professor_interview_allow_date")
-      .update({ already_apply_time: updatedApplyTimes })
+      .update({ already_apply_time: body.interview_time })
       .eq("id", matchedSlot.id);
 
     if (updateError) {
@@ -189,7 +186,7 @@ export async function POST(req: NextRequest) {
           allowInfo: {
             allow_date: matchedSlot.allow_date,
             allow_time: matchedSlot.allow_time,
-            already_apply_time: updatedApplyTimes,
+            already_apply_time: body.interview_time,
           },
         },
       },
