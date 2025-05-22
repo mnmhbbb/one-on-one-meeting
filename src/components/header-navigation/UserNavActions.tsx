@@ -16,7 +16,7 @@ const UserNavActions = () => {
     const res = await userApi.logout();
     if (res) {
       clearUserInfo();
-      router.push("/");
+      window.location.replace("/");
     }
   };
 

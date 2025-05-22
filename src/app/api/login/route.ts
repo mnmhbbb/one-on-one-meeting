@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "@/utils/supabase/server";
+import { UserRole } from "@/common/const";
 
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
     const { email, password, role } = await request.json();
 
-    const table = role === "student" ? "students" : "professors";
+    const table = role === UserRole.STUDENT ? "students" : "professors";
     const { data: userData, error: queryError } = await supabase
       .from(table)
       .select("is_verified")

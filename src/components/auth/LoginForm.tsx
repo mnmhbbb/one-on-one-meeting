@@ -2,7 +2,6 @@
 
 import { LockKeyhole, Mail } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { UserRole } from "@/common/const";
 import { Button } from "@/components/ui/button";
@@ -13,11 +12,7 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ role }: LoginFormProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const defaultRedirectTo = pathname.startsWith("/student") ? "/student/my" : "/professor/my";
-  const redirectTo = searchParams.get("redirectTo") ?? defaultRedirectTo;
+  const redirectTo = role === UserRole.STUDENT ? "/student/my" : "/professor/my";
 
   const handleSubmit = async (formData: FormData) => {
     const email = formData.get("email") as string;
@@ -25,7 +20,7 @@ export default function LoginForm({ role }: LoginFormProps) {
 
     const success = await userApi.login({ email, password, role });
     if (success) {
-      router.push(redirectTo);
+      window.location.replace(redirectTo);
     }
   };
 
