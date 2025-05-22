@@ -109,7 +109,6 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
 
   // updateTarget에 따라 필요한 데이터만 갱신(데이터 추가, 수정 후 목록 갱신하기 위함)
   useEffect(() => {
-    console.log("updateTarget", updateTarget);
     if (!updateTarget) return;
 
     switch (updateTarget) {
