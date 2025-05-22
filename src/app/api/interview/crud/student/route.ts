@@ -168,9 +168,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "면담 예약 실패" }, { status: 500 });
     }
 
+    // 1. 기존 시간 배열
+    const original = matchedSlot.already_apply_time || [];
+    console.log("original = ", original);
+    // 2. 새 요청 시간
+    const requested = body.interview_time || [];
+    console.log("requested = ", requested);
+
+    // 3. 병합 후 중복 제거
+    const mergedTimes = Array.from(new Set([...original, ...requested]));
+
+    // 4. 업데이트
     const { error: updateError } = await supabase
       .from("professor_interview_allow_date")
-      .update({ already_apply_time: body.interview_time })
+      .update({ already_apply_time: mergedTimes })
       .eq("id", matchedSlot.id);
 
     if (updateError) {
@@ -186,7 +197,7 @@ export async function POST(req: NextRequest) {
           allowInfo: {
             allow_date: matchedSlot.allow_date,
             allow_time: matchedSlot.allow_time,
-            already_apply_time: body.interview_time,
+            already_apply_time: mergedTimes,
           },
         },
       },
