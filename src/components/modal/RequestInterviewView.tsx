@@ -8,7 +8,7 @@ import { InterviewStatus, UserRole } from "@/common/const";
 import LoadingUI from "@/components/LoadingUI";
 import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import ProfessorNotice from "@/components/modal/ProfessorNotice";
-import TimeSelect from "@/components/modal/TimeSelect";
+import TimeSelectEdit from "@/components/modal/TimeSelectEdit";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
@@ -29,7 +29,7 @@ const RequestInterviewView = () => {
 
   const userRole = useUserStore(state => state.role);
   const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
-  const selectedTime = useInterviewModalStore(state => state.selectedTime);
+  const selectedTimeWhenEdit = useInterviewModalStore(state => state.selectedTimeWhenEdit);
   const close = useInterviewModalStore(state => state.close);
   const professorAllowDateList = useDateStore(state => state.professorAllowDateList);
   const setToast = useToastStore(state => state.setToast);
@@ -129,8 +129,8 @@ const RequestInterviewView = () => {
   const formattedSelectedTimeList = useMemo(() => {
     if (!interviewInfo?.interview_date) return [];
     const baseDate = dayjs(interviewInfo.interview_date).format("YYYY년 MM월 DD일 dddd");
-    return selectedTime.map(time => `${baseDate} ${time}`);
-  }, [selectedTime, interviewInfo?.interview_date]);
+    return selectedTimeWhenEdit.map(time => `${baseDate} ${time}`);
+  }, [selectedTimeWhenEdit, interviewInfo?.interview_date]);
 
   // 학생 면담 저장 핸들러
   const handleStudentInterviewSave = useCallback(() => {
@@ -166,12 +166,12 @@ const RequestInterviewView = () => {
       student_id: interviewInfo?.student_id ?? "",
       professor_id: interviewInfo?.professor_id ?? "",
       interview_date: interviewInfo?.interview_date ?? "",
-      interview_time: interviewInfo?.interview_time ?? [],
+      interview_time: selectedTimeWhenEdit ?? [],
       interview_category: interviewInfo?.interview_category ?? "",
       interview_content: interviewInfo?.interview_content ?? "",
       interview_state: InterviewStatus.REQUESTED, // 면담 상태를 업데이트하면 면담 신청 상태로 변경
     });
-  }, [interviewInfo, updateInterviewMutationByStudent, setToast, userRole]);
+  }, [interviewInfo, updateInterviewMutationByStudent, setToast, userRole, selectedTimeWhenEdit]);
 
   // 교수 면담 저장 핸들러
   const handleProfessorInterviewSave = useCallback(() => {
@@ -199,11 +199,11 @@ const RequestInterviewView = () => {
       student_id: interviewInfo?.student_id,
       professor_id: interviewInfo?.professor_id,
       interview_date: interviewInfo?.interview_date,
-      interview_time: interviewInfo?.interview_time,
+      interview_time: selectedTimeWhenEdit,
       interview_accept: false,
       interview_reject_reason: interviewInfo?.interview_reject_reason,
     });
-  }, [interviewInfo, updateInterviewMutationByProfessor, setToast]);
+  }, [interviewInfo, updateInterviewMutationByProfessor, setToast, selectedTimeWhenEdit]);
 
   const handleCancelInterview = () => {
     if (!interviewInfo?.interview_date) {
@@ -236,13 +236,13 @@ const RequestInterviewView = () => {
           </div>
           <Separator className="!my-4" />
           <div className="mb-5 h-[300px] overflow-y-auto">
-            <TimeSelect timeList={professorAllowDateList} />
+            <TimeSelectEdit timeList={professorAllowDateList} />
           </div>
           <div className="flex justify-end gap-4">
             <Button variant="outline" onClick={() => handleStepChange(3)}>
               면담취소
             </Button>
-            <Button disabled={!selectedTime.length} onClick={handleNextStep}>
+            <Button disabled={!selectedTimeWhenEdit.length} onClick={handleNextStep}>
               다음
             </Button>
           </div>

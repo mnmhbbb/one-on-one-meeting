@@ -6,25 +6,23 @@ import { Button } from "@/components/ui/button";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { ProfessorAllowDate } from "@/types/user";
 
-interface TimeSelectProps {
+interface TimeSelectEditProps {
   timeList: ProfessorAllowDate[];
 }
 
-// 면담 신청 시 면담 시간 선택
-const TimeSelect = ({ timeList }: TimeSelectProps) => {
-  const selectedTime = useInterviewModalStore(state => state.selectedTime);
-
+// 면담 변경 시 면담 시간 선택
+const TimeSelectEdit = ({ timeList }: TimeSelectEditProps) => {
   const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
-  const setSelectedTime = useInterviewModalStore(state => state.setSelectedTime);
-  const [selected, setSelected] = useState<string[]>(() => selectedTime);
+  const setSelectedTimeWhenEdit = useInterviewModalStore(state => state.setSelectedTimeWhenEdit);
+  const [selected, setSelected] = useState<string[]>(() => interviewInfo?.interview_time || []);
 
   // interviewInfo의 날짜와 일치하는 시간 목록 찾기
   const filteredTimeList = timeList.find(time => time.allow_date === interviewInfo?.interview_date);
 
-  // selected 상태가 변경될 때 setSelectedTime 호출
+  // selected 상태가 변경될 때 setSelectedTimeWhenEdit 호출
   useEffect(() => {
-    setSelectedTime(selected);
-  }, [selected, setSelectedTime]);
+    setSelectedTimeWhenEdit(selected);
+  }, [selected, setSelectedTimeWhenEdit]);
 
   const toggleTime = useCallback((time: string) => {
     setSelected(prev => (prev.includes(time) ? prev.filter(t => t !== time) : [...prev, time]));
@@ -35,8 +33,10 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
   return (
     <div className="grid grid-cols-2 gap-2">
       {TIMES.map(time => {
-        // isCreateInterview(새 면담 신청)일 경우, 이미 신청된 면담은 모두 비활성화
-        const isApplied = filteredTimeList.already_apply_time?.includes(time);
+        // 면담 변경일 경우, 이미 신청된 면담 시간 중, 내가 신청한 면담 시간은 비활성화하지 않음
+        const isApplied = filteredTimeList.already_apply_time?.some(
+          appliedTime => !interviewInfo?.interview_time?.includes(appliedTime)
+        );
         const isAvailable = filteredTimeList.allow_time.includes(time);
         const isSelected = selected.includes(time);
 
@@ -68,4 +68,4 @@ const TimeSelect = ({ timeList }: TimeSelectProps) => {
   );
 };
 
-export default memo(TimeSelect);
+export default memo(TimeSelectEdit);
