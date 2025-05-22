@@ -1,5 +1,10 @@
 import axiosInstance from "@/lib/axios";
-import { Professor, ProfessorAllowDate, ProfessorAllowDateRequest } from "@/types/user";
+import {
+  Professor,
+  ProfessorAllowDate,
+  ProfessorAllowDateRequest,
+  ProfessorNotice,
+} from "@/types/user";
 
 import { tryApiWithToast } from "./common";
 
@@ -42,6 +47,22 @@ export const professorApi = {
     return await tryApiWithToast(() =>
       axiosInstance.post<{ data: ProfessorAllowDate[] }>("/professor/allow-date", body, {
         params: { start, end },
+      })
+    );
+  },
+
+  // 교수 본인 공지 조회
+  getProfessorNotice: async (): Promise<{ data: ProfessorNotice } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.get<{ data: ProfessorNotice }>("/interview/notice")
+    );
+  },
+
+  // 교수 본인 공지 업데이트
+  putProfessorNotice: async (noticeContent: string): Promise<{ message: string } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.put<{ message: string }>("/interview/notice", {
+        notice_content: noticeContent,
       })
     );
   },

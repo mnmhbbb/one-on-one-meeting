@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest) {
   const { user, supabase, response } = await getSessionUser();
   if (!user) return response;
 
-  const { notice_content, last_update_at } = await req.json();
+  const { notice_content } = await req.json();
 
   // 교수 공지 레코드가 존재하는지 확인
   const { error: noticeError } = await supabase
@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest) {
     .from("professor_notice")
     .update({
       notice_content,
-      last_update_at,
+      last_update_at: new Date().toISOString(),
     })
     .eq("professor_id", user.id);
 

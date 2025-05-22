@@ -7,55 +7,56 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useToastStore } from "@/store/toastStore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { professorApi } from "@/utils/api/professor";
 
 const NoticeForm = () => {
   const [notice, setNotice] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const setToast = useToastStore(state => state.setToast);
+  const queryClient = useQueryClient();
 
-  const fetchNotice = async () => {
-    try {
-      const res = await fetch("/api/interview/notice");
-      if (!res.ok) throw new Error("공지 조회 실패");
-      const { data } = await res.json();
-      if (data) {
-        setNotice(data.notice_content || "");
-      }
-    } catch (error) {
-      console.error("공지 불러오기 실패:", error);
-    }
-  };
-
+  // 교수 본인 공지 조회
+  const { data } = useQuery({
+    queryKey: ["ProfessorNotice"],
+    queryFn: async () => {
+      const result = await professorApi.getProfessorNotice();
+      return result;
+    },
+    select: res => res?.data || null,
+  });
   useEffect(() => {
-    fetchNotice();
-  }, []);
+    if (data) {
+      setNotice(data.notice_content || "");
+    }
+  }, [data]);
 
   // 저장 버튼 핸들러
-  const handleSave = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-
-    try {
-      const res = await fetch("/api/interview/notice", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          notice_content: notice,
-          last_update_at: new Date().toISOString(),
-        }),
-      });
-
-      if (!res.ok) throw new Error("공지 업데이트 실패");
-
-      alert("공지사항이 저장되었습니다.");
-      await fetchNotice(); // 저장 후 최신 상태로 재조회
-    } catch (error) {
-      console.error(error);
-      alert("공지 저장 중 오류가 발생했습니다.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const useSaveProfessorNoticeMutation = ({
+    setToast,
+  }: {
+    setToast: (message: string, type: "success" | "error") => void;
+  }) => {
+    return useMutation({
+      mutationFn: async (notice: string) => {
+        const response = await professorApi.putProfessorNotice(notice);
+        return response;
+      },
+      onSuccess: () => {
+        setToast("공지사항이 저장되었습니다.", "success");
+        queryClient.invalidateQueries({ queryKey: ["ProfessorNotice"] });
+      },
+      onError: () => {
+        setToast("공지 저장 중 오류가 발생했습니다.", "error");
+      },
+    });
   };
+  const { mutate: saveNotice, isPending } = useSaveProfessorNoticeMutation({ setToast });
 
+  const handleSave = () => {
+    if (!notice || isPending) return;
+    saveNotice(notice);
+  };
   return (
     <Card className="rounded-l-none">
       <CardContent>
@@ -69,8 +70,8 @@ const NoticeForm = () => {
               onChange={e => setNotice(e.target.value)}
               maxLength={500}
             />
-            <Button className="ml-auto flex max-w-fit" onClick={handleSave} disabled={isSubmitting}>
-              저장
+            <Button onClick={handleSave} disabled={isPending}>
+              {isPending ? "저장 중..." : "저장"}
             </Button>
           </div>
 

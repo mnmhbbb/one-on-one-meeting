@@ -64,3 +64,10 @@ export interface ProfessorAllowDateRequest {
   allow_date: string;
   allow_time: string[];
 }
+
+export interface ProfessorNotice {
+  id: string;
+  professor_id: string;
+  notice_content: string;
+  last_update_at: string;
+}
