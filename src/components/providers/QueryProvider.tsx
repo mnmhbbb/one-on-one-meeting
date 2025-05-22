@@ -11,10 +11,10 @@ export default function QueryProvider({ children }: { children: React.ReactNode 
         defaultOptions: {
           queries: {
             // staleTime: 1000 * 30, // 30초
-            // gcTime: 1000 * 60 * 5, // 5분
+            gcTime: 1000 * 60 * 5, // 5분
             // retry: 1,
             // refetchOnWindowFocus: true, // 윈도우 포커스 시 재요청
-            // refetchOnMount: true, // 컴포넌트 마운트 시 재요청
+            refetchOnMount: false, // 컴포넌트 마운트 시 재요청
           },
         },
       })
