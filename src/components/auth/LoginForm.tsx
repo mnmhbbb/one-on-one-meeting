@@ -2,8 +2,10 @@
 
 import { LockKeyhole, Mail } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { UserRole } from "@/common/const";
+import LoadingUI from "@/components/LoadingUI";
 import { Button } from "@/components/ui/button";
 import { userApi } from "@/utils/api/user";
 
@@ -13,19 +15,28 @@ interface LoginFormProps {
 
 export default function LoginForm({ role }: LoginFormProps) {
   const redirectTo = role === UserRole.STUDENT ? "/student/my" : "/professor/my";
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = (formData: FormData) => {
+    setIsLoading(true);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    const success = await userApi.login({ email, password, role });
-    if (success) {
-      window.location.replace(redirectTo);
-    }
+    userApi
+      .login({ email, password, role })
+      .then(success => {
+        if (success) {
+          window.location.replace(redirectTo);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
     <form className="relative z-10 space-y-5" action={handleSubmit}>
+      {isLoading && <LoadingUI />}
       <input type="hidden" name="role" value={role} />
       <div className="relative">
         <div className="text-primary absolute top-1/2 left-5 -translate-y-1/2">
