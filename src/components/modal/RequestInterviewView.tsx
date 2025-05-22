@@ -221,6 +221,10 @@ const RequestInterviewView = () => {
     });
   };
 
+  const formatProfessorInfo = () => {
+    return `- 이메일: ${interviewInfo?.professor_notification_email}\n- 면담 위치: ${interviewInfo?.professor_interview_location}`;
+  };
+
   return (
     <>
       <DialogHeader>
@@ -258,6 +262,7 @@ const RequestInterviewView = () => {
           />
           <div className="mt-2 mb-8">
             <ProfessorNotice
+              professorInfo={formatProfessorInfo() || ""}
               notice={interviewInfo?.notice_content || ""}
               guide={interviewInfo?.guide_content || ""}
             />

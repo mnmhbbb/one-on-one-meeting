@@ -51,7 +51,7 @@ export const InterviewModal = () => {
     if (!type) return null;
 
     // '면담 확정'의 경우, 현재 일시 - 면담 일시 > 0 ? RECORDED : REQUESTED
-    if (type === INTERVIEW_MODAL_TYPE.CONFIRMED || type === INTERVIEW_MODAL_TYPE.REJECTED) {
+    if (type === INTERVIEW_MODAL_TYPE.CONFIRMED) {
       if (!interviewInfo) return null;
 
       const now = new Date();
@@ -59,6 +59,14 @@ export const InterviewModal = () => {
       const interviewDateTime = new Date(`${interviewInfo.interview_date}T${startTime}`);
 
       return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
+    } else if (type === INTERVIEW_MODAL_TYPE.REJECTED) {
+      if (!interviewInfo) return null;
+
+      const now = new Date();
+      const [startTime] = interviewInfo.interview_time[0].split(" - ");
+      const interviewDateTime = new Date(`${interviewInfo.interview_date}T${startTime}`);
+
+      return now > interviewDateTime ? RejectInterviewView : RequestInterviewView;
     }
 
     return modalViewMap[type];

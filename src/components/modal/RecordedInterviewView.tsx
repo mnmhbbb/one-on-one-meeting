@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 import { Textarea } from "../ui/textarea";
+import ProfessorNotice from "./ProfessorNotice";
 
 const RecordedInterviewView = () => {
   const { interviewInfo } = useInterviewModalStore(
@@ -40,6 +41,9 @@ const RecordedInterviewView = () => {
     return interviewInfo?.interview_time.map(time => `${baseDate} ${time}`);
   }, [interviewInfo?.interview_date, interviewInfo?.interview_time]);
 
+  const formatProfessorInfo = () => {
+    return `- 이메일: ${interviewInfo?.professor_notification_email}\n- 면담 위치: ${interviewInfo?.professor_interview_location}`;
+  };
   return (
     <>
       <DialogHeader>
@@ -50,6 +54,13 @@ const RecordedInterviewView = () => {
       {step === 1 && (
         <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
           <InterviewInfoForm interviewDatetimeList={formattedInterviewDatetimeList} />
+          <div className="mt-2 mb-8">
+            <ProfessorNotice
+              professorInfo={formatProfessorInfo() || ""}
+              notice={interviewInfo?.notice_content || ""}
+              guide={interviewInfo?.guide_content || ""}
+            />
+          </div>
           <div className="flex justify-end">
             <Button onClick={() => handleStepChange(2)}>다음</Button>
           </div>

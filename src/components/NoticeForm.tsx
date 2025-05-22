@@ -10,11 +10,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToastStore } from "@/store/toastStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { professorApi } from "@/utils/api/professor";
+import { useUserStore } from "@/store/userStore";
 
 const NoticeForm = () => {
   const [notice, setNotice] = useState("");
   const setToast = useToastStore(state => state.setToast);
   const queryClient = useQueryClient();
+  const userInfo = useUserStore(state => state.userInfo);
 
   // 교수 본인 공지 조회
   const { data } = useQuery({
@@ -57,6 +59,10 @@ const NoticeForm = () => {
     if (!notice || isPending) return;
     saveNotice(notice);
   };
+
+  const formatProfessorInfo = () => {
+    return `- 이메일: ${userInfo?.notification_email}\n- 면담 위치: ${userInfo?.interview_location}`;
+  };
   return (
     <Card className="rounded-l-none">
       <CardContent>
@@ -87,7 +93,11 @@ const NoticeForm = () => {
             </p>
             <Separator className="mt-2 mb-1.5" />
             <b className="text-primary mb-1.5 inline-block text-lg">교수님 공지사항</b>
+
             <div className="bg-primary h-[15rem] w-full overflow-y-auto p-3 text-left text-base font-semibold whitespace-pre-line text-white">
+              {formatProfessorInfo()}
+              <br />
+              <br />
               {notice}
             </div>
           </div>

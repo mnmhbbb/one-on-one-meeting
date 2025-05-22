@@ -46,6 +46,9 @@ const RejectInterviewView = () => {
     return now.isBefore(interviewDateTime);
   }, [interviewInfo]);
 
+  const formatProfessorInfo = () => {
+    return `- 이메일: ${interviewInfo?.professor_interview_location}\n- 면담 위치: ${interviewInfo?.professor_interview_location}`;
+  };
   return (
     <>
       <DialogHeader>
@@ -58,6 +61,7 @@ const RejectInterviewView = () => {
           isBeforeInterviewDate={isBeforeInterviewDate}
         />
         <ProfessorNotice
+          professorInfo={formatProfessorInfo() || ""}
           notice={interviewInfo?.notice_content || ""}
           guide={interviewInfo?.guide_content || ""}
         />

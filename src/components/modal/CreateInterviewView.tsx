@@ -111,6 +111,10 @@ const CreateInterviewView = () => {
     });
   }, [interviewInfo, selectedProfessor, userId, createInterviewMutation, setToast]);
 
+  const formatProfessorInfo = () => {
+    return `- 이메일: ${selectedProfessor?.notification_email}\n- 면담 위치: ${selectedProfessor?.interview_location}`;
+  };
+
   return (
     <>
       <DialogHeader>
@@ -145,6 +149,7 @@ const CreateInterviewView = () => {
           />
           <div className="mt-2 mb-8">
             <ProfessorNotice
+              professorInfo={formatProfessorInfo() || ""}
               notice={selectedProfessor?.notice_content || ""}
               guide={guideData?.data[0]?.guide_content || ""}
             />

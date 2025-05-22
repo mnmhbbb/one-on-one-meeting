@@ -33,6 +33,7 @@ export interface Professor {
   phone_num: string;
   interview_location: string;
   notice_content: string;
+  notification_email: string;
 }
 
 export interface MyPageUserInfo {
