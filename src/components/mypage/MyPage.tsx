@@ -20,6 +20,7 @@ import { userApi } from "@/utils/api/user";
 import LoadingUI from "../LoadingUI";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useToastStore } from "@/store/toastStore";
 
 const MyPage = () => {
   const router = useRouter();
@@ -37,6 +38,7 @@ const MyPage = () => {
   const [department, setDepartment] = useState("");
   const [college, setCollege] = useState("");
   const [location, setLocation] = useState("");
+  const setToast = useToastStore(state => state.setToast);
 
   const handleGoToMain = () => {
     if (role === UserRole.STUDENT) {
@@ -76,7 +78,7 @@ const MyPage = () => {
         setDepartment(data.department || "");
         setCollege(data.college || "");
         setLocation(data.interview_location || "");
-        alert("정보가 저장되었습니다.");
+        setToast("정보가 업데이트되었습니다.", "success");
       }
     },
     onError: () => {
