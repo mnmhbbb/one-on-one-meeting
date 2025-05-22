@@ -85,14 +85,16 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[10%] text-center text-base font-semibold">날짜</TableHead>
-            <TableHead className="w-[50%] text-center text-base font-semibold">
+            <TableHead className="w-[50px] text-center text-base font-semibold">날짜</TableHead>
+            <TableHead className="w-[50px] text-center text-base font-semibold">
               면담 신청내용
             </TableHead>
-            <TableHead className="w-[10%] text-center text-base font-semibold">
+            <TableHead className="w-[50px] text-center text-base font-semibold">
               면담 기록내용
             </TableHead>
-            <TableHead className="w-[20%] text-center text-base font-semibold">면담 요청</TableHead>
+            <TableHead className="w-[50px] text-center text-base font-semibold">
+              면담 요청
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
