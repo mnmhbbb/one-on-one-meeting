@@ -37,7 +37,7 @@ export const InterviewModal = () => {
 
   const modalViewMap = {
     [INTERVIEW_MODAL_TYPE.REQUESTED]: RequestInterviewView,
-    [INTERVIEW_MODAL_TYPE.REJECTED]: RejectInterviewView,
+    [INTERVIEW_MODAL_TYPE.REJECTED]: () => <></>,
     [INTERVIEW_MODAL_TYPE.CANCELLED]: RejectInterviewView, // reject랑 동일 컴포넌트(interviewModalStore에서 interviewInfo.status로 워딩 분기처리하기)
     [INTERVIEW_MODAL_TYPE.CONFIRMED]: () => <></>, // 아래에서 분기처리 하기 떄문에 빈 컴포넌트
     [INTERVIEW_MODAL_TYPE.RECORDED]: RecordedInterviewView,
@@ -51,7 +51,7 @@ export const InterviewModal = () => {
     if (!type) return null;
 
     // '면담 확정'의 경우, 현재 일시 - 면담 일시 > 0 ? RECORDED : REQUESTED
-    if (type === INTERVIEW_MODAL_TYPE.CONFIRMED) {
+    if (type === INTERVIEW_MODAL_TYPE.CONFIRMED || type === INTERVIEW_MODAL_TYPE.REJECTED) {
       if (!interviewInfo) return null;
 
       const now = new Date();

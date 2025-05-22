@@ -66,9 +66,9 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
               <TableCell className="w-[40%] px-6">
                 <div>
                   {event.professor_name} 교수님
-                  <br />
-                  [면담 일정] {event.interview_time.join(", ")}
-                  <br />
+                  <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
+                    [면담 일정] {event.interview_time.join(", ")}
+                  </div>
                   <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
                     [면담 사유] {event.interview_content}
                   </div>

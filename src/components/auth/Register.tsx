@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { emailApi } from "@/utils/api/email";
 import { userApi } from "@/utils/api/user";
+import { useToastStore } from "@/store/toastStore";
 
 type Props = {
   role: "student" | "professor";
@@ -26,6 +27,7 @@ export default function Register({ role }: Props) {
   const [phoneNum, setPhoneNum] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [interviewLocation, setInterviewLocation] = useState("");
+  const setToast = useToastStore(state => state.setToast);
 
   // 학과, 학부 목록 조회
   const { data: departmenCollegeData } = useQuery({
@@ -49,11 +51,8 @@ export default function Register({ role }: Props) {
     mutationFn: (email: string) => emailApi.sendVerificationCode(email),
     onSuccess: data => {
       if (data) {
-        alert(data);
+        setToast("이메일이 전송되었습니다.", "success");
       }
-    },
-    onError: err => {
-      console.error(err);
     },
   });
 
@@ -62,12 +61,10 @@ export default function Register({ role }: Props) {
     mutationFn: ({ email, code }: { email: string; code: string }) =>
       emailApi.verifyCode(email, code),
     onSuccess: data => {
-      alert(data);
+      if (data) {
+        setToast("인증이 완료되었습니다.", "success");
+      }
       setIsVerified(true);
-    },
-    onError: err => {
-      console.error(err);
-      alert("인증에 실패했습니다.");
     },
   });
 
