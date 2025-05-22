@@ -146,8 +146,13 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
       <div>
         {userRole === UserRole.PROFESSOR && (
           <div className="mb-2 text-sm">
-            [신청 학생] {interviewInfo?.student_name} ({interviewInfo?.student_department}{" "}
-            {interviewInfo?.student_sign_num})
+            이름: {interviewInfo?.student_name}
+            <br />
+            학번: {interviewInfo?.student_sign_num}
+            <br />
+            학과: {interviewInfo?.student_department}
+            <br />
+            이메일: {interviewInfo?.student_notification_email}
           </div>
         )}
 
