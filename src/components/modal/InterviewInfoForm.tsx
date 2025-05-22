@@ -72,20 +72,12 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
   }, [interviewInfo, userRole, props.isBeforeInterviewDate]);
 
   // 면담상태 select 비활성화 여부(교수 권한)
+  // 면담일이 지나지 않았을 땐 false(=활성화)
   const isInterviewStatusDisabled = useMemo(() => {
-    if (userRole === UserRole.PROFESSOR) {
-      // 확인요청일 땐 false(활성화)
-      if (interviewInfo?.interview_state === InterviewStatus.REQUESTED) return false;
-
-      // 면담확정이면서 면담일이 지나지 않았을 땐 false(활성화)
-      if (
-        interviewInfo?.interview_state === InterviewStatus.CONFIRMED &&
-        props.isBeforeInterviewDate
-      )
-        return false;
-    }
-    return true;
-  }, [interviewInfo?.interview_state, userRole, props.isBeforeInterviewDate]);
+    const isProfessor = userRole === UserRole.PROFESSOR;
+    const isBeforeInterview = props.isBeforeInterviewDate;
+    return !(isProfessor && isBeforeInterview);
+  }, [userRole, props.isBeforeInterviewDate]);
 
   const isStudent = useMemo(() => (userRole === UserRole.STUDENT ? true : false), [userRole]);
 
