@@ -30,6 +30,7 @@ const RequestInterviewView = () => {
   const userRole = useUserStore(state => state.role);
   const interviewInfo = useInterviewModalStore(state => state.interviewInfo);
   const selectedTimeWhenEdit = useInterviewModalStore(state => state.selectedTimeWhenEdit);
+  const selectedTime = useInterviewModalStore(state => state.selectedTime);
   const close = useInterviewModalStore(state => state.close);
   const professorAllowDateList = useDateStore(state => state.professorAllowDateList);
   const setToast = useToastStore(state => state.setToast);
@@ -199,11 +200,11 @@ const RequestInterviewView = () => {
       student_id: interviewInfo?.student_id,
       professor_id: interviewInfo?.professor_id,
       interview_date: interviewInfo?.interview_date,
-      interview_time: selectedTimeWhenEdit,
-      interview_accept: false,
+      interview_time: selectedTime, // FIXME: 교수 시점에선 selectedTimeWhenEdit를 사용하지 않기 때문(추후 수정 필요))
+      interview_accept: interviewInfo?.interview_state === InterviewStatus.CONFIRMED,
       interview_reject_reason: interviewInfo?.interview_reject_reason,
     });
-  }, [interviewInfo, updateInterviewMutationByProfessor, setToast, selectedTimeWhenEdit]);
+  }, [interviewInfo, updateInterviewMutationByProfessor, setToast, selectedTime]);
 
   const handleCancelInterview = () => {
     if (!interviewInfo?.interview_date) {
