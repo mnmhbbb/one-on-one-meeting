@@ -9,10 +9,10 @@ import DateSelector from "@/components/DateSelector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDateStore } from "@/store/dateStore";
+import { useToastStore } from "@/store/toastStore";
 import { useUserStore } from "@/store/userStore";
 import { ProfessorAllowDate, ProfessorAllowDateRequest } from "@/types/user";
 import { professorApi } from "@/utils/api/professor";
-import { useToastStore } from "@/store/toastStore";
 
 const ScheduleManagement = () => {
   const userInfo = useUserStore(state => state.userInfo);
@@ -64,6 +64,9 @@ const ScheduleManagement = () => {
 
       if (dayIndex !== -1) {
         date.allow_time.forEach(time => {
+          // already_apply_time에 포함된 시간은 미체크 처리
+          if (date.already_apply_time?.includes(time)) return;
+
           const timeIndex = TIMES.findIndex(t => t === time);
           if (timeIndex !== -1) {
             newSelected[dayIndex][timeIndex] = true;
@@ -229,10 +232,9 @@ const ScheduleManagement = () => {
                 <tr key={timeIdx}>
                   {weekDates.map((date, dayIdx) => {
                     const isSelected = selected[dayIdx][timeIdx];
-                    const time = timeLabel.split(" - ")[0];
                     const currentDate = format(date, "yyyy-MM-dd");
                     const isAlreadyApplied = allowDateList?.some(
-                      d => d.allow_date === currentDate && d.already_apply_time?.includes(time)
+                      d => d.allow_date === currentDate && d.already_apply_time?.includes(timeLabel)
                     );
 
                     return (
