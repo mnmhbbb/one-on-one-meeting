@@ -142,7 +142,6 @@ const CreateInterviewView = () => {
           <InterviewInfoForm
             isBeforeInterviewDate
             interviewDatetimeList={formattedSelectedTimeList}
-            interviewDatetimeGuideText="면담 신청 정보를 확인해주세요."
           />
           <div className="mt-2 mb-8">
             <ProfessorNotice

@@ -28,8 +28,9 @@ const RejectInterviewView = () => {
     if (!interviewInfo?.interview_date || !interviewInfo?.interview_time) return [];
 
     return interviewInfo.interview_time.map(time => {
-      const [startTime] = time.split(" - ");
-      return `${interviewInfo.interview_date} ${startTime}`;
+      const startDateTime = dayjs(`${interviewInfo.interview_date} ${time.split(" - ")[0]}`);
+      const formattedDate = startDateTime.format("YYYY년 MM월 DD일 dddd");
+      return `${formattedDate} ${time}`; // 예: 2025년 05월 20일 화요일 11:00 - 11:30
     });
   }, [interviewInfo]);
 

@@ -115,9 +115,10 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
                 </TableCell>
                 <TableCell className="w-[30%] px-6">
                   <div>
-                    [신청 학생] {event.student_name} ({event.student_department}) <br />
-                    [면담 일정] {event.interview_time.join(", ")}
-                    <br />
+                    [신청 학생] {event.student_name} ({event.student_department})
+                    <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
+                      [면담 일정] {event.interview_time.join(", ")}
+                    </div>
                     <div className="line-clamp-2 text-sm break-words text-ellipsis whitespace-normal">
                       [면담 사유] {event.interview_content}
                     </div>

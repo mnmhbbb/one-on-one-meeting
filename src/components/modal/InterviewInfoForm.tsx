@@ -156,6 +156,14 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
           </div>
         )}
 
+        {userRole === UserRole.STUDENT && (
+          <div className="mb-2 text-sm">
+            면담 장소: {interviewInfo?.professor_interview_location}
+            <br />
+            이메일: {interviewInfo?.student_notification_email}
+          </div>
+        )}
+
         {props.interviewDatetimeList.map(time => (
           <div key={time} className="text-left text-sm font-bold">
             {time}

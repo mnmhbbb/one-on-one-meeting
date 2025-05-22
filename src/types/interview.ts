@@ -20,6 +20,7 @@ export interface InterviewInfo {
   student_sign_num: string; // 면담 신청 학생 학번
   student_department: string; // 면담 신청 학생 학과
   student_notification_email: string; // 면담 신청 학생 이메일
+  professor_interview_location: string; // 교수 면담 장소
 }
 
 export const DEFAULT_INTERVIEW_INFO: InterviewInfo = {
@@ -43,6 +44,7 @@ export const DEFAULT_INTERVIEW_INFO: InterviewInfo = {
   student_sign_num: "",
   student_department: "",
   student_notification_email: "",
+  professor_interview_location: "",
 };
 
 export interface InterviewCreateBody {
