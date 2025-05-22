@@ -126,4 +126,14 @@ export const interviewApi = {
       axiosInstance.put<{ data: InterviewInfo[]; message: string }>("/interview/record", body)
     );
   },
+  // 면담 안내사항 가져오기(최초 면담 시에만 사용)
+  getInterviewGuide: async (): Promise<{
+    data: { id: string; interview_state: string; guide_content: string }[];
+  } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.get<{ data: { id: string; interview_state: string; guide_content: string }[] }>(
+        "/interview/guide"
+      )
+    );
+  },
 };
