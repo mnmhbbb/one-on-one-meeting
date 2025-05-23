@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/store/userStore";
 import { userApi } from "@/utils/api/user";
 
 const UserNavActions = () => {
-  const router = useRouter();
   const userInfo = useUserStore(state => state.userInfo);
   const clearUserInfo = useUserStore(state => state.clearUserInfo);
 
