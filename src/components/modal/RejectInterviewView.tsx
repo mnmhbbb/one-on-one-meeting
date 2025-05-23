@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { InterviewStatus, STATUS_LABELS } from "@/common/const";
@@ -19,6 +19,7 @@ const RejectInterviewView = () => {
       interviewInfo: state.interviewInfo,
     }))
   );
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
 
   const headerText = useMemo(() => {
     return `${interviewInfo?.professor_name} 교수님 ${STATUS_LABELS[interviewInfo?.interview_state as InterviewStatus]}`;

@@ -82,7 +82,7 @@ const NoticeForm = () => {
           </div>
 
           <div className="rounded-xl bg-[#F7F7F7] p-6 shadow-xl">
-            <h4 className="text-primary text-xl font-bold">OOO 교수님 면담 신청</h4>
+            <h4 className="text-primary text-xl font-bold">{userInfo?.name} 교수님 면담 신청</h4>
             <p className="text-sm text-gray-500">
               <b className="text-primary text-lg">학생에게 보이는 화면 예시 입니다.</b>
               <br /> ※ 공지 외 정보는{" "}

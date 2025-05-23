@@ -108,19 +108,21 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "면담 가능 시간 정보 조회 실패" }, { status: 500 });
     }
 
-    const requestedTime = body.interview_time[0];
-
+    const requestedTime = body.interview_time;
+    const requestedTimeCheck = body.interview_time[0];
     // 5. 해당 시간대를 포함한 슬롯 찾기
-    const matchedSlot = allowRows.find(slot => (slot.allow_time || []).includes(requestedTime));
+    const matchedSlot = allowRows.find(slot =>
+      (slot.allow_time || []).includes(requestedTimeCheck)
+    );
 
     if (!matchedSlot) {
       return NextResponse.json({ message: "해당 시간대 정보 없음" }, { status: 404 });
     }
 
     // 6. 시간 제거 후 업데이트
-    const filteredTimes = (matchedSlot.already_apply_time || []).filter(
-      (time: string) => time !== requestedTime
-    );
+    const filteredTimes = (matchedSlot.already_apply_time || []).filter((time: string) => {
+      !(requestedTime as string[]).includes(time);
+    });
 
     const { error: timeUpdateError } = await supabase
       .from("professor_interview_allow_date")

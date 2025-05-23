@@ -3,7 +3,7 @@
 import { lazy, memo, Suspense, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { INTERVIEW_MODAL_TYPE, InterviewModalType } from "@/common/const";
+import { INTERVIEW_MODAL_TYPE, InterviewModalType, InterviewStatus } from "@/common/const";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +37,7 @@ export const InterviewModal = () => {
 
   const modalViewMap = {
     [INTERVIEW_MODAL_TYPE.REQUESTED]: RequestInterviewView,
-    [INTERVIEW_MODAL_TYPE.REJECTED]: () => <></>,
+    [INTERVIEW_MODAL_TYPE.REJECTED]: RejectInterviewView,
     [INTERVIEW_MODAL_TYPE.CANCELLED]: RejectInterviewView, // reject랑 동일 컴포넌트(interviewModalStore에서 interviewInfo.status로 워딩 분기처리하기)
     [INTERVIEW_MODAL_TYPE.CONFIRMED]: () => <></>, // 아래에서 분기처리 하기 떄문에 빈 컴포넌트
     [INTERVIEW_MODAL_TYPE.RECORDED]: RecordedInterviewView,
@@ -48,7 +48,7 @@ export const InterviewModal = () => {
 
   // 면담 모달 타입에 따라 모달 뷰 컴포넌트 적용
   const ModalView = useMemo(() => {
-    if (!type) return null;
+    if (!type || !interviewInfo) return null;
 
     // '면담 확정'의 경우, 현재 일시 - 면담 일시 > 0 ? RECORDED : REQUESTED
     if (type === INTERVIEW_MODAL_TYPE.CONFIRMED) {
@@ -57,20 +57,20 @@ export const InterviewModal = () => {
       const now = new Date();
       const [startTime] = interviewInfo.interview_time[0].split(" - ");
       const interviewDateTime = new Date(`${interviewInfo.interview_date}T${startTime}`);
-
       return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
-    } else if (type === INTERVIEW_MODAL_TYPE.REJECTED) {
-      if (!interviewInfo) return null;
-
-      const now = new Date();
-      const [startTime] = interviewInfo.interview_time[0].split(" - ");
-      const interviewDateTime = new Date(`${interviewInfo.interview_date}T${startTime}`);
-
-      return now > interviewDateTime ? RejectInterviewView : RequestInterviewView;
     }
 
+    // 상태가 바뀐 경우에도 View 교체
+    if (type === INTERVIEW_MODAL_TYPE.REJECTED) {
+      if (interviewInfo.interview_state === InterviewStatus.CONFIRMED) {
+        const now = new Date();
+        const [startTime] = interviewInfo.interview_time[0].split(" - ");
+        const interviewDateTime = new Date(`${interviewInfo.interview_date}T${startTime}`);
+        return now > interviewDateTime ? RecordedInterviewView : RequestInterviewView;
+      }
+    }
     return modalViewMap[type];
-  }, [type, interviewInfo, modalViewMap]);
+  }, [type, interviewInfo]);
 
   if (!isOpen || !type) return null; // 모달이 열려있지 않거나 타입이 없으면 렌더링 하지 않음
 

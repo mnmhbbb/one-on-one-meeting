@@ -3,7 +3,7 @@ import {
   Professor,
   ProfessorAllowDate,
   ProfessorAllowDateRequest,
-  ProfessorNotice,
+  ProfessorNoticeType,
 } from "@/types/user";
 
 import { tryApiWithToast } from "./common";
@@ -52,9 +52,9 @@ export const professorApi = {
   },
 
   // 교수 본인 공지 조회
-  getProfessorNotice: async (): Promise<{ data: ProfessorNotice } | null> => {
+  getProfessorNotice: async (): Promise<{ data: ProfessorNoticeType } | null> => {
     return await tryApiWithToast(() =>
-      axiosInstance.get<{ data: ProfessorNotice }>("/interview/notice")
+      axiosInstance.get<{ data: ProfessorNoticeType }>("/interview/notice")
     );
   },
 

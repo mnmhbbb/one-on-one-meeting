@@ -45,7 +45,6 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
   const [rejectionReason, setRejectionReason] = useState(
     interviewInfo?.interview_reject_reason || ""
   ); // 면담 거절 사유
-  const [isProfessorEditing, setIsProfessorEditing] = useState(false); // 교수 유저가 편집 중
 
   const prevInterviewInfo = useRef(interviewInfo);
 
@@ -86,19 +85,13 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
   // 인풋 변화 시, 스토어에 저장된 interviewInfo 업데이트
   const updateInterviewInfo = useCallback(
     (newContent: string, newCategory: string) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        setInterviewInfo({
-          ...prevInterviewInfo.current!,
-          interview_state: status,
-          interview_category: newCategory,
-          interview_content: newContent,
-          interview_reject_reason: status === InterviewStatus.REJECTED ? rejectionReason! : null,
-        });
-      }, 500);
+      setInterviewInfo({
+        ...prevInterviewInfo.current!,
+        interview_state: status,
+        interview_category: newCategory,
+        interview_content: newContent,
+        interview_reject_reason: status === InterviewStatus.REJECTED ? rejectionReason! : null,
+      });
     },
     [setInterviewInfo, status, rejectionReason]
   );
@@ -219,17 +212,17 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
         </div>
 
         {/* 교수 권한으로 면담 거절 선택한 경우, 사유 인풋 노출 */}
-        {!isInterviewStatusDisabled && status === InterviewStatus.REJECTED && (
+        {status === InterviewStatus.REJECTED && (
           <div className="mb-4 flex w-full flex-col items-start space-y-1">
             <label className="text-base font-medium">면담 거절 사유</label>
             <Textarea
               placeholder="면담 거절 사유를 입력해주세요."
-              value={rejectionReason ?? ""}
+              value={rejectionReason ?? interviewInfo?.interview_reject_reason ?? ""}
+              onChange={e => setRejectionReason(e.target.value)}
               required
               maxLength={MAX_REASON_LENGTH}
+              disabled={isInterviewStatusDisabled} // 권한 없을 땐 읽기 전용
               className="text-sm whitespace-pre-line"
-              onChange={e => setRejectionReason(e.target.value)}
-              onFocus={() => setIsProfessorEditing(true)} // 교수 수정 중
             />
           </div>
         )}
@@ -244,21 +237,6 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
               placeholder="면담 취소 사유를 입력해주세요."
               className="text-sm whitespace-pre-line"
               defaultValue={interviewInfo?.interview_cancel_reason}
-            />
-          </div>
-        )}
-
-        {/* TODO: 보완 필요 - 교수가 입력 중일 땐 미노출 */}
-        {/* 면담 거절 사유 조회 */}
-        {!isProfessorEditing && interviewInfo?.interview_reject_reason && (
-          <div className="mb-4 flex w-full flex-col items-start space-y-1">
-            <label className="text-base font-medium">면담 거절 사유</label>
-            <Textarea
-              required
-              disabled
-              placeholder="면담 거절 사유를 입력해주세요."
-              className="text-sm whitespace-pre-line"
-              defaultValue={interviewInfo?.interview_reject_reason}
             />
           </div>
         )}
