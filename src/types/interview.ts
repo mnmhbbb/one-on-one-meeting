@@ -15,7 +15,6 @@ export interface InterviewInfo {
   interview_close_at: string | null; // 취소/거절한 날짜
   notice_content: string | null;
   guide_content: string; // 면담 상태에 따른 가이드 메시지
-  interview_record?: string; // 면담 기록
   student_name: string; // 면담 신청 학생 이름
   student_sign_num: string; // 면담 신청 학생 학번
   student_department: string; // 면담 신청 학생 학과
@@ -84,8 +83,12 @@ export interface InterviewCancelBody {
   interview_cancel_reason: string;
 }
 
-// 면담 기록 저장
+// 면담 기록
 export interface InterviewRecordBody {
+  id?: string;
+  writer_id: string;
   interview_id: string;
   interview_record: string;
+  created_at?: string;
+  role: string;
 }

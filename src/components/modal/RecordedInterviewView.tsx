@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
@@ -13,20 +13,82 @@ import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 import { Textarea } from "../ui/textarea";
 import ProfessorNotice from "./ProfessorNotice";
+import { interviewApi } from "@/utils/api/interview";
+import { useMutation } from "@tanstack/react-query";
+import { useUserStore } from "@/store/userStore";
+import { InterviewInfo, InterviewRecordBody } from "@/types/interview";
+import { useToastStore } from "@/store/toastStore";
 
 const RecordedInterviewView = () => {
-  const { interviewInfo } = useInterviewModalStore(
+  const { interviewInfo, interviewRecord, setInterviewRecord } = useInterviewModalStore(
     useShallow(state => ({
       interviewInfo: state.interviewInfo,
+      interviewRecord: state.interviewRecord,
+      setInterviewRecord: state.setInterviewRecord,
     }))
   );
 
+  const userInfo = useUserStore(state => state.userInfo);
   const [step, setStep] = useState(1);
-  const [memo, setMemo] = useState(interviewInfo?.interview_record ?? "");
+  const setToast = useToastStore(state => state.setToast);
+
+  // 기록 저장
+  const useSaveRecordMutation = ({
+    setToast,
+  }: {
+    setToast: (message: string, type: "success" | "error") => void;
+  }) => {
+    return useMutation({
+      mutationFn: async (body: InterviewRecordBody) => {
+        const response = await interviewApi.postInterviewRecord(body);
+        return response;
+      },
+      onSuccess: () => {
+        setToast("면담 기록이 저장되었습니다.", "success");
+      },
+      onError: () => {
+        setToast("기록 저장 중 오류가 발생했습니다.", "error");
+      },
+    });
+  };
+
+  const { mutate: saveRecord } = useSaveRecordMutation({ setToast });
+
+  const handleSave = () => {
+    if (
+      !userInfo?.id ||
+      !interviewInfo?.id ||
+      !userInfo?.role ||
+      !interviewRecord?.interview_record
+    ) {
+      setToast("기록 저장에 필요한 정보가 없습니다.", "error");
+      return;
+    }
+
+    const recordBody: InterviewRecordBody = {
+      writer_id: userInfo.id,
+      interview_id: interviewInfo.id,
+      interview_record: interviewRecord.interview_record,
+      role: userInfo.role,
+    };
+
+    saveRecord(recordBody);
+  };
 
   const handleStepChange = useCallback((step: number) => {
     setStep(step);
   }, []);
+
+  useEffect(() => {
+    if (!interviewRecord && interviewInfo && userInfo?.id && userInfo?.role) {
+      setInterviewRecord({
+        writer_id: userInfo.id,
+        interview_id: interviewInfo.id,
+        interview_record: "",
+        role: userInfo.role,
+      });
+    }
+  }, [interviewRecord, interviewInfo, userInfo, setInterviewRecord]);
 
   const headerText = useMemo(() => {
     return step === 1
@@ -76,7 +138,6 @@ const RecordedInterviewView = () => {
                 {time}
               </div>
             ))}
-            <p className="text-left text-sm">{`${interviewInfo?.professor_name} 교수님과의 면담을 기록해 보세요!`}</p>
           </div>
           <Separator className="!my-4" />
           <div
@@ -87,15 +148,21 @@ const RecordedInterviewView = () => {
           <Textarea
             placeholder="면담 기록 내용을 입력해 주세요."
             className="!placeholder:text-white bg-primary mb-8 w-full p-3 text-left text-sm whitespace-pre-line text-white"
-            value={memo}
-            onChange={e => setMemo(e.target.value)}
+            value={interviewRecord?.interview_record || ""}
+            onChange={e => {
+              if (!interviewRecord) return;
+              setInterviewRecord({
+                ...interviewRecord,
+                interview_record: e.target.value,
+              });
+            }}
           />
 
           <div className="flex justify-between gap-4">
             <Button variant="outline" onClick={() => handleStepChange(1)}>
               이전
             </Button>
-            <Button>저장</Button>
+            <Button onClick={handleSave}>저장</Button>
           </div>
         </div>
       )}

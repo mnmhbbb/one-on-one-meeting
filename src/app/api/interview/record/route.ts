@@ -5,6 +5,28 @@ import { getSessionUser } from "@/utils/auth/getSessionUser";
 {
   /*================== 면담 기록 API====================*/
 }
+// GET: 유저 면담 기록 불러오기
+export async function GET(req: NextRequest) {
+  const { user, supabase, response } = await getSessionUser();
+  if (!user) return response;
+
+  const { searchParams } = new URL(req.url);
+  const interview_id = searchParams.get("id");
+
+  const { data, error } = await supabase
+    .from("interview_record")
+    .select("*")
+    .eq("writer_id", user.id)
+    .eq("interview_id", interview_id)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json({ message: "면담 기록 조회 실패", error }, { status: 500 });
+  }
+
+  return NextResponse.json({ data });
+}
+
 // POST: 면담 기록 저장
 export async function POST(req: NextRequest) {
   const { user, supabase, response } = await getSessionUser();

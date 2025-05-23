@@ -76,7 +76,7 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
               </TableCell>
               <TableCell className="w-[30%] px-6">
                 <div className="line-clamp-2 max-w-[250px] text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                  {event.interview_state === InterviewStatus.RECORDED && event.interview_record}
+                  {/* {event.interview_state === InterviewStatus.RECORDED && event.interview_record} */}
                 </div>
               </TableCell>
             </TableRow>

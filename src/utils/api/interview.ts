@@ -110,22 +110,33 @@ export const interviewApi = {
       )
     );
   },
+
+  // 면담 기록 가져오기
+  getInterviewRecord: async (
+    interviewId: string
+  ): Promise<{ data: InterviewRecordBody } | null> => {
+    return await tryApiWithToast(() =>
+      axiosInstance.get<{ data: InterviewRecordBody }>(`interview/record?id=${interviewId}`)
+    );
+  },
+
   // 면담 기록 저장
   postInterviewRecord: async (
     body: InterviewRecordBody
-  ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
+  ): Promise<{ data: InterviewRecordBody; message: string } | null> => {
     return await tryApiWithToast(() =>
-      axiosInstance.post<{ data: InterviewInfo[]; message: string }>("/interview/record", body)
+      axiosInstance.post<{ data: InterviewRecordBody; message: string }>("/interview/record", body)
     );
   },
   // 면담 기록 수정
   putInterviewRecord: async (
     body: InterviewRecordBody
-  ): Promise<{ data: InterviewInfo[]; message: string } | null> => {
+  ): Promise<{ data: InterviewRecordBody; message: string } | null> => {
     return await tryApiWithToast(() =>
-      axiosInstance.put<{ data: InterviewInfo[]; message: string }>("/interview/record", body)
+      axiosInstance.put<{ data: InterviewRecordBody; message: string }>("/interview/record", body)
     );
   },
+
   // 면담 안내사항 가져오기(최초 면담 시에만 사용)
   getInterviewGuide: async (): Promise<{
     data: { id: string; interview_state: string; guide_content: string }[];

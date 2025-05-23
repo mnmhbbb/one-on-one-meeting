@@ -136,7 +136,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
                     )}
                   {event.interview_state === InterviewStatus.RECORDED && (
                     <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                      {event.interview_record}
+                      {/* {event.interview_record} */}
                     </div>
                   )}
                 </TableCell>

@@ -1,6 +1,6 @@
 import { InterviewModalType } from "@/common/const";
 import { createStore } from "@/store/store";
-import { InterviewInfo } from "@/types/interview";
+import { InterviewInfo, InterviewRecordBody } from "@/types/interview";
 
 type InterviewModalState = {
   pathname: string;
@@ -9,6 +9,7 @@ type InterviewModalState = {
   isProfessorSearchOpen: boolean; // 교수 검색 모달 열림 여부
   type: InterviewModalType | null;
   interviewInfo: InterviewInfo | null;
+  interviewRecord: InterviewRecordBody | null;
 
   selectedTime: string[];
   selectedTimeWhenEdit: string[]; // 면담 변경 중 선택된 시간 저장용
@@ -20,6 +21,7 @@ type InterviewModalState = {
   openProfessorSearch: () => void;
   closeProfessorSearch: () => void;
   setInterviewInfo: (info: InterviewInfo) => void;
+  setInterviewRecord: (record: InterviewRecordBody) => void;
 
   setSelectedTime: (time: string[]) => void;
   setSelectedTimeWhenEdit: (time: string[]) => void;
@@ -32,6 +34,7 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
   isProfessorSearchOpen: false,
   type: null,
   interviewInfo: null,
+  interviewRecord: null,
 
   selectedTime: [],
   selectedTimeWhenEdit: [],
@@ -63,6 +66,8 @@ export const useInterviewModalStore = createStore<InterviewModalState>((set, get
   openProfessorSearch: () => set({ isProfessorSearchOpen: true }),
   closeProfessorSearch: () => set({ isProfessorSearchOpen: false }),
   setInterviewInfo: info => set({ interviewInfo: info, selectedTime: info.interview_time }),
+  setInterviewRecord: record => set({ interviewRecord: record }),
+
   setSelectedTime: (time: string[]) =>
     set({
       selectedTime: time,
