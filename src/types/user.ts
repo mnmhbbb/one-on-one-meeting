@@ -66,7 +66,7 @@ export interface ProfessorAllowDateRequest {
   allow_time: string[];
 }
 
-export interface ProfessorNotice {
+export interface ProfessorNoticeType {
   id: string;
   professor_id: string;
   notice_content: string;

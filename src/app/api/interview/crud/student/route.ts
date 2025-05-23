@@ -170,10 +170,8 @@ export async function POST(req: NextRequest) {
 
     // 1. 기존 시간 배열
     const original = matchedSlot.already_apply_time || [];
-    console.log("original = ", original);
     // 2. 새 요청 시간
     const requested = body.interview_time || [];
-    console.log("requested = ", requested);
 
     // 3. 병합 후 중복 제거
     const mergedTimes = Array.from(new Set([...original, ...requested]));
