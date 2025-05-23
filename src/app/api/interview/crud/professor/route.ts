@@ -173,26 +173,24 @@ export async function PUT(req: NextRequest) {
     }
 
     const matchedSlot = allowRows.find(slot => (slot.allow_time || []).includes(requestedTime));
-    console.log("matchedSlot = ", matchedSlot);
     if (!matchedSlot) {
       return NextResponse.json({ message: "해당 시간대 정보 없음" }, { status: 404 });
     }
-
     const requestedTimeCheck = body.interview_time;
     let updatedApplyTime: string[] = [];
 
     if (body.interview_accept === false) {
       // 시간 제거
       updatedApplyTime = (matchedSlot.already_apply_time || []).filter((time: string) => {
-        console.log("time =", time);
         return !(requestedTimeCheck as string[]).includes(time);
       });
-
-      console.log("updatedApplyTime = ", updatedApplyTime);
     } else {
       // 시간 추가
       updatedApplyTime = Array.from(
-        new Set([...(matchedSlot.already_apply_time || []), requestedTime])
+        new Set([
+          ...(matchedSlot.already_apply_time || []),
+          ...(Array.isArray(requestedTimeCheck) ? requestedTimeCheck : [requestedTimeCheck]),
+        ])
       );
     }
 
