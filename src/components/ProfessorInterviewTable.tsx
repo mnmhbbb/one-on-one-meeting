@@ -4,7 +4,12 @@ import { ko } from "date-fns/locale";
 import { Check, CirclePlus, X } from "lucide-react";
 import { memo, useCallback } from "react";
 
-import { INTERVIEW_MODAL_TYPE, InterviewModalType, InterviewStatus } from "@/common/const";
+import {
+  INTERVIEW_MODAL_TYPE,
+  InterviewModalType,
+  InterviewStatus,
+  UserRole,
+} from "@/common/const";
 import LoadingUI from "@/components/LoadingUI";
 import StatusBadgeSmall from "@/components/StatusBadgeSmall";
 import { Button } from "@/components/ui/button";
@@ -21,6 +26,7 @@ import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useToastStore } from "@/store/toastStore";
 import { InterviewAcceptBody, InterviewInfo } from "@/types/interview";
 import { interviewApi } from "@/utils/api/interview";
+import { useUserStore } from "@/store/userStore";
 
 interface InterviewTableProps {
   events: InterviewInfo[];
@@ -33,6 +39,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
   const open = useInterviewModalStore(state => state.open);
   const setToast = useToastStore(state => state.setToast);
   const setUpdateTarget = useDateStore(state => state.setUpdateTarget);
+  const userInfo = useUserStore(state => state.userInfo);
 
   const handleClick = useCallback(
     (event: InterviewInfo) => {
@@ -136,7 +143,9 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
                     )}
                   {event.interview_state === InterviewStatus.RECORDED && (
                     <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                      {/* {event.interview_record} */}
+                      {userInfo?.role === UserRole.STUDENT
+                        ? event.interview_record_student
+                        : event.interview_record_professor}
                     </div>
                   )}
                 </TableCell>

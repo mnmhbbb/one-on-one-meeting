@@ -5,28 +5,6 @@ import { getSessionUser } from "@/utils/auth/getSessionUser";
 {
   /*================== 면담 기록 API====================*/
 }
-// GET: 유저 면담 기록 불러오기
-export async function GET(req: NextRequest) {
-  const { user, supabase, response } = await getSessionUser();
-  if (!user) return response;
-
-  const { searchParams } = new URL(req.url);
-  const interview_id = searchParams.get("id");
-
-  const { data, error } = await supabase
-    .from("interview_record")
-    .select("*")
-    .eq("writer_id", user.id)
-    .eq("interview_id", interview_id)
-    .maybeSingle();
-
-  if (error) {
-    return NextResponse.json({ message: "면담 기록 조회 실패", error }, { status: 500 });
-  }
-
-  return NextResponse.json({ data });
-}
-
 // POST: 면담 기록 저장
 export async function POST(req: NextRequest) {
   const { user, supabase, response } = await getSessionUser();
@@ -39,20 +17,40 @@ export async function POST(req: NextRequest) {
     if (!interview_id || !interview_record) {
       return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
     }
+    const updateField =
+      user.user_metadata.role === "student"
+        ? "interview_record_student"
+        : user.user_metadata.role === "professor"
+          ? "interview_record_professor"
+          : null;
 
-    const { data, error: insertError } = await supabase
-      .from("interview_record")
-      .insert([
-        { writer_id: user.id, interview_id, interview_record, role: user.user_metadata.role },
-      ])
-      .select()
-      .single();
+    const stateField =
+      user.user_metadata.role === "student"
+        ? "interview_record_state_student"
+        : user.user_metadata.role === "professor"
+          ? "interview_record_state_professor"
+          : null;
 
-    if (insertError) {
-      console.error(insertError);
-      return NextResponse.json({ message: "기록 저장 실패" }, { status: 500 });
+    if (!updateField || !stateField) {
+      return NextResponse.json({ message: "잘못된 사용자 역할" }, { status: 400 });
     }
-    return NextResponse.json({ message: "면담 기록 저장 완료", data }, { status: 201 });
+
+    // create_interview 테이블 업데이트
+    const { error: updateError } = await supabase
+      .from("create_interview")
+      .update({
+        [updateField]: interview_record,
+        [stateField]: "면담 기록 완료",
+        interview_state: "면담 기록 완료",
+      })
+      .eq("id", interview_id);
+
+    if (updateError) {
+      console.error(updateError);
+      return NextResponse.json({ message: "기록 업데이트 실패" }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: "면담 기록 저장 완료" }, { status: 201 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
@@ -72,17 +70,37 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
     }
 
+    const updateField =
+      user.user_metadata.role === "student"
+        ? "interview_record_student"
+        : user.user_metadata.role === "professor"
+          ? "interview_record_professor"
+          : null;
+
+    const stateField =
+      user.user_metadata.role === "student"
+        ? "interview_record_state_student"
+        : user.user_metadata.role === "professor"
+          ? "interview_record_state_professor"
+          : null;
+
+    if (!updateField || !stateField) {
+      return NextResponse.json({ message: "잘못된 사용자 역할" }, { status: 400 });
+    }
+
+    // create_interview 테이블 업데이트
     const { data, error: updateError } = await supabase
-      .from("interview_record")
-      .update({ interview_record })
-      .eq("interview_id", interview_id)
-      .eq("writer_id", user.id)
-      .select()
-      .single();
+      .from("create_interview")
+      .update({
+        [updateField]: interview_record,
+        [stateField]: "면담 기록 완료",
+        interview_state: "면담 기록 완료",
+      })
+      .eq("id", interview_id);
 
     if (updateError) {
       console.error(updateError);
-      return NextResponse.json({ message: "기록 수정 실패" }, { status: 500 });
+      return NextResponse.json({ message: "기록 수정 실패 (상태 테이블)" }, { status: 500 });
     }
 
     return NextResponse.json({ message: "면담 기록 수정 완료", data }, { status: 200 });

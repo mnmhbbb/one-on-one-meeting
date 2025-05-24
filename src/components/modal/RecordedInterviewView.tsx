@@ -1,10 +1,10 @@
 "use client";
 
 import dayjs from "dayjs";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { InterviewStatus, STATUS_COLORS, STATUS_LABELS } from "@/common/const";
+import { InterviewStatus, STATUS_COLORS, STATUS_LABELS, UserRole } from "@/common/const";
 import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -16,79 +16,94 @@ import ProfessorNotice from "./ProfessorNotice";
 import { interviewApi } from "@/utils/api/interview";
 import { useMutation } from "@tanstack/react-query";
 import { useUserStore } from "@/store/userStore";
-import { InterviewInfo, InterviewRecordBody } from "@/types/interview";
+import { InterviewRecordBody } from "@/types/interview";
 import { useToastStore } from "@/store/toastStore";
 
 const RecordedInterviewView = () => {
-  const { interviewInfo, interviewRecord, setInterviewRecord } = useInterviewModalStore(
+  const { interviewInfo, setInterviewInfo, close } = useInterviewModalStore(
     useShallow(state => ({
       interviewInfo: state.interviewInfo,
-      interviewRecord: state.interviewRecord,
-      setInterviewRecord: state.setInterviewRecord,
+      setInterviewInfo: state.setInterviewInfo,
+      close: state.close,
     }))
   );
 
   const userInfo = useUserStore(state => state.userInfo);
-  const [step, setStep] = useState(1);
   const setToast = useToastStore(state => state.setToast);
+  const [step, setStep] = useState(1);
 
-  // 기록 저장
-  const useSaveRecordMutation = ({
-    setToast,
-  }: {
-    setToast: (message: string, type: "success" | "error") => void;
-  }) => {
-    return useMutation({
-      mutationFn: async (body: InterviewRecordBody) => {
-        const response = await interviewApi.postInterviewRecord(body);
-        return response;
-      },
-      onSuccess: () => {
-        setToast("면담 기록이 저장되었습니다.", "success");
-      },
-      onError: () => {
-        setToast("기록 저장 중 오류가 발생했습니다.", "error");
-      },
-    });
-  };
+  // 기록 저장 (POST)
+  const { mutate: postRecord } = useMutation({
+    mutationFn: async (body: InterviewRecordBody) => {
+      return await interviewApi.postInterviewRecord(body);
+    },
+    onSuccess: () => {
+      setToast("면담 기록이 저장되었습니다.", "success");
+      if (interviewInfo) {
+        setInterviewInfo({
+          ...interviewInfo,
+          interview_state: InterviewStatus.RECORDED,
+        });
+      }
+      close();
+    },
+    onError: () => {
+      setToast("기록 저장 중 오류가 발생했습니다.", "error");
+    },
+  });
 
-  const { mutate: saveRecord } = useSaveRecordMutation({ setToast });
+  // 기록 수정 (PUT)
+  const { mutate: putRecord } = useMutation({
+    mutationFn: async (body: InterviewRecordBody) => {
+      return await interviewApi.putInterviewRecord(body);
+    },
+    onSuccess: () => {
+      setToast("면담 기록이 수정되었습니다.", "success");
+      if (interviewInfo) {
+        setInterviewInfo({
+          ...interviewInfo,
+          interview_state: InterviewStatus.RECORDED,
+        });
+      }
+      close();
+    },
+    onError: () => {
+      setToast("기록 수정 중 오류가 발생했습니다.", "error");
+    },
+  });
 
   const handleSave = () => {
-    if (
-      !userInfo?.id ||
-      !interviewInfo?.id ||
-      !userInfo?.role ||
-      !interviewRecord?.interview_record
-    ) {
+    if (!userInfo?.id || !interviewInfo?.id || !userInfo?.role) {
       setToast("기록 저장에 필요한 정보가 없습니다.", "error");
       return;
     }
 
+    const interview_record =
+      userInfo.role === UserRole.STUDENT
+        ? interviewInfo?.interview_record_student
+        : interviewInfo?.interview_record_professor;
+
     const recordBody: InterviewRecordBody = {
       writer_id: userInfo.id,
       interview_id: interviewInfo.id,
-      interview_record: interviewRecord.interview_record,
+      interview_record,
       role: userInfo.role,
     };
 
-    saveRecord(recordBody);
+    // 기록이 이미 존재하면 PUT, 아니면 POST
+    if (
+      (userInfo.role === UserRole.STUDENT && interviewInfo?.interview_record_student) ||
+      (userInfo.role === UserRole.PROFESSOR && interviewInfo?.interview_record_professor)
+    ) {
+      putRecord(recordBody);
+    } else {
+      postRecord(recordBody);
+    }
   };
 
   const handleStepChange = useCallback((step: number) => {
     setStep(step);
   }, []);
-
-  useEffect(() => {
-    if (!interviewRecord && interviewInfo && userInfo?.id && userInfo?.role) {
-      setInterviewRecord({
-        writer_id: userInfo.id,
-        interview_id: interviewInfo.id,
-        interview_record: "",
-        role: userInfo.role,
-      });
-    }
-  }, [interviewRecord, interviewInfo, userInfo, setInterviewRecord]);
 
   const headerText = useMemo(() => {
     return step === 1
@@ -106,19 +121,19 @@ const RecordedInterviewView = () => {
   const formatProfessorInfo = () => {
     return `- 이메일: ${interviewInfo?.professor_notification_email}\n- 면담 위치: ${interviewInfo?.professor_interview_location}`;
   };
+
   return (
     <>
       <DialogHeader>
         <DialogTitle className="text-left text-2xl font-bold">{headerText}</DialogTitle>
       </DialogHeader>
 
-      {/* 면담 신청 정보 확인 */}
       {step === 1 && (
         <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
           <InterviewInfoForm interviewDatetimeList={formattedInterviewDatetimeList} />
           <div className="mt-2 mb-8">
             <ProfessorNotice
-              professorInfo={formatProfessorInfo() || ""}
+              professorInfo={formatProfessorInfo()}
               notice={interviewInfo?.notice_content || ""}
               guide={interviewInfo?.guide_content || ""}
             />
@@ -129,7 +144,6 @@ const RecordedInterviewView = () => {
         </div>
       )}
 
-      {/* 면담 기록 입력 */}
       {step === 2 && (
         <div className="mt-4 max-h-[50vh] overflow-y-auto p-1">
           <div>
@@ -141,19 +155,33 @@ const RecordedInterviewView = () => {
           </div>
           <Separator className="!my-4" />
           <div
-            className={`text-primary mb-2 w-fit rounded-lg px-3 py-1 text-sm ${STATUS_COLORS[interviewInfo?.interview_state as InterviewStatus]}`}
+            className={`text-primary mb-2 w-fit rounded-lg px-3 py-1 text-sm ${
+              STATUS_COLORS[interviewInfo?.interview_state as InterviewStatus]
+            }`}
           >
             {STATUS_LABELS[interviewInfo?.interview_state as InterviewStatus]}
           </div>
+
           <Textarea
             placeholder="면담 기록 내용을 입력해 주세요."
             className="!placeholder:text-white bg-primary mb-8 w-full p-3 text-left text-sm whitespace-pre-line text-white"
-            value={interviewRecord?.interview_record || ""}
+            value={
+              userInfo?.role === UserRole.STUDENT
+                ? interviewInfo?.interview_record_student || ""
+                : interviewInfo?.interview_record_professor || ""
+            }
             onChange={e => {
-              if (!interviewRecord) return;
-              setInterviewRecord({
-                ...interviewRecord,
-                interview_record: e.target.value,
+              const newValue = e.target.value;
+              const field =
+                userInfo?.role === UserRole.STUDENT
+                  ? "interview_record_student"
+                  : "interview_record_professor";
+
+              if (!interviewInfo) return;
+
+              setInterviewInfo({
+                ...interviewInfo,
+                [field]: newValue,
               });
             }}
           />

@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { memo, useCallback } from "react";
 
-import { InterviewModalType, InterviewStatus } from "@/common/const";
+import { InterviewModalType, InterviewStatus, UserRole } from "@/common/const";
 import StatusBadgeSmall from "@/components/StatusBadgeSmall";
 import {
   Table,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/types/interview";
+import { useUserStore } from "@/store/userStore";
 
 interface InterviewTableProps {
   events: InterviewInfo[];
@@ -24,6 +25,7 @@ interface InterviewTableProps {
  */
 const StudentInterviewTable = ({ events }: InterviewTableProps) => {
   const open = useInterviewModalStore(state => state.open);
+  const userInfo = useUserStore(state => state.userInfo);
 
   const handleClick = useCallback(
     (event: InterviewInfo) => {
@@ -75,9 +77,13 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
                 </div>
               </TableCell>
               <TableCell className="w-[30%] px-6">
-                <div className="line-clamp-2 max-w-[250px] text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                  {/* {event.interview_state === InterviewStatus.RECORDED && event.interview_record} */}
-                </div>
+                {event.interview_state === InterviewStatus.RECORDED && (
+                  <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
+                    {userInfo?.role === UserRole.STUDENT
+                      ? event.interview_record_student
+                      : event.interview_record_professor}
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}
