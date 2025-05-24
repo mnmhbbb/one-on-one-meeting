@@ -28,16 +28,16 @@ interface Message {
 }
 
 const quickPrompts = [
-  {
-    icon: MessageSquareQuote,
-    text: "면담 수락",
-    description: "ex) 오늘 일정 모두 수락해줘",
-  },
-  {
-    icon: MessageSquareOff,
-    text: "면담 거절",
-    description: "ex) 오늘 일정 모두 거절해줘",
-  },
+  // {
+  //   icon: MessageSquareQuote,
+  //   text: "면담 수락",
+  //   description: "ex) 오늘 일정 모두 수락해줘",
+  // },
+  // {
+  //   icon: MessageSquareOff,
+  //   text: "면담 거절",
+  //   description: "ex) 오늘 일정 모두 거절해줘",
+  // },
   {
     icon: Calendar,
     text: "면담 목록 조회",
@@ -234,7 +234,7 @@ export default function ChatbotWidget() {
       "면담 수락": "면담을 수락할 일정을 말씀해주세요.",
       "면담 거절": "면담을 거절할 일정을 말씀해주세요.",
       "면담 목록 조회":
-        "조회할 기간을 말씀해주세요. (예: 이번 주, 오늘, 2024-01-01부터 2024-01-31까지)",
+        "조회할 기간을 말씀해주세요. <br/> ex) 이번 주, 오늘, 2024-01-01 ~ 2024-01-31",
     };
     const guide = guideMap[prompt];
     // 유도 메시지만 보여주고 사용자 입력을 기다림
