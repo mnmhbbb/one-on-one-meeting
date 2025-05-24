@@ -16,6 +16,7 @@ import {
   Minimize2,
   MessageSquareOff,
   MessageSquareQuote,
+  Calendar,
 } from "lucide-react";
 import { useUserStore } from "@/store/userStore";
 
@@ -36,6 +37,11 @@ const quickPrompts = [
     icon: MessageSquareOff,
     text: "면담 거절",
     description: "ex) 오늘 일정 모두 거절해줘",
+  },
+  {
+    icon: Calendar,
+    text: "면담 목록 조회",
+    description: "ex) 이번 주 면담 목록 보여줘",
   },
 ];
 
@@ -68,6 +74,18 @@ export default function ChatbotWidget() {
   }, [isOpen, isMinimized]);
 
   const handleSend = async (message?: string, guideMessage?: string) => {
+    if (guideMessage) {
+      const guideMessageObj: Message = {
+        id: crypto.randomUUID(),
+        content: guideMessage,
+        role: "assistant",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, guideMessageObj]);
+      setInput(""); // 입력창 비우기
+      return;
+    }
+
     const messageToSend = message || input;
     if (!messageToSend.trim()) return;
 
@@ -99,35 +117,63 @@ export default function ChatbotWidget() {
       });
 
       const data = await res.json();
-      if (data.extracted) {
-        // LLM이 추출한 날짜/시간을 store 값과 합치기
-        const fullPayload = {
-          ...data.extracted,
-          id: userInfo?.id,
-          professor_id: userInfo?.id,
-        };
-        // 이걸 다시 면담 수락/거절 API로 보내기
-        console.log("최종 예약 요청 payload:", fullPayload);
-      } else {
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: data.reply || "답변을 가져오지 못했습니다.",
-          role: "assistant",
-          timestamp: new Date(),
-        };
-        setMessages(prev => [...prev, aiMessage]);
-      }
+      console.log("서버 응답:", data);
+
+      // AI 메시지는 무조건 추가
       const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: crypto.randomUUID(),
         content: data.reply || "답변을 가져오지 못했습니다.",
         role: "assistant",
         timestamp: new Date(),
       };
-
       setMessages(prev => [...prev, aiMessage]);
+
+      // extracted가 있으면 후속 작업
+      if (data.extracted) {
+        const fullPayload = {
+          ...data.extracted,
+          id: userInfo?.id,
+        };
+        return;
+      }
+
+      // tool call 결과가 있는 경우 처리
+      if (data.toolCallResult) {
+        console.log("Tool call 결과:", data.toolCallResult);
+
+        // 면담 목록 조회 결과인 경우 추가 정보 표시
+        if (data.toolCallResult.result && data.toolCallResult.result.interviews) {
+          const { interviews, summary, period } = data.toolCallResult.result;
+
+          // 상세 면담 정보를 추가 메시지로 표시
+          if (interviews.length > 0) {
+            const detailMessage = formatInterviewDetails(interviews, period);
+            const detailMessageObj: Message = {
+              id: crypto.randomUUID(),
+              content: detailMessage,
+              role: "assistant",
+              timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, detailMessageObj]);
+          }
+        }
+        return;
+      }
+
+      // fallback: reply 안에 function-call JSON이 담긴 경우
+      try {
+        const maybeFunction = JSON.parse(data.reply);
+        if (maybeFunction?.type === "function" && maybeFunction?.parameters) {
+          const fullPayload = {
+            ...maybeFunction.parameters,
+            id: userInfo?.id,
+          };
+        }
+      } catch (e) {}
     } catch (err) {
+      console.error("에러 발생:", err);
       const errorMessage: Message = {
-        id: (Date.now() + 2).toString(),
+        id: crypto.randomUUID(),
         content: "⚠️ 오류가 발생했습니다. 다시 시도해주세요.",
         role: "assistant",
         timestamp: new Date(),
@@ -138,13 +184,61 @@ export default function ChatbotWidget() {
     }
   };
 
+  // 면담 상세 정보 포맷팅 함수
+  const formatInterviewDetails = (interviews: any[], period: { start: string; end: string }) => {
+    const sortedInterviews = interviews.sort(
+      (a, b) => new Date(a.interview_date).getTime() - new Date(b.interview_date).getTime()
+    );
+
+    let details = `📅 **${period.start} ~ ${period.end} 면담 상세**\n\n`;
+
+    sortedInterviews.forEach((interview, index) => {
+      const date = new Date(interview.interview_date).toLocaleDateString("ko-KR");
+      const timeSlots = Array.isArray(interview.interview_time)
+        ? interview.interview_time.join(", ")
+        : interview.interview_time || "시간 미정";
+
+      const statusIcon = getStatusIcon(interview.interview_state);
+
+      details += `${index + 1}. ${statusIcon} **${date}**\n`;
+      details += `   • 시간: ${timeSlots}\n`;
+      details += `   • 학생: ${interview.student_name || "미정"}\n`;
+      details += `   • 상태: ${interview.interview_state || "상태 미정"}\n`;
+
+      if (interview.interview_reject_reason) {
+        details += `   • 거절 사유: ${interview.interview_reject_reason}\n`;
+      }
+
+      details += "\n";
+    });
+
+    return details;
+  };
+
+  // 상태별 아이콘 반환
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "면담 확정":
+        return "✅";
+      case "면담 거절":
+        return "❌";
+      case "면담 대기":
+        return "⏳";
+      default:
+        return "📋";
+    }
+  };
+
   const handleQuickPrompt = (prompt: string) => {
-    const responseMap: Record<string, string> = {
+    const guideMap: Record<string, string> = {
       "면담 수락": "면담을 수락할 일정을 말씀해주세요.",
       "면담 거절": "면담을 거절할 일정을 말씀해주세요.",
+      "면담 목록 조회":
+        "조회할 기간을 말씀해주세요. (예: 이번 주, 오늘, 2024-01-01부터 2024-01-31까지)",
     };
-
-    handleSend(prompt, responseMap[prompt]);
+    const guide = guideMap[prompt];
+    // 유도 메시지만 보여주고 사용자 입력을 기다림
+    handleSend(undefined, guide);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -308,9 +402,10 @@ export default function ChatbotWidget() {
                     <Sparkles className="mr-1 h-3 w-3" />
                     AI
                   </Badge>
-                  <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm leading-relaxed text-gray-800">
-                    {message.content}
-                  </div>
+                  <div
+                    className="rounded-lg border border-gray-200 bg-white p-3 text-sm leading-relaxed text-gray-800"
+                    dangerouslySetInnerHTML={{ __html: message.content }}
+                  />
                 </div>
               )}
             </div>
@@ -332,7 +427,7 @@ export default function ChatbotWidget() {
                       style={{ animationDelay: "0.2s" }}
                     ></div>
                   </div>
-                  <span className="text-xs text-gray-500">Thinking...</span>
+                  <span className="text-xs text-gray-500">생각 중...</span>
                 </div>
               </div>
             </div>
