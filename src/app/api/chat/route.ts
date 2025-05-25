@@ -5,7 +5,10 @@ import { tools } from "@/utils/ai/tools";
 import { handleGetInterviewsToolCall } from "@/utils/ai/handleGetInterviewsToolCall";
 // import { handleAllowRejectviewsToolCall } from "@/utils/ai/handleAllowRejectviewsToolCall";
 import { getSessionUser } from "@/utils/auth/getSessionUser";
-import { format, startOfWeek, endOfWeek } from "date-fns";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import isoWeek from "dayjs/plugin/isoWeek";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -23,11 +26,14 @@ export async function POST(req: NextRequest) {
 
   const { messages } = await req.json();
 
-  // ✅ 날짜 관련 변수 정의
-  const today = new Date();
-  const todayStr = format(today, "yyyy-MM-dd");
-  const startDate = format(startOfWeek(today, { weekStartsOn: 1 }), "yyyy-MM-dd"); // 월요일 시작
-  const endDate = format(endOfWeek(today, { weekStartsOn: 1 }), "yyyy-MM-dd"); // 일요일 끝
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  dayjs.extend(isoWeek);
+
+  const today = dayjs().tz("Asia/Seoul");
+  const todayStr = today.format("YYYY-MM-DD");
+  const startDate = today.startOf("isoWeek").format("YYYY-MM-DD");
+  const endDate = today.endOf("isoWeek").format("YYYY-MM-DD");
 
   // 사용자가 면담 수락 또는 거절을 요청할 때는 반드시 다음 절차를 따르세요:
   // 1. 면담 정보를 알고 있지 않다면, 먼저 조회(get_professor_interviews_by_period) tool을 호출하여 면담 목록을 확인합니다.
