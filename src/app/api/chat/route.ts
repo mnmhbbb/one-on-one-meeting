@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+
 import { NextRequest, NextResponse } from "next/server";
 import { tools } from "@/utils/ai/tools";
 import { handleGetInterviewsToolCall } from "@/utils/ai/handleGetInterviewsToolCall";
@@ -17,7 +18,7 @@ interface ChatMessage {
 }
 
 export async function POST(req: NextRequest) {
-  const { user, accessToken, supabase, response } = await getSessionUser();
+  const { user, accessToken, response } = await getSessionUser();
   if (!user) return response;
 
   const { messages } = await req.json();

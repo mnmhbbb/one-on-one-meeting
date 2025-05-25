@@ -1,5 +1,3 @@
-import { useUserStore } from "@/store/userStore";
-
 export async function handleAllowRejectviewsToolCall(
   toolCall: any,
   context: { accessToken: string }

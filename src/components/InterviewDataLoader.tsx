@@ -39,8 +39,6 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
     "yyyy-MM-dd"
   );
 
-  const interviewId = userInfo?.id;
-
   // 학생 면담 데이터 조회(학생 화면일 때)
   const { data: studentInterviewList } = useQuery<{ data: InterviewInfo[] } | null, Error>({
     queryKey: ["studentInterviewList", startDate, endDate],
