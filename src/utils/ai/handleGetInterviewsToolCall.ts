@@ -65,7 +65,7 @@ export async function handleGetInterviewsToolCall(toolCall: any, context: { acce
         `${index + 1}. 날짜: ${date}<br>` +
         `&nbsp;&nbsp;시간: ${time}<br>` +
         `&nbsp;&nbsp;상태: ${state}<br>` +
-        `&nbsp;&nbsp;유형: ${category}<br>` +
+        `&nbsp;&nbsp;목적: ${category}<br>` +
         `&nbsp;&nbsp;학생: ${student} (${department})`
       );
     });
@@ -77,8 +77,8 @@ export async function handleGetInterviewsToolCall(toolCall: any, context: { acce
 
     return {
       reply:
-        `면담 일정 요약 (${start} ~ ${end} 기준): 총 ${totalCount}건<br><br>` +
-        interviewSummaries.join("<br><br>"),
+        `면담 일정 요약(총 ${totalCount}건)<br><br>
+        (${start} ~ ${end} 기준)` + interviewSummaries.join("<br><br>"),
       result: {
         interviews,
         count: totalCount,
