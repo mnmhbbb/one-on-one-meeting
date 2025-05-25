@@ -21,6 +21,7 @@ interface InterviewInfoFormProps {
   interviewDatetimeList: string[]; // 면담일시 목록
   isBeforeInterviewDate?: boolean; // 면담일이 지났는지 여부
   interviewDatetimeGuideText?: string; // 면담일시 하위 가이드 문구
+  isRejected?: boolean; // 본 컴포넌트가 면담 거절 모달에서 사용됐는지 여부
 }
 
 /**
@@ -221,7 +222,7 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
               onChange={e => setRejectionReason(e.target.value)}
               required
               maxLength={MAX_REASON_LENGTH}
-              disabled={isInterviewStatusDisabled} // 권한 없을 땐 읽기 전용
+              disabled={isInterviewStatusDisabled || props.isRejected} // 권한 없거나 거절 컴포넌트에서 사용된 경우, 읽기 전용
               className="text-sm whitespace-pre-line"
             />
           </div>

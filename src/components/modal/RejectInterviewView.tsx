@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { InterviewStatus, STATUS_LABELS } from "@/common/const";
@@ -60,6 +60,7 @@ const RejectInterviewView = () => {
         <InterviewInfoForm
           interviewDatetimeList={formattedInterviewDatetimeList}
           isBeforeInterviewDate={isBeforeInterviewDate}
+          isRejected={true}
         />
         <ProfessorNotice
           professorInfo={formatProfessorInfo() || ""}
