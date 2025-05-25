@@ -18,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useUserStore } from "@/store/userStore";
 import { InterviewRecordBody } from "@/types/interview";
 import { useToastStore } from "@/store/toastStore";
+import { useDateStore } from "@/store/dateStore";
 
 const RecordedInterviewView = () => {
   const { interviewInfo, setInterviewInfo, close } = useInterviewModalStore(
@@ -27,7 +28,7 @@ const RecordedInterviewView = () => {
       close: state.close,
     }))
   );
-
+  const setUpdateTarget = useDateStore(state => state.setUpdateTarget);
   const userInfo = useUserStore(state => state.userInfo);
   const setToast = useToastStore(state => state.setToast);
   const [step, setStep] = useState(1);
@@ -46,6 +47,11 @@ const RecordedInterviewView = () => {
         });
       }
       close();
+      if (userInfo?.role === UserRole.STUDENT) {
+        setUpdateTarget("studentInterviewList");
+      } else {
+        setUpdateTarget("professorInterviewList");
+      }
     },
     onError: () => {
       setToast("기록 저장 중 오류가 발생했습니다.", "error");
@@ -66,6 +72,11 @@ const RecordedInterviewView = () => {
         });
       }
       close();
+      if (userInfo?.role === UserRole.STUDENT) {
+        setUpdateTarget("studentInterviewList");
+      } else {
+        setUpdateTarget("professorInterviewList");
+      }
     },
     onError: () => {
       setToast("기록 수정 중 오류가 발생했습니다.", "error");
@@ -118,6 +129,10 @@ const RecordedInterviewView = () => {
     return interviewInfo?.interview_time.map(time => `${baseDate} ${time}`);
   }, [interviewInfo?.interview_date, interviewInfo?.interview_time]);
 
+  const isInterviewStatus = (value: any): value is InterviewStatus => {
+    return Object.values(InterviewStatus).includes(value);
+  };
+
   const formatProfessorInfo = () => {
     return `- 이메일: ${interviewInfo?.professor_notification_email}\n- 면담 위치: ${interviewInfo?.professor_interview_location}`;
   };
@@ -155,11 +170,45 @@ const RecordedInterviewView = () => {
           </div>
           <Separator className="!my-4" />
           <div
-            className={`text-primary mb-2 w-fit rounded-lg px-3 py-1 text-sm ${
-              STATUS_COLORS[interviewInfo?.interview_state as InterviewStatus]
-            }`}
+            className={`text-primary mb-2 w-fit rounded-lg px-3 py-1 text-sm ${(() => {
+              const fallbackStatus = InterviewStatus.CONFIRMED;
+
+              let derivedStatus: string | null | undefined;
+
+              if (interviewInfo?.interview_state === InterviewStatus.RECORDED) {
+                if (userInfo?.role === UserRole.STUDENT) {
+                  derivedStatus = interviewInfo.interview_record_state_student;
+                } else if (userInfo?.role === UserRole.PROFESSOR) {
+                  derivedStatus = interviewInfo.interview_record_state_professor;
+                }
+              } else {
+                derivedStatus = interviewInfo?.interview_state;
+              }
+
+              return STATUS_COLORS[
+                isInterviewStatus(derivedStatus) ? derivedStatus : fallbackStatus
+              ];
+            })()}`}
           >
-            {STATUS_LABELS[interviewInfo?.interview_state as InterviewStatus]}
+            {(() => {
+              const fallbackStatus = InterviewStatus.CONFIRMED;
+
+              let derivedStatus: string | null | undefined;
+
+              if (interviewInfo?.interview_state === InterviewStatus.RECORDED) {
+                if (userInfo?.role === UserRole.STUDENT) {
+                  derivedStatus = interviewInfo.interview_record_state_student;
+                } else if (userInfo?.role === UserRole.PROFESSOR) {
+                  derivedStatus = interviewInfo.interview_record_state_professor;
+                }
+              } else {
+                derivedStatus = interviewInfo?.interview_state;
+              }
+
+              return STATUS_LABELS[
+                isInterviewStatus(derivedStatus) ? derivedStatus : fallbackStatus
+              ];
+            })()}
           </div>
 
           <Textarea

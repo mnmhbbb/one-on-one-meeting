@@ -17,12 +17,14 @@ import {
   STATUS_COLORS,
   INTERVIEW_MODAL_TYPE,
   TIMES,
+  UserRole,
 } from "@/common/const";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo, DEFAULT_INTERVIEW_INFO } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
+import { useUserStore } from "@/store/userStore";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -40,6 +42,7 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
       setCurrentDate: state.setCurrentDate,
     }))
   );
+  const userInfo = useUserStore(state => state.userInfo);
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
   const openInterviewModal = useInterviewModalStore(state => state.open);
   const setInterviewInfo = useInterviewModalStore(state => state.setInterviewInfo);
@@ -192,10 +195,27 @@ const MonthlySchedule = (props: MonthlyScheduleProps) => {
                     key={eventIndex}
                     className={cn(
                       "rounded px-1 py-0.5 text-center text-xs",
-                      STATUS_COLORS[event.interview_state as InterviewStatus]
+                      STATUS_COLORS[
+                        (event.interview_state === "면담 기록 완료"
+                          ? userInfo?.role === UserRole.STUDENT
+                            ? (event.interview_record_state_student ?? "면담 확정")
+                            : (event.interview_record_state_professor ?? "면담 확정")
+                          : event.interview_state) as InterviewStatus
+                      ]
                     )}
                   >
-                    {event.interview_state}
+                    <span className="text-sm text-gray-800">
+                      {(() => {
+                        if (event.interview_state === "면담 기록 완료") {
+                          if (userInfo?.role === UserRole.STUDENT) {
+                            return event.interview_record_state_student ?? "면담 확정";
+                          } else if (userInfo?.role === UserRole.PROFESSOR) {
+                            return event.interview_record_state_professor ?? "면담 확정";
+                          }
+                        }
+                        return event.interview_state;
+                      })()}
+                    </span>
                   </div>
                 ))}
               </div>
