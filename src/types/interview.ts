@@ -21,6 +21,10 @@ export interface InterviewInfo {
   student_notification_email: string; // 면담 신청 학생 이메일
   professor_interview_location: string; // 교수 면담 장소
   professor_notification_email: string; // 면담 신청 교수 이메일
+  interview_record_student: string; // 학생 면담 기록
+  interview_record_professor: string; // 교수 면담 기록
+  interview_record_state_student: string; // 학생 면담 기록 상태
+  interview_record_state_professor: string; // 교수 면담 기록 상태
 }
 
 export const DEFAULT_INTERVIEW_INFO: InterviewInfo = {
@@ -46,6 +50,10 @@ export const DEFAULT_INTERVIEW_INFO: InterviewInfo = {
   student_notification_email: "",
   professor_interview_location: "",
   professor_notification_email: "",
+  interview_record_student: "",
+  interview_record_professor: "",
+  interview_record_state_student: "",
+  interview_record_state_professor: "",
 };
 
 export interface InterviewCreateBody {

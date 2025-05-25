@@ -11,7 +11,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useState, useMemo, memo, useEffect } from "react";
 
-import { InterviewStatus } from "@/common/const";
+import { InterviewStatus, UserRole } from "@/common/const";
 import DateSelector from "@/components/DateSelector";
 import ProfessorInterviewTable from "@/components/ProfessorInterviewTable";
 import StatusFilterGroup from "@/components/StatusFilterGroup";
@@ -19,6 +19,7 @@ import StudentInterviewTable from "@/components/StudentInterviewTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDateStore } from "@/store/dateStore";
+import { useUserStore } from "@/store/userStore";
 
 const TABS = [
   { value: "month", label: "Month" },
@@ -29,6 +30,8 @@ const TABS = [
 const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) => {
   const currentDate = useDateStore(state => state.currentDate);
   const interviewList = useDateStore(state => state.interviewList);
+  const userInfo = useUserStore(state => state.userInfo);
+
   const [selectedTab, setSelectedTab] = useState<"month" | "week" | "day">("month");
   const [selectedStatuses, setSelectedStatuses] = useState<InterviewStatus[]>([
     InterviewStatus.REQUESTED,
@@ -59,13 +62,25 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
   }, [date]);
 
   // 상태 필터링이 적용된 이벤트 목록
-  const filteredEvents = useMemo(
-    () =>
-      interviewList.filter(event =>
-        selectedStatuses.includes(event.interview_state as InterviewStatus)
-      ),
-    [interviewList, selectedStatuses]
-  );
+  const filteredEvents = useMemo(() => {
+    return interviewList.filter(event => {
+      let stateToCompare: string;
+
+      if (event.interview_state === "면담 기록 완료") {
+        if (userInfo?.role === UserRole.STUDENT) {
+          stateToCompare = event.interview_record_state_student ?? "면담 확정";
+        } else if (userInfo?.role === UserRole.PROFESSOR) {
+          stateToCompare = event.interview_record_state_professor ?? "면담 확정";
+        } else {
+          stateToCompare = event.interview_state;
+        }
+      } else {
+        stateToCompare = event.interview_state;
+      }
+
+      return selectedStatuses.includes(stateToCompare as InterviewStatus);
+    });
+  }, [interviewList, selectedStatuses, userInfo?.role]);
 
   // 각 탭에 해당하는 이벤트 필터링
   const monthEvents = useMemo(

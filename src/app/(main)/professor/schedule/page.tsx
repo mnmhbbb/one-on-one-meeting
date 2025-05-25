@@ -1,3 +1,4 @@
+import ChatbotWidget from "@/components/ai/ChatbotWidget";
 import ProfessorHeader from "@/components/ProfessorHeader";
 import ScheduleFrame from "@/components/ScheduleFrame";
 import ScheduleManagement from "@/components/ScheduleManagement";
@@ -10,6 +11,7 @@ const SchedulePage = () => {
     <ScheduleFrame>
       <ProfessorHeader />
       <ScheduleManagement />
+      <ChatbotWidget />
     </ScheduleFrame>
   );
 };

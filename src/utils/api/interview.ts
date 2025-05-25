@@ -111,15 +111,6 @@ export const interviewApi = {
     );
   },
 
-  // 면담 기록 가져오기
-  getInterviewRecord: async (
-    interviewId: string
-  ): Promise<{ data: InterviewRecordBody } | null> => {
-    return await tryApiWithToast(() =>
-      axiosInstance.get<{ data: InterviewRecordBody }>(`interview/record?id=${interviewId}`)
-    );
-  },
-
   // 면담 기록 저장
   postInterviewRecord: async (
     body: InterviewRecordBody

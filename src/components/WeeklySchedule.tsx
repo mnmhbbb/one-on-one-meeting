@@ -5,13 +5,21 @@ import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-import { DAYS, INTERVIEW_MODAL_TYPE, InterviewStatus, RoleViewType, TIMES } from "@/common/const";
+import {
+  DAYS,
+  INTERVIEW_MODAL_TYPE,
+  InterviewStatus,
+  RoleViewType,
+  TIMES,
+  UserRole,
+} from "@/common/const";
 import StatusBadge from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { DEFAULT_INTERVIEW_INFO, InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
+import { useUserStore } from "@/store/userStore";
 
 interface WeeklyScheduleProps {
   events: InterviewInfo[];
@@ -30,6 +38,7 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
   const openProfessorSearch = useInterviewModalStore(state => state.openProfessorSearch);
   const openInterviewModal = useInterviewModalStore(state => state.open);
   const setInterviewInfo = useInterviewModalStore(state => state.setInterviewInfo);
+  const userInfo = useUserStore(state => state.userInfo);
 
   const handleClick = (date: Date, event: InterviewInfo | undefined, isDateAvailable: boolean) => {
     if (!isDateAvailable) return; // 면담 신청 가능한 날짜가 아닌 경우 바로 리턴
@@ -92,6 +101,10 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
         })
       );
     });
+  };
+
+  const isInterviewStatus = (value: any): value is InterviewStatus => {
+    return Object.values(InterviewStatus).includes(value);
   };
 
   return (
@@ -178,7 +191,27 @@ const WeeklySchedule = (props: WeeklyScheduleProps) => {
                       onClick: () => handleClick(date, event, isDateAvailable),
                     })}
                   >
-                    {event && <StatusBadge status={event.interview_state as InterviewStatus} />}
+                    {event && (
+                      <StatusBadge
+                        status={(() => {
+                          const fallbackStatus = InterviewStatus.CONFIRMED;
+
+                          let derivedStatus: string | null | undefined;
+
+                          if (event.interview_state === InterviewStatus.RECORDED) {
+                            if (userInfo?.role === UserRole.STUDENT) {
+                              derivedStatus = event.interview_record_state_student;
+                            } else if (userInfo?.role === UserRole.PROFESSOR) {
+                              derivedStatus = event.interview_record_state_professor;
+                            }
+                          } else {
+                            derivedStatus = event.interview_state;
+                          }
+
+                          return isInterviewStatus(derivedStatus) ? derivedStatus : fallbackStatus;
+                        })()}
+                      />
+                    )}
                   </div>
                 );
               })}

@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { memo, useCallback } from "react";
 
-import { InterviewModalType, InterviewStatus } from "@/common/const";
+import { InterviewModalType, InterviewStatus, UserRole } from "@/common/const";
 import StatusBadgeSmall from "@/components/StatusBadgeSmall";
 import {
   Table,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/types/interview";
+import { useUserStore } from "@/store/userStore";
 
 interface InterviewTableProps {
   events: InterviewInfo[];
@@ -24,14 +25,33 @@ interface InterviewTableProps {
  */
 const StudentInterviewTable = ({ events }: InterviewTableProps) => {
   const open = useInterviewModalStore(state => state.open);
+  const userInfo = useUserStore(state => state.userInfo);
 
   const handleClick = useCallback(
     (event: InterviewInfo) => {
-      open(event, event.interview_state as InterviewModalType);
+      let modalState: InterviewModalType;
+
+      if (event.interview_state === "면담 기록 완료") {
+        if (userInfo?.role === UserRole.STUDENT) {
+          modalState = (event.interview_record_state_student ?? "면담 확정") as InterviewModalType;
+        } else if (userInfo?.role === UserRole.PROFESSOR) {
+          modalState = (event.interview_record_state_professor ??
+            "면담 확정") as InterviewModalType;
+        } else {
+          modalState = event.interview_state as InterviewModalType;
+        }
+      } else {
+        modalState = event.interview_state as InterviewModalType;
+      }
+
+      open(event, modalState);
     },
-    [open]
+    [open, userInfo?.role]
   );
 
+  const isInterviewStatus = (value: any): value is InterviewStatus => {
+    return Object.values(InterviewStatus).includes(value);
+  };
   return (
     <Table>
       <TableHeader>
@@ -53,7 +73,25 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
           .map((event, index) => (
             <TableRow key={index} role="button" onClick={() => handleClick(event)}>
               <TableCell className="w-[20%] px-6 font-medium">
-                <StatusBadgeSmall status={event.interview_state as InterviewStatus} />
+                <StatusBadgeSmall
+                  status={(() => {
+                    const fallbackStatus = InterviewStatus.CONFIRMED;
+
+                    let derivedStatus: string | null | undefined;
+
+                    if (event.interview_state === InterviewStatus.RECORDED) {
+                      if (userInfo?.role === UserRole.STUDENT) {
+                        derivedStatus = event.interview_record_state_student;
+                      } else if (userInfo?.role === UserRole.PROFESSOR) {
+                        derivedStatus = event.interview_record_state_professor;
+                      }
+                    } else {
+                      derivedStatus = event.interview_state;
+                    }
+
+                    return isInterviewStatus(derivedStatus) ? derivedStatus : fallbackStatus;
+                  })()}
+                />
                 <br />
                 <div className="mt-1 w-full text-center text-sm">
                   {`${format(new Date(event.interview_date), "yyyy.MM.dd")} (${format(
@@ -75,9 +113,13 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
                 </div>
               </TableCell>
               <TableCell className="w-[30%] px-6">
-                <div className="line-clamp-2 max-w-[250px] text-sm break-words text-ellipsis whitespace-normal text-gray-600">
-                  {/* {event.interview_state === InterviewStatus.RECORDED && event.interview_record} */}
-                </div>
+                {event.interview_record_state_student === InterviewStatus.RECORDED && (
+                  <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
+                    {userInfo?.role === UserRole.STUDENT
+                      ? event.interview_record_student
+                      : event.interview_record_professor}
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}

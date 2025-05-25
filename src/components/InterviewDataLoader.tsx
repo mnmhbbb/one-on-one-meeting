@@ -7,11 +7,10 @@ import { useEffect } from "react";
 import { UserRole } from "@/common/const";
 import { useDateStore } from "@/store/dateStore";
 import { useUserStore } from "@/store/userStore";
-import { InterviewInfo, InterviewRecordBody } from "@/types/interview";
+import { InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
 import { interviewApi } from "@/utils/api/interview";
 import { professorApi } from "@/utils/api/professor";
-import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 interface InterviewDataLoaderProps {
   professorId?: string;
@@ -29,7 +28,6 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
   const setProfessorAllowDateList = useDateStore(state => state.setProfessorAllowDateList);
   const updateTarget = useDateStore(state => state.updateTarget);
   const setUpdateTarget = useDateStore(state => state.setUpdateTarget);
-  const setInterviewRecord = useInterviewModalStore(state => state.setInterviewRecord);
 
   // currentDate가 포함된 월(1일 ~ 말일) 데이터 조회
   const startDate = format(
@@ -56,19 +54,6 @@ const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
     queryKey: ["professorInterviewList", startDate, endDate],
     queryFn: () => interviewApi.getProfessorInterviewList(startDate, endDate),
     enabled: userRole === UserRole.PROFESSOR,
-  });
-
-  // 유저 면담 기록 조회
-  useQuery<{ data: InterviewRecordBody } | null, Error>({
-    queryKey: ["interviewRecord", interviewId],
-    queryFn: async () => {
-      const result = await interviewApi.getInterviewRecord(interviewId!);
-      if (result?.data) {
-        setInterviewRecord(result.data);
-      }
-      return result;
-    },
-    enabled: !!interviewId,
   });
 
   // 교수 면담 가능 날짜 조회(학생 화면일 때)
