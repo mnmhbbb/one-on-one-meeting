@@ -90,7 +90,7 @@ const InterviewInfoForm = (props: InterviewInfoFormProps) => {
         interview_state: status,
         interview_category: newCategory,
         interview_content: newContent,
-        interview_reject_reason: status === InterviewStatus.REJECTED ? rejectionReason! : null,
+        interview_reject_reason: rejectionReason!,
       });
     },
     [setInterviewInfo, status, rejectionReason]
