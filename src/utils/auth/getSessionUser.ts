@@ -3,10 +3,10 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 
 export async function getSessionUser() {
+  const supabase = await createClient(); // 이미 내부에서 cookieStore 처리 중이어야 함
   const headerStore = await headers();
 
-  const supabase = await createClient();
-
+  // 1. Authorization 헤더 우선 처리
   const authHeader = headerStore.get("authorization");
   const accessToken = authHeader?.replace("Bearer ", "");
 
@@ -17,6 +17,7 @@ export async function getSessionUser() {
     }
   }
 
+  // 2. 그 외는 쿠키 기반 세션 처리
   const { data: sessionData } = await supabase.auth.getSession();
   const cookieAccessToken = sessionData.session?.access_token;
   const { data: userData } = await supabase.auth.getUser();

@@ -27,7 +27,7 @@ export async function UpdateInterviewToProfessorEmail({
       pass: process.env.EMAIL_PASS,
     },
   });
-  const url = `https://${process.env.NEXT_PUBLIC_BASE_URL}/professor/interview-requests?tab=day&date=${interviewDate}`;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/professor/interview-requests?tab=day&date=${interviewDate}`;
 
   const htmlDiffs = Object.entries(diffs)
     .map(
