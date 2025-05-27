@@ -64,7 +64,7 @@ export async function handleGetInterviewsToolCall(toolCall: any, context: { acce
       return (
         `${index + 1}. 날짜: ${date}<br>` +
         `&nbsp;&nbsp;시간: ${time}<br>` +
-        `&nbsp;&nbsp;학생: ${student} (${department})` +
+        `&nbsp;&nbsp;학생: ${student} (${department})<br>` +
         `&nbsp;&nbsp;상태: ${state}<br>` +
         `&nbsp;&nbsp;목적: ${category}<br>`
       );
