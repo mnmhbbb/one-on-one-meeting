@@ -54,20 +54,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    if (!Array.isArray(body) || body.length === 0) {
+    if (!Array.isArray(body)) {
       return NextResponse.json({ message: "입력 데이터가 유효하지 않습니다." }, { status: 400 });
     }
 
-    const requiredKeys = ["professor_id", "allow_date", "allow_time"];
-    const hasAllRequired = body.every(item => requiredKeys.every(key => key in item && item[key]));
+    const professorId = body[0]?.professor_id || user.id; // body가 빈 배열일 경우 fallback
 
-    if (!hasAllRequired) {
-      return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
-    }
-
-    const professorId = body[0].professor_id;
-
-    // 1. start ~ end 구간 기존 데이터 삭제
+    // 기존 일정 삭제
     const { error: deleteError } = await supabase
       .from("professor_interview_allow_date")
       .delete()
@@ -80,18 +73,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "기존 일정 삭제 실패" }, { status: 500 });
     }
 
-    // 2. 새 데이터 insert
-    const { data, error: insertError } = await supabase
-      .from("professor_interview_allow_date")
-      .insert(body)
-      .select();
+    // 새 일정이 있으면 insert
+    if (body.length > 0) {
+      const requiredKeys = ["professor_id", "allow_date", "allow_time"];
+      const hasAllRequired = body.every(item =>
+        requiredKeys.every(key => key in item && item[key])
+      );
 
-    if (insertError) {
-      console.error(insertError);
-      return NextResponse.json({ message: "일정 저장 실패" }, { status: 500 });
+      if (!hasAllRequired) {
+        return NextResponse.json({ message: "필수 값 누락" }, { status: 400 });
+      }
+
+      const { data, error: insertError } = await supabase
+        .from("professor_interview_allow_date")
+        .insert(body)
+        .select();
+
+      if (insertError) {
+        console.error(insertError);
+        return NextResponse.json({ message: "일정 저장 실패" }, { status: 500 });
+      }
+
+      return NextResponse.json({ message: "일정 수정 완료", data }, { status: 200 });
     }
 
-    return NextResponse.json({ message: "일정 수정 완료", data }, { status: 200 });
+    // insert 없이 삭제만 한 경우
+    return NextResponse.json({ message: "일정 삭제 완료" }, { status: 200 });
   } catch (e) {
     console.error("서버 오류:", e);
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });

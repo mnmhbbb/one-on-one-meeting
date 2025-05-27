@@ -86,7 +86,7 @@ const ScheduleManagement = () => {
     mutationFn: async (data: ProfessorAllowDateRequest[]) => {
       const response = await professorApi.postAllowDate(data, startDate, endDate);
       if (response) {
-        setToast("일정 활성화가 완료되었습니다.", "success");
+        setToast("일정 반영이 완료되었습니다.", "success");
         close();
       }
       return response?.data;
