@@ -88,7 +88,7 @@ const ProfessorInterviewTable = ({ events }: InterviewTableProps) => {
           interview_time: event.interview_time,
           interview_accept: true,
         });
-        close();
+        // close();
       }
     },
     [updateInterviewStateMutation]
