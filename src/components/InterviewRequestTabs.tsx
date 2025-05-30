@@ -53,10 +53,15 @@ const InterviewRequestTabs = ({ isStudent = false }: { isStudent?: boolean }) =>
 
   // date 쿼리 파라미터가 있으면 currentDate에 반영
   useEffect(() => {
+    if (typeof window === "undefined") return; // SSR 환경 방지
+
     if (date) {
       const parsed = new Date(date);
       if (!isNaN(parsed.getTime())) {
-        useDateStore.getState().setCurrentDate(parsed);
+        const prev = useDateStore.getState().currentDate;
+        if (prev.toISOString() !== parsed.toISOString()) {
+          useDateStore.getState().setCurrentDate(parsed);
+        }
       }
     }
   }, [date]);
