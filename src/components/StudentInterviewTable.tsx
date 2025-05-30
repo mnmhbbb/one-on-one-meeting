@@ -15,6 +15,7 @@ import {
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { InterviewInfo } from "@/types/interview";
 import { useUserStore } from "@/store/userStore";
+import { CirclePlus } from "lucide-react";
 
 interface InterviewTableProps {
   events: InterviewInfo[];
@@ -113,6 +114,13 @@ const StudentInterviewTable = ({ events }: InterviewTableProps) => {
                 </div>
               </TableCell>
               <TableCell className="w-[30%] px-6">
+                {event.interview_state === InterviewStatus.CONFIRMED &&
+                  new Date(event.interview_date) < new Date() && (
+                    <div className="text-primary flex h-full w-full items-center justify-center gap-1 rounded-md bg-[#FDFF9B] px-3 py-7 text-center font-semibold">
+                      <CirclePlus className="h-4 w-4" />
+                      면담 내용을 기록해보세요!
+                    </div>
+                  )}
                 {event.interview_record_state_student === InterviewStatus.RECORDED && (
                   <div className="line-clamp-2 max-w-[250px] px-2 text-sm break-words text-ellipsis whitespace-normal text-gray-600">
                     {userInfo?.role === UserRole.STUDENT
