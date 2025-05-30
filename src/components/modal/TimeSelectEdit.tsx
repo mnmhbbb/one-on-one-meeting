@@ -34,9 +34,9 @@ const TimeSelectEdit = ({ timeList }: TimeSelectEditProps) => {
     <div className="grid grid-cols-2 gap-2">
       {TIMES.map(time => {
         // 면담 변경일 경우, 이미 신청된 면담 시간 중, 내가 신청한 면담 시간은 비활성화하지 않음
-        const isApplied = filteredTimeList.already_apply_time?.some(
-          appliedTime => !interviewInfo?.interview_time?.includes(appliedTime)
-        );
+        const isApplied =
+          filteredTimeList.already_apply_time?.includes(time) &&
+          !interviewInfo?.interview_time?.includes(time);
         const isAvailable = filteredTimeList.allow_time.includes(time);
         const isSelected = selected.includes(time);
 
