@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# JetBrains IDE (IntelliJ, WebStorm, etc.)
+.idea/
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+.idea/workspace.xml
+
+
