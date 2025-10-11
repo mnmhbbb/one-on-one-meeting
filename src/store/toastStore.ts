@@ -21,9 +21,9 @@ export const useToastStore = create<ToastState>(set => ({
     if (status === 401 && typeof window !== "undefined") {
       const pathname = window.location.pathname;
       if (pathname.startsWith("/student")) {
-        window.location.href = "/student/login";
+        // window.location.href = "/student/login";
       } else if (pathname.startsWith("/professor")) {
-        window.location.href = "/professor/login";
+        // window.location.href = "/professor/login";
       }
       return;
     }

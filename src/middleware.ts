@@ -1,10 +1,11 @@
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 import { updateSession } from "@/utils/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
   // 세션을 갱신하고 인증 체크
-  return await updateSession(request);
+  // return await updateSession(request);
+  return NextResponse.next();
 }
 
 export const config = {
