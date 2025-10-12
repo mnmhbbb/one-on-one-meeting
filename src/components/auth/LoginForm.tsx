@@ -2,7 +2,7 @@
 
 import { LockKeyhole, Mail } from "lucide-react";
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
 
 import { UserRole } from "@/common/const";
 import { loginAction, type LoginFormState } from "@/app/actions/login";
@@ -12,26 +12,9 @@ interface LoginFormProps {
   role: UserRole;
 }
 
-/**
- * Submit 버튼 컴포넌트 (pending 상태를 위해 분리)
- */
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      type="submit"
-      disabled={pending}
-      className="bg-primary h-auto w-full rounded-full py-4 text-center text-lg font-medium text-white shadow-md transition-all duration-300 hover:bg-[#5a4638] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
-    >
-      {pending ? "로그인 중..." : "로그인"}
-    </Button>
-  );
-}
-
 export default function LoginForm({ role }: LoginFormProps) {
   const initialState: LoginFormState = { success: false };
-  const [state, formAction] = useFormState(loginAction, initialState);
+  const [state, formAction, isPending] = useActionState(loginAction, initialState);
 
   return (
     <form className="relative z-10 space-y-5" action={formAction}>
@@ -78,7 +61,13 @@ export default function LoginForm({ role }: LoginFormProps) {
         )}
       </div>
 
-      <SubmitButton />
+      <Button
+        type="submit"
+        disabled={isPending}
+        className="bg-primary h-auto w-full rounded-full py-4 text-center text-lg font-medium text-white shadow-md transition-all duration-300 hover:bg-[#5a4638] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {isPending ? "로그인 중..." : "로그인"}
+      </Button>
 
       <div className="relative py-3">
         <div className="absolute inset-0 flex items-center">
