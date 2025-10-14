@@ -8,6 +8,7 @@ import ClientLocaleSetter from "@/components/ClientLocaleSetter";
 import NavigationBar from "@/components/header-navigation/NavigationBar";
 import QueryProvider from "@/components/providers/QueryProvider";
 import Toast from "@/components/Toast";
+import MSWComponent from "@/app/_component/MSWComponent";
 
 // 전역 locale 설정
 dayjs.locale("ko");
@@ -39,6 +40,7 @@ export default function RootLayout({
         </QueryProvider>
         <ClientLocaleSetter />
         <Toast />
+        <MSWComponent />
       </body>
     </html>
   );
