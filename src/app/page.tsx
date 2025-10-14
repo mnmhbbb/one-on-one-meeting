@@ -1,4 +1,4 @@
-import MainPageLogin from "@/components/MainPageLogin";
+import MainPageLogin from "@/app/_component/MainPageLogin";
 
 export default async function Home() {
   return (
