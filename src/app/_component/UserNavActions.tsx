@@ -3,27 +3,26 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { useUserStore } from "@/store/userStore";
+import { useUser } from "@/hooks/useUser";
 import { userApi } from "@/utils/api/user";
 
 const UserNavActions = () => {
-  const userInfo = useUserStore(state => state.userInfo);
-  const clearUserInfo = useUserStore(state => state.clearUserInfo);
+  const { user, clearUser } = useUser();
 
   const handleLogout = async () => {
     const res = await userApi.logout();
     if (res) {
-      clearUserInfo();
+      clearUser();
       window.location.replace("/");
     }
   };
 
-  if (!userInfo) return null;
+  if (!user) return null;
 
   return (
     <div className="flex items-center gap-4">
       <Link href="/mypage" className="text-xs text-white sm:text-sm md:text-base">
-        👤 내 정보
+        👤 {user.name}님
       </Link>
       <Button
         variant="outline"

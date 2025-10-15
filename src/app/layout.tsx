@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
+import { HydrationBoundary, dehydrate, QueryClient } from "@tanstack/react-query";
 
 import "./globals.css";
 import "@/lib/dayjs"; // dayjs 전역 설정 import
@@ -7,6 +8,7 @@ import NavigationBar from "@/app/_component/NavigationBar";
 import QueryProvider from "@/components/providers/QueryProvider";
 import Toast from "@/app/_component/Toast";
 import MSWComponent from "@/app/_component/MSWComponent";
+import { userApi } from "@/utils/api/user";
 
 const sans = Open_Sans({ subsets: ["latin"] });
 
@@ -21,17 +23,36 @@ export const metadata: Metadata = {
 /**
  * 모든 페이지 공통 레이아웃
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // QueryClient 생성
+  const queryClient = new QueryClient();
+
+  // 서버에서 사용자 정보 미리 가져오기 (prefetchQuery 사용)
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ["user"],
+      queryFn: userApi.getCurrentUser,
+      staleTime: 5 * 60 * 1000,
+    });
+  } catch (error) {
+    // 로그인하지 않은 상태는 정상적인 경우이므로 에러 로그 생략
+    // console.error("사용자 정보 가져오기 실패:", error);
+  }
+
+  const dehydratedState = dehydrate(queryClient);
+
   return (
     <html lang="ko">
       <body className={`${sans.className} bg-gray-100 antialiased`}>
         <QueryProvider>
-          <NavigationBar />
-          <main>{children}</main>
+          <HydrationBoundary state={dehydratedState}>
+            <NavigationBar />
+            <main>{children}</main>
+          </HydrationBoundary>
         </QueryProvider>
         <Toast />
         <MSWComponent />
