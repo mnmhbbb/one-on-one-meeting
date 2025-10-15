@@ -19,12 +19,6 @@ export interface UserResponse {
   role: UserRole;
 }
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-  role: UserRole;
-}
-
 export interface Professor {
   id: string;
   email: string;
