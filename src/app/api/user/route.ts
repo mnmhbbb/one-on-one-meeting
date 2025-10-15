@@ -1,95 +1,79 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getSessionUser } from "@/utils/auth/getSessionUser";
+import { UserRole } from "@/common/const";
+import { mockProfessors, mockStudents } from "@/mocks/data/users";
 
-{
-  /*================== 유저 정보 API====================*/
-}
-// GET: 유저 정보 불러오기
+/**
+ * GET /api/user - 유저 정보 불러오기
+ * MSW 목업 데이터 사용 (Supabase 전환 전 임시)
+ */
 export async function GET() {
-  const { user, supabase, response } = await getSessionUser();
-  if (!user) return response;
+  // MSW 임시 구현: 첫 번째 학생 데이터 반환 (인증 구현 전)
+  // 실제로는 세션에서 userId를 가져와서 해당 유저 정보 반환
+  const mockUser = mockStudents[0];
 
-  // 1. 유저 role 확인
-  const { data: userMetadata, error: userError } = await supabase.auth.getUser();
-  if (userError || !userMetadata.user?.user_metadata?.role) {
-    console.error("유저 메타데이터 조회 실패", userError);
-    return NextResponse.json({ message: "유저 정보 조회 실패" }, { status: 500 });
-  }
-
-  const role = userMetadata.user.user_metadata.role;
-
-  // 2. role에 따라 테이블, 컬럼 결정
-  const tableMap = {
-    student: { table: "students" },
-    professor: { table: "professors" },
-  };
-
-  const mapping = tableMap[role as "student" | "professor"];
-  if (!mapping) {
-    return NextResponse.json({ message: "유효하지 않은 역할입니다." }, { status: 400 });
-  }
-
-  // 3. 해당 테이블에서 데이터 조회
-  const { data, error } = await supabase.from(mapping.table).select("*").eq("id", user.id).single();
-
-  if (error) {
-    console.error("역할별 데이터 조회 실패", error);
-    return NextResponse.json({ message: "유저 정보 조회 실패" }, { status: 500 });
-  }
-
-  // 4. 응답: role + 데이터
-  return NextResponse.json({ role, user: data }, { status: 200 });
+  return NextResponse.json(
+    {
+      role: mockUser.role,
+      user: mockUser,
+    },
+    { status: 200 }
+  );
 }
 
-// PUT: 유저 정보 업데이트
+/**
+ * PUT /api/user - 유저 정보 업데이트
+ * MSW 목업 데이터 사용 (Supabase 전환 전 임시)
+ */
 export async function PUT(req: NextRequest) {
-  const { user, supabase, response } = await getSessionUser();
-  if (!user) return response;
-
-  const tableMap = {
-    student: { table: "students" },
-    professor: { table: "professors" },
-  };
-
   try {
     const body = await req.json();
     const { role, id } = body;
 
-    const mapping = tableMap[role as "student" | "professor"];
+    // MSW 임시 구현: 목업 데이터 직접 수정
+    if (role === UserRole.STUDENT) {
+      const studentIndex = mockStudents.findIndex(s => s.id === id);
+      if (studentIndex === -1) {
+        return NextResponse.json({ message: "학생을 찾을 수 없습니다." }, { status: 404 });
+      }
 
-    if (!mapping) {
-      return NextResponse.json({ message: "잘못된 역할(role)" }, { status: 400 });
+      if ("department" in body) mockStudents[studentIndex].department = body.department;
+      if ("phone_num" in body) mockStudents[studentIndex].phone_num = body.phone_num;
+      if ("notification_email" in body)
+        mockStudents[studentIndex].notification_email = body.notification_email;
+
+      return NextResponse.json(
+        {
+          message: "유저 정보 업데이트 완료",
+          ...mockStudents[studentIndex],
+          role,
+        },
+        { status: 201 }
+      );
+    } else if (role === UserRole.PROFESSOR) {
+      const professorIndex = mockProfessors.findIndex(p => p.id === id);
+      if (professorIndex === -1) {
+        return NextResponse.json({ message: "교수를 찾을 수 없습니다." }, { status: 404 });
+      }
+
+      if ("college" in body) mockProfessors[professorIndex].college = body.college;
+      if ("phone_num" in body) mockProfessors[professorIndex].phone_num = body.phone_num;
+      if ("notification_email" in body)
+        mockProfessors[professorIndex].notification_email = body.notification_email;
+      if ("interview_location" in body)
+        mockProfessors[professorIndex].interview_location = body.interview_location;
+
+      return NextResponse.json(
+        {
+          message: "유저 정보 업데이트 완료",
+          ...mockProfessors[professorIndex],
+          role,
+        },
+        { status: 201 }
+      );
     }
 
-    const updateFields: Record<string, string> = {};
-
-    if (role === "student") {
-      if ("department" in body) updateFields.department = body.department;
-      if ("phone_num" in body) updateFields.phone_num = body.phone_num;
-      if ("notification_email" in body) updateFields.notification_email = body.notification_email;
-    } else if (role === "professor") {
-      if ("college" in body) updateFields.college = body.college;
-      if ("phone_num" in body) updateFields.phone_num = body.phone_num;
-      if ("notification_email" in body) updateFields.notification_email = body.notification_email;
-      if ("interview_location" in body) updateFields.interview_location = body.interview_location;
-    }
-
-    const { data, error } = await supabase
-      .from(mapping.table)
-      .update(updateFields)
-      .eq("id", id)
-      .select();
-
-    if (error) {
-      console.error(error);
-      return NextResponse.json({ message: "유저 정보 업데이트 실패" }, { status: 500 });
-    }
-
-    return NextResponse.json(
-      { message: "유저 정보 업데이트 완료", ...data[0], role },
-      { status: 201 }
-    );
+    return NextResponse.json({ message: "잘못된 역할(role)" }, { status: 400 });
   } catch {
     return NextResponse.json({ message: "서버 오류" }, { status: 500 });
   }

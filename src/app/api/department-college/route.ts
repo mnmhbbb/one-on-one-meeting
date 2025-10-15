@@ -1,25 +1,24 @@
 import { NextResponse } from "next/server";
 
-import { createClient } from "@/utils/supabase/server";
+import { mockDepartments } from "@/mocks/data/departments";
 
-{
-  /*================== 학과, 학부 API====================*/
-}
-// GET: 학과, 학부 불러오기
+/**
+ * GET /api/department-college - 학과/단과대학 목록 조회
+ * MSW 목업 데이터 사용
+ */
 export async function GET() {
-  const supabase = await createClient();
-
   try {
-    const { data, error } = await supabase.from("department").select("*");
-
-    if (error) {
-      console.error(error);
-      return NextResponse.json({ message: "조회 실패" }, { status: 500 });
-    }
-
-    return NextResponse.json({ data }, { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ message: "서버 오류" }, { status: 500 });
+    return NextResponse.json(
+      {
+        data: mockDepartments,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("학과/단과대학 조회 에러:", error);
+    return NextResponse.json(
+      { message: "학과/단과대학 조회 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }
