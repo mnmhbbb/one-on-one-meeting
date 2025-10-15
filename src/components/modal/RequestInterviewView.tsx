@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
 
 import { InterviewStatus, UserRole } from "@/common/const";

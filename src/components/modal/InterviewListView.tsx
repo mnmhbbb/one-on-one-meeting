@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { useRouter } from "next/navigation";
 import { memo, useEffect, useMemo, useState } from "react";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 

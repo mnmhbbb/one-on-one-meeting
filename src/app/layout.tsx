@@ -1,17 +1,12 @@
-import dayjs from "dayjs";
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
-import "dayjs/locale/ko";
 
 import "./globals.css";
-import ClientLocaleSetter from "@/app/_component/ClientLocaleSetter";
+import "@/lib/dayjs"; // dayjs 전역 설정 import
 import NavigationBar from "@/app/_component/NavigationBar";
 import QueryProvider from "@/components/providers/QueryProvider";
 import Toast from "@/app/_component/Toast";
 import MSWComponent from "@/app/_component/MSWComponent";
-
-// 전역 locale 설정
-dayjs.locale("ko");
 
 const sans = Open_Sans({ subsets: ["latin"] });
 
@@ -38,7 +33,6 @@ export default function RootLayout({
           <NavigationBar />
           <main>{children}</main>
         </QueryProvider>
-        <ClientLocaleSetter />
         <Toast />
         <MSWComponent />
       </body>
