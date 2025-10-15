@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import { UserRole } from "@/common/const";
-import { loginAction, type LoginFormState } from "@/app/actions/login";
+import { loginAction } from "@/actions/auth";
+import type { LoginFormState } from "@/types/auth";
 import { Button } from "@/components/ui/button";
 
 interface LoginFormProps {
