@@ -68,3 +68,8 @@ export enum UserRole {
   PROFESSOR = "professor",
   ADMIN = "admin",
 }
+
+export const baseURL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:9090/api" // 개발: MSW 목 서버
+    : "/api"; // 배포: Next.js API Routes (상대 경로)
