@@ -32,16 +32,11 @@ export default async function RootLayout({
   const queryClient = new QueryClient();
 
   // 서버에서 사용자 정보 미리 가져오기 (prefetchQuery 사용)
-  try {
-    await queryClient.prefetchQuery({
-      queryKey: ["user"],
-      queryFn: userApi.getCurrentUser,
-      staleTime: 5 * 60 * 1000,
-    });
-  } catch (error) {
-    // 로그인하지 않은 상태는 정상적인 경우이므로 에러 로그 생략
-    // console.error("사용자 정보 가져오기 실패:", error);
-  }
+  await queryClient.prefetchQuery({
+    queryKey: ["user"],
+    queryFn: userApi.getCurrentUser,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const dehydratedState = dehydrate(queryClient);
 
