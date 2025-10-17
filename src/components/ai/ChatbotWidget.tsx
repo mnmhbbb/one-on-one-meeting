@@ -1,15 +1,14 @@
 "use client";
 
+import { Sparkles, X, ArrowUp, Minimize2, Calendar } from "lucide-react";
 import type React from "react";
-
 import { useState, useRef, useEffect } from "react";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-
-import { Sparkles, X, ArrowUp, Minimize2, Calendar } from "lucide-react";
 import { useUserStore } from "@/store/userStore";
 
 interface Message {

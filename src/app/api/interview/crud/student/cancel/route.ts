@@ -121,7 +121,7 @@ export async function PUT(req: NextRequest) {
 
     // 6. 시간 제거 후 업데이트
     const filteredTimes = (matchedSlot.already_apply_time || []).filter((time: string) => {
-      !(requestedTime as string[]).includes(time);
+      return !(requestedTime as string[]).includes(time);
     });
 
     const { error: timeUpdateError } = await supabase

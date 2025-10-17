@@ -22,9 +22,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { useUserStore } from "@/store/userStore";
 import { InterviewInfo, DEFAULT_INTERVIEW_INFO } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
-import { useUserStore } from "@/store/userStore";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 

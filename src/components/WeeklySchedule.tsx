@@ -17,9 +17,9 @@ import StatusBadge from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
+import { useUserStore } from "@/store/userStore";
 import { DEFAULT_INTERVIEW_INFO, InterviewInfo } from "@/types/interview";
 import { ProfessorAllowDate } from "@/types/user";
-import { useUserStore } from "@/store/userStore";
 
 interface WeeklyScheduleProps {
   events: InterviewInfo[];

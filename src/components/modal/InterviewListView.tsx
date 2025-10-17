@@ -1,12 +1,12 @@
 "use client";
 
 import clsx from "clsx";
-import dayjs from "@/lib/dayjs";
 import { useRouter } from "next/navigation";
 import { memo, useEffect, useMemo, useState } from "react";
 
-import { STATUS_COLORS, TIMES } from "@/common/const";
 import {
+  STATUS_COLORS,
+  TIMES,
   INTERVIEW_MODAL_TYPE,
   InterviewModalType,
   InterviewStatus,
@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import dayjs from "@/lib/dayjs";
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useProfessorsStore } from "@/store/professorsStore";

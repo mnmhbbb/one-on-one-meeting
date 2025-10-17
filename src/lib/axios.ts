@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CanceledError } from "axios";
 
-import { useToastStore } from "@/store/toastStore";
 import { baseURL } from "@/common/const";
+import { useToastStore } from "@/store/toastStore";
 
 export const axiosBase = axios.create({
   baseURL,

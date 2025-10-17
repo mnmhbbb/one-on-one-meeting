@@ -1,6 +1,6 @@
 "use client";
 
-import dayjs from "@/lib/dayjs";
+import { useMutation } from "@tanstack/react-query";
 import { memo, useCallback, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
@@ -9,16 +9,16 @@ import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import dayjs from "@/lib/dayjs";
+import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-
-import { Textarea } from "../ui/textarea";
-import ProfessorNotice from "./ProfessorNotice";
-import { interviewApi } from "@/utils/api/interview";
-import { useMutation } from "@tanstack/react-query";
+import { useToastStore } from "@/store/toastStore";
 import { useUserStore } from "@/store/userStore";
 import { InterviewRecordBody } from "@/types/interview";
-import { useToastStore } from "@/store/toastStore";
-import { useDateStore } from "@/store/dateStore";
+import { interviewApi } from "@/utils/api/interview";
+
+import ProfessorNotice from "./ProfessorNotice";
+import { Textarea } from "../ui/textarea";
 
 const RecordedInterviewView = () => {
   const { interviewInfo, setInterviewInfo, close } = useInterviewModalStore(

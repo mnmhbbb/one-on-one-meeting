@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToastStore } from "@/store/toastStore";
 import { useUserStore } from "@/store/userStore";
 import { MyPageUserInfo } from "@/types/user";
 import { userApi } from "@/utils/api/user";
@@ -20,7 +21,6 @@ import { userApi } from "@/utils/api/user";
 import LoadingUI from "../LoadingUI";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { useToastStore } from "@/store/toastStore";
 
 const MyPage = () => {
   const router = useRouter();

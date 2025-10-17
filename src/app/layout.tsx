@@ -1,13 +1,13 @@
+import { HydrationBoundary, dehydrate, QueryClient } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
-import { HydrationBoundary, dehydrate, QueryClient } from "@tanstack/react-query";
 
 import "./globals.css";
 import "@/lib/dayjs"; // dayjs 전역 설정 import
-import NavigationBar from "@/app/_component/NavigationBar";
-import QueryProvider from "@/components/providers/QueryProvider";
-import Toast from "@/app/_component/Toast";
 import MSWComponent from "@/app/_component/MSWComponent";
+import NavigationBar from "@/app/_component/NavigationBar";
+import Toast from "@/app/_component/Toast";
+import QueryProvider from "@/components/providers/QueryProvider";
 import { userApi } from "@/utils/api/user";
 
 const sans = Open_Sans({ subsets: ["latin"] });

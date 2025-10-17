@@ -24,9 +24,9 @@ import {
 import { useDateStore } from "@/store/dateStore";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 import { useToastStore } from "@/store/toastStore";
+import { useUserStore } from "@/store/userStore";
 import { InterviewAcceptBody, InterviewInfo } from "@/types/interview";
 import { interviewApi } from "@/utils/api/interview";
-import { useUserStore } from "@/store/userStore";
 
 interface InterviewTableProps {
   events: InterviewInfo[];

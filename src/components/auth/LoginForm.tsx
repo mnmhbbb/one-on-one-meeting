@@ -4,10 +4,10 @@ import { LockKeyhole, Mail } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
 
-import { UserRole } from "@/common/const";
 import { loginAction } from "@/actions/auth";
-import type { LoginFormState } from "@/types/auth";
+import { UserRole } from "@/common/const";
 import { Button } from "@/components/ui/button";
+import type { LoginFormState } from "@/types/auth";
 
 interface LoginFormProps {
   role: UserRole;

@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+
+import { createClient } from "@/utils/supabase/server";
 
 export async function getSessionUser() {
   const supabase = await createClient(); // 이미 내부에서 cookieStore 처리 중이어야 함

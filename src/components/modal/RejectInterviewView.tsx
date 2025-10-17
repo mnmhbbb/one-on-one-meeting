@@ -1,6 +1,5 @@
 "use client";
 
-import dayjs from "@/lib/dayjs";
 import { memo, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
@@ -8,6 +7,7 @@ import { InterviewStatus, STATUS_LABELS } from "@/common/const";
 import InterviewInfoForm from "@/components/modal/InterviewInfoForm";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import dayjs from "@/lib/dayjs";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
 
 import ProfessorNotice from "./ProfessorNotice";

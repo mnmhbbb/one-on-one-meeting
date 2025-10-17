@@ -1,9 +1,9 @@
 import { http, HttpResponse } from "msw";
 
 import { UserRole } from "@/common/const";
-import type { ProfessorSignupRequest, StudentSignupRequest } from "@/types/auth";
 import { mockCredentials, mockProfessors, mockStudents } from "@/mocks/data/users";
 import { isEmailVerified } from "@/mocks/data/verification";
+import type { ProfessorSignupRequest, StudentSignupRequest } from "@/types/auth";
 
 /**
  * 회원가입 관련 MSW 핸들러

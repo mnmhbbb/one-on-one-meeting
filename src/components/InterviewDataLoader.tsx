@@ -22,7 +22,6 @@ interface InterviewDataLoaderProps {
 const InterviewDataLoader = ({ professorId }: InterviewDataLoaderProps) => {
   const queryClient = useQueryClient();
   const userRole = useUserStore(state => state.role);
-  const userInfo = useUserStore(state => state.userInfo);
   const currentDate = useDateStore(state => state.currentDate);
   const setInterviewList = useDateStore(state => state.setInterviewList);
   const setProfessorAllowDateList = useDateStore(state => state.setProfessorAllowDateList);

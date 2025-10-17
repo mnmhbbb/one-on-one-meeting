@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import { CirclePlus } from "lucide-react";
 import { memo, useCallback } from "react";
 
 import { InterviewModalType, InterviewStatus, UserRole } from "@/common/const";
@@ -13,9 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useInterviewModalStore } from "@/store/interviewModalStore";
-import { InterviewInfo } from "@/types/interview";
 import { useUserStore } from "@/store/userStore";
-import { CirclePlus } from "lucide-react";
+import { InterviewInfo } from "@/types/interview";
 
 interface InterviewTableProps {
   events: InterviewInfo[];

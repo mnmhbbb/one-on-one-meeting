@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { UserRole } from "@/common/const";
-import type { ProfessorSignupRequest, StudentSignupRequest } from "@/types/auth";
 import { mockCredentials, mockProfessors, mockStudents } from "@/mocks/data/users";
 import { isEmailVerified } from "@/mocks/data/verification";
+import type { ProfessorSignupRequest, StudentSignupRequest } from "@/types/auth";
 
 /**
  * POST /api/signup - 회원가입 API
@@ -12,7 +12,7 @@ import { isEmailVerified } from "@/mocks/data/verification";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, role } = body;
+    const { email, role } = body;
 
     // 1. 이메일 인증 확인
     if (!isEmailVerified(email)) {

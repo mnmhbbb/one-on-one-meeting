@@ -3,11 +3,11 @@
 import { LockKeyhole, Mail, User, Phone, BookOpen, GraduationCap, MapPin } from "lucide-react";
 import { useActionState, useState } from "react";
 
-import { UserRole } from "@/common/const";
 import { signupAction } from "@/actions/auth";
+import { UserRole } from "@/common/const";
+import { Button } from "@/components/ui/button";
 import type { SignupFormState } from "@/types/auth";
 import { emailApi } from "@/utils/api/email";
-import { Button } from "@/components/ui/button";
 
 interface RegisterFormProps {
   role: UserRole.STUDENT | UserRole.PROFESSOR;

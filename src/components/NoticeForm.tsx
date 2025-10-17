@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { memo, useEffect, useState } from "react";
 
@@ -8,9 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastStore } from "@/store/toastStore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { professorApi } from "@/utils/api/professor";
 import { useUserStore } from "@/store/userStore";
+import { professorApi } from "@/utils/api/professor";
 
 const NoticeForm = () => {
   const [notice, setNotice] = useState("");
