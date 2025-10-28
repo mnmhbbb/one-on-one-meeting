@@ -32,9 +32,9 @@ const config = [
       },
     },
     plugins: {
-      import: eslintPluginImport,
-      "unused-imports": eslintPluginUnusedImports,
-      prettier: prettierPlugin,
+      import: eslintPluginImport, // import 순서 적용하기 위함
+      "unused-imports": eslintPluginUnusedImports, // 사용하지 않는 import 자동 제거하기 위함
+      prettier: prettierPlugin, // Prettier를 ESLint 규칙으로 실행
     },
     rules: {
       // Import 관련 규칙
@@ -75,7 +75,7 @@ const config = [
       "prettier/prettier": "error",
     },
   },
-  // Prettier 설정 충돌 제거
+  // Prettier와 충돌하는 ESLint 규칙 제거
   {
     ...prettierConfig,
   },
